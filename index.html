@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow, noarchive, noimageindex">
+<title>찜콩 · 좌석 찜하기</title>
+<meta name="description" content="와서, 일단 앉아. 강의실 자리를 미리 찜하세요.">
+<meta property="og:title" content="찜콩 · 좌석 찜하기">
+<meta property="og:description" content="와서, 일단 앉아. 링크를 누르고 빈자리를 찜하세요.">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="splash" id="splash" aria-hidden="true">
+  <div class="splash-stage">
+    <div class="splash-seats">
+      <i></i><i></i><i class="target"></i><i></i><i></i>
+    </div>
+    <img class="splash-bean" src="icon.svg" alt="" width="72" height="72">
+    <div class="splash-pop">찜!</div>
+  </div>
+  <div class="splash-name">찜콩</div>
+  <div class="splash-tag">와서, 일단 앉아</div>
+</div>
+<script>
+  (function () {
+    var splash = document.getElementById('splash');
+    var seen = false;
+    try { seen = sessionStorage.getItem('jjimkong.splash') === '1'; sessionStorage.setItem('jjimkong.splash', '1'); } catch (e) {}
+    if (seen || location.hash || matchMedia('(prefers-reduced-motion: reduce)').matches) { splash.remove(); return; }
+    function close() { splash.classList.add('out'); setTimeout(function () { splash.remove(); }, 600); }
+    splash.addEventListener('click', close);
+    setTimeout(close, 2300);
+  })();
+</script>
+<header class="brand">
+  <a class="brand-link" href="./" aria-label="찜콩 처음으로">
+    <img src="icon.svg" alt="" width="36" height="36">
+    <span class="brand-name">찜콩</span>
+  </a>
+  <span class="brand-tag">와서, 일단 앉아</span>
+</header>
+
+<main>
+  <section id="connectView" hidden>
+    <div class="card hero">
+      <h1>자리 찜하기</h1>
+      <p class="lead">관리자가 나눠 준 링크로 들어왔다면 이름만 적고 <b>[연결]</b> 을 누르세요.</p>
+
+      <label class="field">
+        <span>내 이름 <small>(좌석표에 보여요)</small></span>
+        <input id="nameInput" type="text" maxlength="20" placeholder="예: 김찜콩" autocomplete="name">
+      </label>
+
+      <label class="field">
+        <span>연결 코드</span>
+        <textarea id="codeInput" rows="2" placeholder="초대 링크나 https://script.google.com/macros/s/…/exec" spellcheck="false"></textarea>
+      </label>
+
+      <div class="check" id="codeCheck" hidden>
+        <span class="check-label">확인 번호</span>
+        <span class="check-code" id="codeFingerprint"></span>
+        <p>관리자 공지의 번호와 같은지 보세요. <b>다르면 가짜 링크</b>일 수 있으니 연결하지 마세요.</p>
+      </div>
+
+      <button class="btn primary big" id="connectButton" type="button">연결</button>
+      <p class="message" id="connectMessage" hidden></p>
+    </div>
+
+    <div class="card">
+      <h2>관리자(교회)이신가요?</h2>
+      <p>좌석 예약 시트를 내 구글 드라이브에 만들어 쓰세요. PC 에서 하시는 게 편해요.</p>
+      <div class="row">
+        <a class="btn" id="templateLink" target="_blank" rel="noopener">좌석 예약 시트 만들기</a>
+        <a class="btn ghost" href="guide.html#admin">관리자 사용법</a>
+      </div>
+      <p class="hint">시트의 <b>[2. 연결 QR 보기]</b> 에 있는 <b>관리자용 글</b>을 위 연결 코드 칸에 붙여 넣으면 관리자로 들어와요.</p>
+    </div>
+
+    <div class="row center">
+      <a class="btn ghost" href="guide.html">사용법</a>
+      <button class="btn ghost" id="demoButton" type="button">체험해 보기</button>
+    </div>
+    <p class="fine">예약 기록과 이름은 관리자의 구글 시트에만 저장돼요. 찜콩은 따로 모으지 않아요.</p>
+  </section>
+
+  <section id="seatView" hidden>
+    <div class="card head">
+      <div class="head-top">
+        <div class="room-line">
+          <h1 id="roomName"></h1>
+          <span class="badge" id="adminBadge" hidden>관리자</span>
+          <span class="count" id="reservedCount"></span>
+        </div>
+        <div class="head-buttons">
+          <button class="btn ghost small" id="refreshButton" type="button">새로 고침</button>
+          <a class="btn ghost small" id="guideLink" href="guide.html">사용법</a>
+          <button class="btn ghost small" id="disconnectButton" type="button">연결 끊기</button>
+        </div>
+      </div>
+
+      <div class="head-info">
+        <label class="inline">
+          <span>내 이름</span>
+          <input id="myNameInput" type="text" maxlength="20" placeholder="이름">
+        </label>
+        <span class="inline" title="관리자 공지의 확인 번호와 같아야 진짜 좌석 예약이에요">
+          <span>확인 번호</span><b class="mono" id="connFingerprint"></b>
+        </span>
+        <span class="mine-text" id="mySeats"></span>
+      </div>
+
+      <p class="status" id="statusText"></p>
+
+      <div class="admin" id="adminPanel" hidden>
+        <div class="admin-row" id="adminControls">
+          <label class="switch"><input type="checkbox" id="publishedToggle"><span class="track"></span><span>공개</span></label>
+          <label class="switch"><input type="checkbox" id="showNamesToggle"><span class="track"></span><span>이름 보이기</span></label>
+          <span class="stepper">
+            <span>1인 최대</span>
+            <button class="btn small" id="maxMinus" type="button" aria-label="1인 최대 줄이기">−</button>
+            <b id="maxValue">1</b>
+            <button class="btn small" id="maxPlus" type="button" aria-label="1인 최대 늘리기">+</button>
+          </span>
+          <span class="muted" id="sessionText"></span>
+        </div>
+        <div class="admin-row" id="adminActions">
+          <button class="btn" id="editLayoutButton" type="button">배치도 고치기</button>
+          <button class="btn" id="inviteCopyButton" type="button">초대 링크 복사</button>
+          <button class="btn" id="inviteQrButton" type="button">초대 QR</button>
+          <button class="btn ghost" id="nextSessionButton" type="button">다음 회차로</button>
+        </div>
+
+        <div class="editor" id="editorPanel" hidden>
+          <div class="admin-row pills" id="toolPanel" role="radiogroup" aria-label="도구">
+            <button class="pill" data-tool="chair" type="button">1인 의자</button>
+            <button class="pill" data-tool="desk" type="button">책상 의자</button>
+            <button class="pill" data-tool="pew" type="button">장의자</button>
+            <button class="pill" data-tool="extra" type="button">보조 의자</button>
+            <button class="pill" data-tool="block" type="button">앉을 수 없음</button>
+            <button class="pill" data-tool="erase" type="button">통로 (지우기)</button>
+          </div>
+          <div class="admin-row pills" id="shapePanel">
+            <span class="muted">모양</span>
+            <button class="pill" data-shape="grid" type="button">네모</button>
+            <button class="pill" data-shape="fan" type="button">부채꼴</button>
+            <button class="pill" data-shape="round" type="button">원형</button>
+            <span class="stepper" id="anglePanel" hidden>
+              <span>각도</span>
+              <button class="btn small" data-angle="-15" type="button">−</button>
+              <b id="angleValue"></b>
+              <button class="btn small" data-angle="15" type="button">+</button>
+            </span>
+          </div>
+          <div class="admin-row">
+            <span class="stepper"><span>줄</span>
+              <button class="btn small" data-resize="row-" type="button">−</button>
+              <button class="btn small" data-resize="row+" type="button">+</button>
+            </span>
+            <span class="stepper"><span id="colsLabel">칸</span>
+              <button class="btn small" data-resize="col-" type="button">−</button>
+              <button class="btn small" data-resize="col+" type="button">+</button>
+            </span>
+            <span class="muted" id="draftSize"></span>
+          </div>
+          <div class="admin-row">
+            <label class="switch touch-only"><input type="checkbox" id="panToggle"><span class="track"></span><span>화면 움직이기</span></label>
+            <span class="grow"></span>
+            <button class="btn ghost" id="cancelEditButton" type="button">그만</button>
+            <button class="btn primary" id="saveLayoutButton" type="button">저장</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="floors" id="floorPanel" hidden></div>
+
+    <div class="board-scroll" id="boardScroll">
+      <div class="board-zoom" id="boardZoom">
+        <div class="board-inner" id="boardInner">
+          <div class="front" id="frontBand">앞 (강단)</div>
+          <div class="board" id="board"></div>
+        </div>
+      </div>
+      <p class="empty" id="emptyText" hidden>아직 좌석표가 없어요.</p>
+    </div>
+
+    <div class="legend">
+      <span><i class="lg free"></i>빈자리</span>
+      <span><i class="lg mine"></i>내 자리</span>
+      <span><i class="lg taken"></i>예약됨</span>
+      <span><i class="lg blocked"></i>앉을 수 없음</span>
+      <span><i class="lg desk"></i>책상 의자</span>
+      <span><i class="lg pew"></i>장의자</span>
+      <span><i class="lg extra"></i>보조 의자</span>
+    </div>
+  </section>
+</main>
+
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+<dialog id="confirmDialog">
+  <form method="dialog">
+    <h3 id="confirmTitle"></h3>
+    <p id="confirmText"></p>
+    <div class="row end">
+      <button class="btn ghost" value="no">아니요</button>
+      <button class="btn primary" value="yes">네</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="qrDialog">
+  <form method="dialog">
+    <h3>초대 QR</h3>
+    <div id="qrBox" class="qr"></div>
+    <p class="check-line">확인 번호 <b class="mono" id="qrFingerprint"></b></p>
+    <p class="small-link" id="qrLink"></p>
+    <div class="row end"><button class="btn primary" value="close">닫기</button></div>
+  </form>
+</dialog>
+
+<footer class="foot">찜콩 · 와서, 일단 앉아</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" defer></script>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>
