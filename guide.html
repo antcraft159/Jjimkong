@@ -15,9 +15,9 @@
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="icon" href="icon.svg?v=20261126l" type="image/svg+xml">
+<link rel="icon" href="icon.svg?v=20261126m" type="image/svg+xml">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
-<link rel="stylesheet" href="css/style.css?v=20261126l">
+<link rel="stylesheet" href="css/style.css?v=20261126m">
 <style>
   body { margin: 0; background: var(--bg); color: var(--text); }
   .guide { max-width: 720px; margin: 0 auto; padding: 16px 16px 48px; box-sizing: border-box; line-height: 1.7; overflow-wrap: anywhere; word-break: keep-all; }
@@ -65,7 +65,7 @@
     window.JJIM_LANG = lang;
     document.documentElement.lang = lang;
     document.documentElement.setAttribute('data-theme', theme);
-    if (lang !== 'ko') document.write('<script src="js/lang/' + lang + '.js?v=20261126l"><\/script>');
+    if (lang !== 'ko') document.write('<script src="js/lang/' + lang + '.js?v=20261126m"><\/script>');
   })();
 </script>
 </head>
@@ -78,13 +78,13 @@
   <nav class="toc" aria-label="목차">
     <strong>목차</strong>
     <ul>
-      <li><a href="#member">성도용 — 자리 찜하기</a></li>
+      <li><a href="#member">유저용 — 자리 찜하기</a></li>
       <li><a href="#admin">관리자용 — 좌석 예약 열기</a></li>
     </ul>
   </nav>
 
-  <!-- ───────────── 성도용 ───────────── -->
-  <h2 id="member">성도용 — 자리 찜하기</h2>
+  <!-- ───────────── 유저용 ───────────── -->
+  <h2 id="member">유저용 — 자리 찜하기</h2>
 
   <h3>한눈에 보기</h3>
   <ul>
@@ -185,7 +185,7 @@
   </ol>
   <div class="warn">
     <strong>액세스는 그냥 "모든 사용자"</strong>
-    "Google 계정이 있는 모든 사용자"를 고르면 성도가 연결되지 않아요.
+    "Google 계정이 있는 모든 사용자"를 고르면 유저가 연결되지 않아요.
   </div>
 
   <h3>③ 찜콩에 관리자로 연결</h3>
@@ -202,7 +202,7 @@
   </div>
   <div class="warn">
     <strong>관리자 글은 남에게 보여 주지 마세요</strong>
-    받은 사람은 배치도를 고치고 예약을 지울 수 있어요. 새어 나갔으면 시트 메뉴 <strong>[좌석 예약] → [관리자 키 새로 만들기]</strong>를 누르고, 새 관리자 글로 다시 연결하세요. 성도 초대 링크는 그대로 써도 돼요.
+    받은 사람은 배치도를 고치고 예약을 지울 수 있어요. 새어 나갔으면 시트 메뉴 <strong>[좌석 예약] → [관리자 키 새로 만들기]</strong>를 누르고, 새 관리자 글로 다시 연결하세요. 유저 초대 링크는 그대로 써도 돼요.
   </div>
 
   <h3>④ 배치도 그리기</h3>
@@ -237,18 +237,18 @@
 
   <h3>⑤ 예약 받기</h3>
   <ol>
-    <li><strong>[공개]</strong>를 켜세요. 그래야 성도에게 좌석표가 보여요.</li>
+    <li><strong>[공개]</strong>를 켜세요. 그래야 유저에게 좌석표가 보여요.</li>
     <li><strong>[초대 링크 복사]</strong> 또는 <strong>[초대 QR]</strong>로 단체방에 나눠 주세요.</li>
     <li>이름 옆 <strong>확인 번호</strong>(8자리)도 단체방 <strong>공지</strong>에 적어 두세요. 가짜 링크를 가려내는 데 써요.</li>
   </ol>
   <div class="warn">
-    <strong>성도에게는 찜콩 초대 링크 · QR 을 주세요</strong>
-    시트의 <strong>성도용 QR</strong>(웹 앱 주소)을 휴대폰 카메라로 바로 찍으면 Apps Script 안내 페이지만 떠요. 꼭 찜콩의 [초대 링크 복사] · [초대 QR]을 쓰세요.
+    <strong>유저에게는 찜콩 초대 링크 · QR 을 주세요</strong>
+    시트의 <strong>유저용 QR</strong>(웹 앱 주소)을 휴대폰 카메라로 바로 찍으면 Apps Script 안내 페이지만 떠요. 꼭 찜콩의 [초대 링크 복사] · [초대 QR]을 쓰세요.
   </div>
 
   <h3>필요할 때 쓰는 것</h3>
   <ul>
-    <li><strong>이름 보이기</strong>: 끄면 성도에게는 남의 자리가 "예약됨"으로만 보여요. 관리자에게는 늘 보여요.</li>
+    <li><strong>이름 보이기</strong>: 끄면 유저에게는 남의 자리가 "예약됨"으로만 보여요. 관리자에게는 늘 보여요.</li>
     <li><strong>1인 최대</strong>: 가족 몫까지 잡게 하려면 늘리세요. 1이면 다른 자리를 누를 때 옮기기가 돼요.</li>
     <li><strong>관리자 취소</strong>: 남의 예약 자리를 누르면 취소할지 물어요. 기기를 바꿔 자기 자리를 못 지우는 분께 써 주세요.</li>
     <li><strong>[다음 회차로]</strong>: 예약을 모두 시트의 '지난 예약' 탭으로 옮기고 좌석표를 비워요. 배치도와 공개는 그대로예요.</li>
@@ -268,7 +268,7 @@
     예약 기록과 이름은 관리자의 구글 시트에만 저장돼요. 찜콩은 따로 모으지 않아요.
   </div>
 
-  <p class="muted"><a href="#member">성도용으로</a> · <a href="./">← 찜콩으로</a></p>
+  <p class="muted"><a href="#member">유저용으로</a> · <a href="./">← 찜콩으로</a></p>
 </main>
 <script>
   (function () {

@@ -344,7 +344,7 @@ function applyState(state) {
 function statusText(state) {
   if (!state.published) {
     return state.admin
-      ? t('공개 전이에요. 성도에게는 아직 좌석표가 보이지 않아요.')
+      ? t('공개 전이에요. 유저에게는 아직 좌석표가 보이지 않아요.')
       : t('아직 예약을 받지 않아요. 관리자가 좌석표를 열면 여기에 보여요.');
   }
 
@@ -498,7 +498,7 @@ async function saveSettings(settings) {
   if (!response.ok) {
     say(tm(response.message) || '');
   } else if (settings.published !== undefined) {
-    say(settings.published ? t('공개했어요. 이제 성도가 찜할 수 있어요.') : t('공개를 멈췄어요.'));
+    say(settings.published ? t('공개했어요. 이제 유저가 찜할 수 있어요.') : t('공개를 멈췄어요.'));
     if (lastState) {
       lastState.published = settings.published;
       $('statusText').textContent = statusText(lastState);
