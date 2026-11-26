@@ -6,7 +6,7 @@
 <meta name="robots" content="noindex, nofollow, noarchive, noimageindex">
 <title>찜콩 사용법</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
-<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/style.css?v=20261126f">
 <style>
   body { margin: 0; background: var(--bg); color: var(--text); }
   .guide { max-width: 720px; margin: 0 auto; padding: 16px 16px 48px; box-sizing: border-box; line-height: 1.7; overflow-wrap: anywhere; word-break: keep-all; }
@@ -29,6 +29,34 @@
   .guide code { background: var(--surface); border: 1px solid var(--border); border-radius: 4px; padding: 0 4px; font-size: .92em; }
   .guide .muted { color: var(--muted); font-size: .92em; }
 </style>
+<script>
+  (function () {
+    var codes = ['ko', 'en', 'es', 'ru', 'mn', 'fr', 'de', 'ja', 'zh-CN', 'zh-TW', 'tl', 'ceb', 'it', 'th', 'ne', 'id', 'pt', 'ky', 'km', 'vi'];
+    var theme = 'light';
+    var lang = '';
+    try {
+      theme = localStorage.getItem('jjimkong.theme') === 'dark' ? 'dark' : 'light';
+      lang = localStorage.getItem('jjimkong.lang') || '';
+    } catch (e) {}
+    var asked = /[?&#]lang=([A-Za-z-]+)/.exec(location.search + location.hash);
+    if (asked && codes.indexOf(asked[1]) >= 0) {
+      lang = asked[1];
+      try { localStorage.setItem('jjimkong.lang', lang); } catch (e) {}
+    }
+    if (codes.indexOf(lang) < 0) {
+      var wanted = ((navigator.languages && navigator.languages[0]) || navigator.language || 'ko').toLowerCase();
+      if (/^zh-(tw|hk|mo)|^zh-hant/.test(wanted)) lang = 'zh-TW';
+      else if (/^zh/.test(wanted)) lang = 'zh-CN';
+      else if (/^fil/.test(wanted)) lang = 'tl';
+      else lang = wanted.split('-')[0];
+      if (codes.indexOf(lang) < 0) lang = 'ko';
+    }
+    window.JJIM_LANG = lang;
+    document.documentElement.lang = lang;
+    document.documentElement.setAttribute('data-theme', theme);
+    if (lang !== 'ko') document.write('<script src="js/lang/' + lang + '.js?v=20261126f"><\/script>');
+  })();
+</script>
 </head>
 <body>
 <main class="guide">
@@ -153,7 +181,7 @@
   <ol>
     <li>시트로 돌아와 <strong>[좌석 예약] → [2. 연결 QR 보기]</strong>.</li>
     <li>처음 한 번 웹 앱 주소를 물어요. 복사한 주소(<code>https://script.google.com/macros/s/…/exec</code>)를 붙여 넣으세요.</li>
-    <li>오른쪽 <strong>관리자용</strong> QR 아래 글(<code>주소#admin=키</code>)을 복사하세요.</li>
+    <li>오른쪽 <strong>관리자용</strong> QR 아래 글(<code>…/exec#admin=…</code>)을 복사하세요.</li>
     <li>찜콩 첫 화면에서 이름을 적고, <strong>연결 코드</strong> 칸에 붙여 넣은 뒤 <strong>[연결]</strong>.</li>
     <li>강의실 이름 옆에 <strong>관리자</strong> 표시가 보이면 돼요.</li>
   </ol>
@@ -176,6 +204,14 @@
         <li><strong>통로(지우기)</strong>: 의자를 없애요.</li>
       </ul>
     </li>
+    <li>의자 · 물건을 다 놓은 뒤 <strong>⬠ 외벽</strong>을 누르면 그것들과 맨 앞의 <strong>강단</strong>까지 감싸는 외벽이 저절로 생겨요(<strong>[다시 감싸기]</strong>로 언제든 다시). 꼭짓점(동그라미)을 끌어 옮기고, 변 가운데 작은 점을 끌면 꼭짓점이 늘어요.
+      꼭짓점을 두 번 누르면 지워져요. 세모 · 오각형 · ㄱ자 같은 강의실도 그릴 수 있어요.</li>
+    <li><strong>강대상 · 출입문 · 창문 · 에어컨 · TV · 스피커 · 기둥</strong>은 고른 뒤 빈 곳을 누르면 놓여요. 끌어서 옮기고,
+      출입문 · 창문 · TV · 에어컨은 외벽 가까이 가면 벽에 착 붙어요. 고른 물건의 빨간 ×로 지워요.
+      <ul>
+        <li>의자 칸과 상관없이 어디든 놓을 수 있어요.</li>
+      </ul>
+    </li>
     <li>모양을 고르세요. <strong>네모 · 부채꼴 · 원형</strong>. 부채꼴 · 원형은 각도를 <strong>15°씩</strong> 늘리고 줄여요.</li>
     <li>줄 · 칸 단추로 판을 늘리고 줄이세요.</li>
     <li>2층 이상이면 <strong>+ 층</strong>으로 층을 더하세요(최대 9층). 층마다 모양을 따로 고를 수 있어요.</li>
@@ -184,6 +220,7 @@
   <ul class="sub">
     <li>의자는 모든 층을 합해 <strong>2000석</strong>까지예요.</li>
     <li>이름표(A1, A2, …)는 저장할 때 저절로 붙어요.</li>
+    <li>외벽 · 물건은 새 판 시트에서만 저장돼요. 옛 판이면 저장 전에 알려 줘요(위 ②의 [새 버전] 배포).</li>
     <li>예약이 있는 자리를 지우면 저장 전에 알려 줘요. 남은 자리의 예약은 그대로예요.</li>
   </ul>
 
@@ -222,5 +259,13 @@
 
   <p class="muted"><a href="#member">성도용으로</a> · <a href="./">← 찜콩으로</a></p>
 </main>
+<script>
+  (function () {
+    var main = document.querySelector('main.guide');
+    if (window.JJIM_GUIDE && main) main.innerHTML = window.JJIM_GUIDE;
+    var dict = window.JJIM_DICT || {};
+    if (dict[document.title]) document.title = dict[document.title];
+  })();
+</script>
 </body>
 </html>

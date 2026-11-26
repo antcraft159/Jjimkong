@@ -1,6 +1,6 @@
 (() => {
 'use strict';
-const { SeatGeometry, LayoutDraft, CELL_W, CELL_H, FAN_ANGLE, ROUND_ANGLE, MIN_ANGLE, MAX_ANGLE, MAX_ROWS, MAX_COLS, floorName, normalizeKind, normalizeShape, kindName, parseCode, memberUrlFromParams, buildInvite, buildShareText, fingerprint, TEMPLATE_COPY_URL, DEMO_URL, post, getState, saveLayout: postLayout, forgetLayout } = window.Jjim;
+const { SeatGeometry, LayoutDraft, CELL_W, CELL_H, FAN_ANGLE, ROUND_ANGLE, MIN_ANGLE, MAX_ANGLE, MAX_ROWS, MAX_COLS, floorName, normalizeKind, normalizeShape, kindName, ITEMS, t, tm, LANGS, LANG, setLang, translatePage, formatDate, isItemKind, MAX_WALL_POINTS, parseCode, memberUrlFromParams, buildInvite, buildShareText, fingerprint, TEMPLATE_COPY_URL, DEMO_URL, post, getState, saveLayout: postLayout, forgetLayout } = window.Jjim;
 const REFRESH_MS = 20000;
 const STORE_KEY = 'jjimkong.v1';
 const HALF_DIAGONAL = 40;
@@ -27,6 +27,7 @@ function loadStore() {
   if (typeof data.personId !== 'string' || !PERSON_PATTERN.test(data.personId)) data.personId = randomId();
   if (typeof data.name !== 'string') data.name = '';
   if (!data.pins || typeof data.pins !== 'object') data.pins = {};
+  if (!data.kept || typeof data.kept !== 'object') data.kept = {};
   if (!data.conn || typeof data.conn.url !== 'string') data.conn = null;
   return data;
 }
@@ -42,6 +43,8 @@ saveStore();
 
 let lastState = null;
 let seats = [];
+let items = [];
+let walls = new Map();
 let floors = [];
 let viewFloorId = 0;
 let viewFloorChosen = false;
@@ -104,7 +107,7 @@ async function connect() {
   const link = parseCode($('codeInput').value);
 
   if (!link) {
-    say('연결 코드를 읽지 못했어요. 관리자가 준 링크나 https://script.google.com/… 주소를 그대로 붙여 넣어 주세요.');
+    say(t('연결 코드를 읽지 못했어요. 관리자가 준 링크나 https://script.google.com/… 주소를 그대로 붙여 넣어 주세요.'));
     return;
   }
 
@@ -116,17 +119,17 @@ async function connect() {
 
   const candidate = { url: link.url, adminKey: link.adminKey, room: '' };
   setBusy(true);
-  say('연결하는 중…');
+  say(t('연결하는 중…'));
   const state = await getState(candidate, store.personId);
   setBusy(false);
 
   if (!state.ok) {
-    say(state.message || '연결하지 못했어요.');
+    say(tm(state.message) || t('연결하지 못했어요.'));
     return;
   }
 
   if (link.adminKey && !state.admin) {
-    say('관리자 키가 맞지 않아요. 시트에서 관리자 QR 을 다시 열어 주세요(키를 새로 만들었을 수 있어요).');
+    say(t('관리자 키가 맞지 않아요. 시트에서 관리자 QR 을 다시 열어 주세요(키를 새로 만들었을 수 있어요).'));
     return;
   }
 
@@ -145,9 +148,9 @@ async function disconnect() {
   if (!store.conn) return;
   const hasMine = seats.some(seat => seat.state === 'mine');
   const text = hasMine
-    ? '연결을 끊어도 찜해 둔 자리는 그대로 남아요. 이 브라우저에서 같은 코드로 다시 연결하면 내 자리로 보여요. 끊을까요?'
-    : '좌석 예약 연결을 끊을까요? 같은 코드로 언제든 다시 연결할 수 있어요.';
-  if (!await confirmBox('연결 끊기', text)) return;
+    ? t('연결을 끊어도 찜해 둔 자리는 그대로 남아요. 이 브라우저에서 같은 코드로 다시 연결하면 내 자리로 보여요. 끊을까요?')
+    : t('좌석 예약 연결을 끊을까요? 같은 코드로 언제든 다시 연결할 수 있어요.');
+  if (!await confirmBox(t('연결 끊기'), text)) return;
   await dropConnection();
 }
 
@@ -175,17 +178,17 @@ function acceptInvite(memberUrl) {
   if (!store.conn) {
     $('codeInput').value = memberUrl;
     updateCodeCheck();
-    say('초대 링크로 들어왔어요. 이름을 적고 [연결] 을 눌러 주세요.');
+    say(t('초대 링크로 들어왔어요. 이름을 적고 [연결] 을 눌러 주세요.'));
     if (!$('nameInput').value) $('nameInput').focus();
     return;
   }
 
   if (store.conn.url === memberUrl) {
-    say('이미 이 좌석 예약에 연결돼 있어요.');
+    say(t('이미 이 좌석 예약에 연결돼 있어요.'));
     return;
   }
 
-  say('다른 좌석 예약에 연결돼 있어요. 초대받은 곳으로 바꾸려면 [연결 끊기] 를 누른 뒤 연결해 주세요(코드는 넣어 둘게요).');
+  say(t('다른 좌석 예약에 연결돼 있어요. 초대받은 곳으로 바꾸려면 [연결 끊기] 를 누른 뒤 연결해 주세요(코드는 넣어 둘게요).'));
   $('codeInput').value = memberUrl;
 }
 
@@ -197,7 +200,7 @@ function readHash() {
     const url = memberUrlFromParams(hash);
     const own = readOwnKey('#' + hash);
     history.replaceState(null, '', location.pathname + location.search);
-    if (!url) say('초대 링크를 읽지 못했어요. 링크가 잘렸을 수 있어요. 관리자에게 다시 받아 주세요.');
+    if (!url) say(t('초대 링크를 읽지 못했어요. 링크가 잘렸을 수 있어요. 관리자에게 다시 받아 주세요.'));
     else if (own.key) acceptMyLink(url, own.key, own.name);
     else acceptInvite(url);
   }
@@ -211,11 +214,11 @@ function readOwnKey(text) {
   return { key: key ? key[1] : '', name: decoded };
 }
 
-const OWN_LINK_DONE = '내 자리 링크로 들어왔어요. 찜해 둔 자리가 내 자리로 보여요.';
+const OWN_LINK_DONE = t('내 자리 링크로 들어왔어요. 찜해 둔 자리가 내 자리로 보여요.');
 
 async function acceptMyLink(url, key, name) {
   if (store.conn && store.conn.url !== url) {
-    if (!await confirmBox('내 자리 링크', '지금 다른 좌석 예약에 연결돼 있어요. 링크의 좌석 예약으로 바꿀까요?')) return;
+    if (!await confirmBox(t('내 자리 링크'), t('지금 다른 좌석 예약에 연결돼 있어요. 링크의 좌석 예약으로 바꿀까요?'))) return;
     await dropConnection();
   }
 
@@ -236,8 +239,8 @@ async function acceptMyLink(url, key, name) {
 async function adoptPerson(personId, name, doneText) {
   if (personId !== store.personId) {
     const hasMine = seats.some(seat => seat.state === 'mine');
-    if (hasMine && !await confirmBox('내 자리 되찾기',
-      '이 브라우저에서 새로 찜한 자리는 더 이상 내 자리로 보이지 않아요(남아 있으면 관리자가 취소할 수 있어요). 바꿀까요?')) return;
+    if (hasMine && !await confirmBox(t('내 자리 되찾기'),
+      t('이 브라우저에서 새로 찜한 자리는 더 이상 내 자리로 보이지 않아요(남아 있으면 관리자가 취소할 수 있어요). 바꿀까요?'))) return;
     store.personId = personId;
   }
   if (name) store.name = name;
@@ -278,7 +281,7 @@ async function refresh(quiet) {
   if (sequence !== refreshSeq || conn !== store.conn || editing()) return;
 
   if (!state.ok) {
-    say(state.message || '', true);
+    say(tm(state.message) || '', true);
     return;
   }
 
@@ -310,6 +313,13 @@ function applyState(state) {
     };
   });
 
+  items = (state.items || [])
+    .filter(item => item && isItemKind(item.kind) && Number.isFinite(item.x) && Number.isFinite(item.y))
+    .map(item => ({ f: item.f | 0, kind: item.kind, x: item.x, y: item.y, a: item.a || 0 }));
+  walls = new Map((state.walls || [])
+    .filter(wall => wall && Array.isArray(wall.points) && wall.points.length >= 3)
+    .map(wall => [wall.f | 0, wall.points]));
+
   const known = new Map();
   for (const floor of state.floors) {
     const id = floor.f | 0;
@@ -334,29 +344,31 @@ function applyState(state) {
 function statusText(state) {
   if (!state.published) {
     return state.admin
-      ? '공개 전이에요. 성도에게는 아직 좌석표가 보이지 않아요.'
-      : '아직 예약을 받지 않아요. 관리자가 좌석표를 열면 여기에 보여요.';
+      ? t('공개 전이에요. 성도에게는 아직 좌석표가 보이지 않아요.')
+      : t('아직 예약을 받지 않아요. 관리자가 좌석표를 열면 여기에 보여요.');
   }
 
   if (!state.isOpen) {
     const opens = formatTime(state.opensAt);
     const closes = formatTime(state.closesAt);
-    if (opens && closes) return `지금은 예약 시간이 아니에요(${opens} ~ ${closes}).`;
-    return opens ? `${opens}부터 예약할 수 있어요.` : '예약이 마감됐어요.';
+    if (opens && closes) return t('지금은 예약 시간이 아니에요({opens} ~ {closes}).', { opens, closes });
+    return opens ? t('{opens}부터 예약할 수 있어요.', { opens }) : t('예약이 마감됐어요.');
   }
 
   return state.maxPerPerson > 1
-    ? `빈자리를 누르면 찜! 한 사람이 ${state.maxPerPerson}자리까지 잡을 수 있어요.`
-    : '빈자리를 누르면 찜! 다른 빈자리를 누르면 그리로 옮겨요.';
+    ? t('빈자리를 누르면 찜! 한 사람이 {n}자리까지 잡을 수 있어요.', { n: state.maxPerPerson })
+    : t('빈자리를 누르면 찜! 다른 빈자리를 누르면 그리로 옮겨요.');
+}
+
+function floorLabel(position) {
+  return t('{n}층', { n: position + 1 });
 }
 
 function formatTime(iso) {
   if (!iso) return '';
   const time = new Date(iso);
   if (isNaN(time.getTime())) return '';
-  const days = ['일', '월', '화', '수', '목', '금', '토'];
-  const pad = n => String(n).padStart(2, '0');
-  return `${time.getMonth() + 1}월 ${time.getDate()}일 (${days[time.getDay()]}) ${pad(time.getHours())}:${pad(time.getMinutes())}`;
+  return formatDate(time);
 }
 
 // ───────────── 이름 ─────────────
@@ -371,12 +383,12 @@ async function commitName() {
     const response = await post(conn, store.personId, 'rename', { name });
     if (conn !== store.conn) return false;
     if (!response.ok) {
-      say('이름을 바꾸지 못했어요. ' + (response.message || ''));
+      say(t('이름을 바꾸지 못했어요.') + ' ' + (tm(response.message) || ''));
       return false;
     }
     store.name = name;
     saveStore();
-    say('이름을 바꿨어요.');
+    say(t('이름을 바꿨어요.'));
     await refresh(true);
     return true;
   }
@@ -392,7 +404,7 @@ async function tapSeat(seat) {
   if (!store.conn || busy || editing()) return;
 
   if (seat.state === 'blocked') {
-    say('앉을 수 없는 자리예요.');
+    say(t('앉을 수 없는 자리예요.'));
     return;
   }
 
@@ -403,7 +415,7 @@ async function tapSeat(seat) {
 
   if (seat.state === 'taken') {
     if (isAdmin()) await forceCancel(seat);
-    else say(seat.name ? `${seat.label} 은(는) ${seat.name} 님 자리예요.` : `${seat.label} 은(는) 이미 찜한 자리예요.`);
+    else say(seat.name ? t('{seat} 은(는) {name} 님 자리예요.', { seat: seat.label, name: seat.name }) : t('{seat} 은(는) 이미 찜한 자리예요.', { seat: seat.label }));
     return;
   }
 
@@ -414,7 +426,7 @@ async function reserveOrMove(seat) {
   const conn = store.conn;
 
   if (!$('myNameInput').value.trim()) {
-    say('위의 이름 칸에 이름을 먼저 적어 주세요.');
+    say(t('위의 이름 칸에 이름을 먼저 적어 주세요.'));
     $('myNameInput').focus();
     return;
   }
@@ -430,7 +442,7 @@ async function reserveOrMove(seat) {
   const mine = seats.filter(item => item.state === 'mine');
   const isMove = mine.length > 0 && mine.length >= max && max === 1;
 
-  say(isMove ? `${mine[0].label} → ${seat.label} 로 옮기는 중…` : `${seat.label} 찜하는 중…`);
+  say(isMove ? t('{from} → {seat} 로 옮기는 중…', { from: mine[0].label, seat: seat.label }) : t('{seat} 찜하는 중…', { seat: seat.label }));
 
   const response = isMove
     ? await post(conn, store.personId, 'move', { name: store.name, from: mine[0].id, seat: seat.id })
@@ -439,24 +451,26 @@ async function reserveOrMove(seat) {
   setBusy(false);
   if (conn !== store.conn) return;
 
-  say(response.ok ? (isMove ? `${seat.label} 로 옮겼어요.` : `${seat.label} 찜콩! 자리를 잡았어요.`) : response.message || '');
+  say(response.ok ? (isMove ? t('{seat} 로 옮겼어요.', { seat: seat.label }) : t('{seat} 찜콩! 자리를 잡았어요.', { seat: seat.label })) : tm(response.message) || '');
   await refresh(true);
 }
 
 async function cancelMine(seat) {
-  if (!await confirmBox('찜 취소', `${seat.label} 예약을 취소할까요?`)) return;
+  if (!await confirmBox(t('찜 취소'), t('{seat} 예약을 취소할까요?', { seat: seat.label }))) return;
   const conn = store.conn;
   setBusy(true);
   const response = await post(conn, store.personId, 'cancel', { seat: seat.id });
   setBusy(false);
   if (conn !== store.conn) return;
-  say(response.ok ? `${seat.label} 예약을 취소했어요.` : response.message || '');
+  say(response.ok ? t('{seat} 예약을 취소했어요.', { seat: seat.label }) : tm(response.message) || '');
   await refresh(true);
 }
 
 async function forceCancel(seat) {
-  const who = seat.name ? seat.name + ' 님의 ' : '';
-  if (!await confirmBox('관리자 취소', `${who}${seat.label} 예약을 관리자 권한으로 취소할까요?`)) return;
+  const question = seat.name
+    ? t('{name} 님의 {seat} 예약을 관리자 권한으로 취소할까요?', { name: seat.name, seat: seat.label })
+    : t('{seat} 예약을 관리자 권한으로 취소할까요?', { seat: seat.label });
+  if (!await confirmBox(t('관리자 취소'), question)) return;
   const conn = store.conn;
   setBusy(true);
   const extra = { seat: seat.id };
@@ -464,7 +478,7 @@ async function forceCancel(seat) {
   const response = await post(conn, store.personId, 'forceCancel', extra);
   setBusy(false);
   if (conn !== store.conn) return;
-  say(response.ok ? `${seat.label} 예약을 취소했어요.` : response.message || '');
+  say(response.ok ? t('{seat} 예약을 취소했어요.', { seat: seat.label }) : tm(response.message) || '');
   await refresh(true);
 }
 
@@ -475,16 +489,16 @@ async function saveSettings(settings) {
 
   if (settings.published === true && seats.length === 0) {
     $('publishedToggle').checked = false;
-    say('배치도를 먼저 만들어 저장해 주세요.');
+    say(t('배치도를 먼저 만들어 저장해 주세요.'));
     return;
   }
 
   const response = await post(store.conn, store.personId, 'saveSettings', { settings });
 
   if (!response.ok) {
-    say(response.message || '');
+    say(tm(response.message) || '');
   } else if (settings.published !== undefined) {
-    say(settings.published ? '공개했어요. 이제 성도가 찜할 수 있어요.' : '공개를 멈췄어요.');
+    say(settings.published ? t('공개했어요. 이제 성도가 찜할 수 있어요.') : t('공개를 멈췄어요.'));
     if (lastState) {
       lastState.published = settings.published;
       $('statusText').textContent = statusText(lastState);
@@ -506,11 +520,11 @@ async function changeMax(delta) {
 async function nextSession() {
   if (!store.conn || !isAdmin()) return;
   const count = seats.filter(seat => seat.state === 'taken' || seat.state === 'mine').length;
-  if (!await confirmBox('다음 회차로', `지금 예약 ${count}자리를 '지난 예약' 탭으로 옮기고 좌석표를 비워요. 배치도와 공개 상태는 그대로예요. 할까요?`)) return;
+  if (!await confirmBox(t('다음 회차로'), t('지금 예약 {n}자리를 \'지난 예약\' 탭으로 옮기고 좌석표를 비워요. 배치도와 공개 상태는 그대로예요. 할까요?', { n: count }))) return;
   setBusy(true);
   const response = await post(store.conn, store.personId, 'nextSession');
   setBusy(false);
-  say(response.ok ? '다음 회차로 넘겼어요.' : response.message || '');
+  say(response.ok ? t('다음 회차로 넘겼어요.') : tm(response.message) || '');
   await refresh(true);
 }
 
@@ -521,17 +535,18 @@ function inviteLink() {
 async function copyInvite() {
   const link = inviteLink();
   if (!link) {
-    say(store.conn && store.conn.url === DEMO_URL ? '체험 모드에서는 초대 링크를 만들 수 없어요.' : '이 연결 주소로는 초대 링크를 만들 수 없어요.');
+    say(store.conn && store.conn.url === DEMO_URL ? t('체험 모드에서는 초대 링크를 만들 수 없어요.') : t('이 연결 주소로는 초대 링크를 만들 수 없어요.'));
     return;
   }
 
-  await copyText(buildShareText(link, lastState ? lastState.room : '', connFingerprint), '초대 글을 복사했어요. 카톡 단체방에 붙여 넣으세요.');
+  await copyText(buildShareText(link, lastState ? lastState.room : '', connFingerprint), t('초대 글을 복사했어요. 카톡 단체방에 붙여 넣으세요.'));
 }
 
 async function copyText(text, doneText) {
   try {
     await navigator.clipboard.writeText(text);
     say(doneText);
+    return true;
   } catch (e) {
     const area = document.createElement('textarea');
     area.value = text;
@@ -539,7 +554,8 @@ async function copyText(text, doneText) {
     area.select();
     const ok = document.execCommand && document.execCommand('copy');
     area.remove();
-    say(ok ? doneText : '복사하지 못했어요. 다시 눌러 주세요.');
+    say(ok ? doneText : t('복사하지 못했어요. 다시 눌러 주세요.'));
+    return !!ok;
   }
 }
 
@@ -554,12 +570,37 @@ function myLink() {
 async function copyMyLink() {
   const link = myLink();
   if (!link) {
-    say(store.conn && store.conn.url === DEMO_URL ? '체험 모드에서는 내 자리 링크를 만들 수 없어요.' : '이 연결 주소로는 내 자리 링크를 만들 수 없어요.');
+    say(store.conn && store.conn.url === DEMO_URL ? t('체험 모드에서는 내 자리 링크를 만들 수 없어요.') : t('이 연결 주소로는 내 자리 링크를 만들 수 없어요.'));
     return;
   }
   const room = String(lastState ? lastState.room : '').trim();
-  const text = `[${room ? room + ' ' : ''}내 자리 링크]\n나만 갖고 계세요. 이 링크를 누르면 어느 기기에서든 내가 찜한 자리로 들어가요.\n${link}`;
-  await copyText(text, "내 자리 링크를 복사했어요. 카톡 '나와의 채팅'이나 메모에 붙여 두세요.");
+  const text = `[${room ? room + ' ' : ''}${t('내 자리 링크')}]\n${t('나만 갖고 계세요. 이 링크를 누르면 어느 기기에서든 내가 찜한 자리로 들어가요.')}\n${link}`;
+  const conn = store.conn;
+  let done = false;
+
+  if (navigator.share && matchMedia('(pointer: coarse)').matches) {
+    try {
+      await navigator.share({ text });
+      say(t("내 자리 링크를 보냈어요. '나와의 채팅'에 잘 들어갔는지 한 번 봐 주세요."));
+      done = true;
+    } catch (e) {
+      if (e && e.name === 'AbortError') return;
+    }
+  }
+
+  if (!done) done = await copyText(text, t("내 자리 링크를 복사했어요. 카톡 '나와의 채팅'이나 메모에 붙여 두세요."));
+  if (done && conn === store.conn) markKept(conn.url);
+}
+
+function markKept(url) {
+  if (store.kept[url]) return;
+  store.kept[url] = true;
+  saveStore();
+  render();
+}
+
+function needsKeepGate() {
+  return !!store.conn && !isAdmin() && !store.kept[store.conn.url] && !store.pins[store.conn.url];
 }
 
 let pinMode = 'set';
@@ -567,10 +608,10 @@ let pinMode = 'set';
 function openPinDialog(mode) {
   pinMode = mode;
   const setting = mode === 'set';
-  $('pinTitle').textContent = setting ? (hasPin() ? '비밀번호 바꾸기' : '비밀번호 정하기') : '내 자리 되찾기';
+  $('pinTitle').textContent = setting ? (hasPin() ? t('비밀번호 바꾸기') : t('비밀번호 정하기')) : t('내 자리 되찾기');
   $('pinText').textContent = setting
-    ? '기록을 지우거나 기기를 바꿨을 때 이 이름과 비밀번호로 내 자리를 되찾아요. 생일처럼 남이 짐작하기 쉬운 번호는 피해 주세요.'
-    : '비밀번호를 정할 때 쓴 이름과 비밀번호를 넣으세요. 그때 찜한 자리가 다시 내 자리로 보여요.';
+    ? t('기록을 지우거나 기기를 바꿨을 때 이 이름과 비밀번호로 내 자리를 되찾아요. 생일처럼 남이 짐작하기 쉬운 번호는 피해 주세요.')
+    : t('비밀번호를 정할 때 쓴 이름과 비밀번호를 넣으세요. 그때 찜한 자리가 다시 내 자리로 보여요.');
   $('pinNameInput').value = store.name;
   $('pinInput').value = '';
   showPinMessage('');
@@ -595,23 +636,23 @@ async function submitPin(event) {
 
   const name = $('pinNameInput').value.trim();
   const pin = $('pinInput').value.trim();
-  if (!name) return showPinMessage('이름을 적어 주세요.');
-  if (!/^\d{4}$/.test(pin)) return showPinMessage('비밀번호는 숫자 4자리로 적어 주세요.');
+  if (!name) return showPinMessage(t('이름을 적어 주세요.'));
+  if (!/^\d{4}$/.test(pin)) return showPinMessage(t('비밀번호는 숫자 4자리로 적어 주세요.'));
 
   const conn = store.conn;
   $('pinOkButton').disabled = true;
-  showPinMessage('보내는 중…');
+  showPinMessage(t('보내는 중…'));
   const response = await post(conn, store.personId, pinMode === 'set' ? 'setPin' : 'reclaim', { name, pin });
   $('pinOkButton').disabled = false;
 
   if (!response.ok) {
     showPinMessage(response.error === 'bad-action'
-      ? '이 좌석 예약 시트가 아직 옛 판이라 비밀번호를 쓸 수 없어요. 관리자에게 시트를 새 판으로 배포해 달라고 해 주세요.'
-      : response.message || '되지 않았어요. 다시 해 주세요.');
+      ? t('이 좌석 예약 시트가 아직 옛 판이라 비밀번호를 쓸 수 없어요. 관리자에게 시트를 새 판으로 배포해 달라고 해 주세요.')
+      : tm(response.message) || t('되지 않았어요. 다시 해 주세요.'));
     return;
   }
   if (pinMode === 'reclaim' && !PERSON_PATTERN.test(String(response.device || ''))) {
-    showPinMessage('답을 읽지 못했어요. 다시 해 주세요.');
+    showPinMessage(t('답을 읽지 못했어요. 다시 해 주세요.'));
     return;
   }
 
@@ -621,11 +662,11 @@ async function submitPin(event) {
     store.pins[conn.url] = true;
     saveStore();
     render();
-    say('비밀번호를 정했어요. 이름과 함께 꼭 기억해 두세요.');
+    say(t('비밀번호를 정했어요. 이름과 함께 꼭 기억해 두세요. 이제 자리를 찜하세요!'));
     return;
   }
 
-  await adoptPerson(response.device, name, '내 자리를 되찾았어요.');
+  await adoptPerson(response.device, name, t('내 자리를 되찾았어요.'));
   if (store.personId === response.device && store.conn === conn) {
     store.pins[conn.url] = true;
     saveStore();
@@ -636,11 +677,11 @@ async function submitPin(event) {
 function showQr() {
   const link = inviteLink();
   if (!link) {
-    say(store.conn && store.conn.url === DEMO_URL ? '체험 모드에서는 초대 QR 을 만들 수 없어요.' : '이 연결 주소로는 초대 QR 을 만들 수 없어요.');
+    say(store.conn && store.conn.url === DEMO_URL ? t('체험 모드에서는 초대 QR 을 만들 수 없어요.') : t('이 연결 주소로는 초대 QR 을 만들 수 없어요.'));
     return;
   }
   if (typeof window.QRCode !== 'function') {
-    say('QR 그리기를 불러오지 못했어요. 인터넷 연결을 확인하고 다시 눌러 주세요.');
+    say(t('QR 그리기를 불러오지 못했어요. 인터넷 연결을 확인하고 다시 눌러 주세요.'));
     return;
   }
   const box = $('qrBox');
@@ -655,14 +696,16 @@ function showQr() {
 
 function beginEdit() {
   if (!isAdmin() || !lastState || busy) return;
-  draft = LayoutDraft.fromSeats(lastState.seats, lastState.floors);
+  draft = LayoutDraft.fromSeats(lastState.seats, lastState.floors, lastState.items, lastState.walls);
+  selectedItem = -1;
+  selectedVertex = -1;
   const position = draft.toFloors().findIndex(floor => floor.f === viewFloorId);
   draft.selectFloor(Math.max(position, 0));
   tool = 'chair';
   $('panToggle').checked = false;
   say(draft.seatCount === 0
-    ? '도구를 고르고 칸을 누르거나 끌어서 의자를 그리세요. 장의자는 한 줄로 끌면 한 덩어리가 돼요.'
-    : '도구를 고르고 칸을 누르거나 끌어서 고치세요. 다 되면 [저장].');
+    ? t('도구를 고르고 칸을 누르거나 끌어서 의자를 그리세요. 장의자는 한 줄로 끌면 한 덩어리가 돼요.')
+    : t('도구를 고르고 칸을 누르거나 끌어서 고치세요. 다 되면 [저장].'));
   render();
 }
 
@@ -686,7 +729,7 @@ async function resizeDraft(deltaRows, deltaCols) {
   const rows = clamp(draft.rows + deltaRows, 1, MAX_ROWS);
   const cols = clamp(draft.cols + deltaCols, 1, MAX_COLS);
   const lost = draft.countOutside(rows, cols);
-  if (lost > 0 && !await confirmBox('판 줄이기', `판 밖으로 나가는 의자 ${lost}개가 지워져요. 줄일까요?`)) return;
+  if (lost > 0 && !await confirmBox(t('판 줄이기'), t('판 밖으로 나가는 의자 {n}개가 지워져요. 줄일까요?', { n: lost }))) return;
   draft.resize(rows, cols);
   render();
 }
@@ -697,7 +740,7 @@ function shapePreset(shape, angle) {
 
 async function changeShape(shape, angle) {
   const lost = draft.countLostByShape(shape, angle);
-  if (lost > 0 && !await confirmBox('모양 바꾸기', `새 모양에 들어가지 않는 의자 ${lost}개가 지워져요. 바꿀까요?`)) {
+  if (lost > 0 && !await confirmBox(t('모양 바꾸기'), t('새 모양에 들어가지 않는 의자 {n}개가 지워져요. 바꿀까요?', { n: lost }))) {
     render();
     return;
   }
@@ -721,16 +764,16 @@ async function changeAngle(delta) {
 function addFloor() {
   if (!draft || busy) return;
   const error = draft.addFloor();
-  say(error || `${floorName(draft.current)}을 더했어요. 모양을 고르고 의자를 그리세요.`);
+  say(error || t('{floor}을 더했어요. 모양을 고르고 의자를 그리세요.', { floor: floorLabel(draft.current) }));
   render();
 }
 
 async function removeFloor() {
   if (!draft || busy || draft.floorCount <= 1) return;
-  const name = floorName(draft.current);
-  if (draft.currentFloorSeatCount > 0 && !await confirmBox('층 지우기', `${name}의 의자 ${draft.currentFloorSeatCount}개가 함께 지워져요. 지울까요?`)) return;
+  const name = floorLabel(draft.current);
+  if (draft.currentFloorSeatCount > 0 && !await confirmBox(t('층 지우기'), t('{floor}의 의자 {n}개가 함께 지워져요. 지울까요?', { floor: name, n: draft.currentFloorSeatCount }))) return;
   draft.removeCurrentFloor();
-  say(`${name}을 지웠어요. [저장] 해야 반영돼요.`);
+  say(t('{floor}을 지웠어요. [저장] 해야 반영돼요.', { floor: name }));
   render();
 }
 
@@ -739,7 +782,7 @@ async function saveLayoutNow() {
   const newSeats = draft.toSeats();
 
   if (newSeats.length === 0) {
-    say('의자를 하나 이상 그려 주세요.');
+    say(t('의자를 하나 이상 그려 주세요.'));
     return;
   }
 
@@ -747,24 +790,29 @@ async function saveLayoutNow() {
   if (taken.length > 0) {
     const kept = new Set(newSeats.filter(seat => !seat.blocked).map(seat => seat.id));
     const lost = taken.filter(item => !kept.has(item.seat)).length;
-    if (lost > 0 && !await confirmBox('배치도 저장', `지우거나 비워 두는 자리에 예약이 ${lost}개 있어요. 저장하면 그 예약은 취소돼요(기록 탭에 남아요). 저장할까요?`)) return;
+    if (lost > 0 && !await confirmBox(t('배치도 저장'), t('지우거나 비워 두는 자리에 예약이 {n}개 있어요. 저장하면 그 예약은 취소돼요(기록 탭에 남아요). 저장할까요?', { n: lost }))) return;
   }
 
+  const newItems = draft.toItems();
+  const newWalls = draft.toWalls();
+  if ((newItems.length > 0 || newWalls.length > 0) && lastState && !lastState.itemsSupported &&
+    !await confirmBox(t('배치도 저장'), t('이 좌석 예약 시트가 옛 판이라 외벽 · 물건은 저장되지 않아요(관리자 사용법의 새 판 배포를 해 주세요). 의자만 저장할까요?'))) return;
+
   setBusy(true);
-  say('배치도 저장하는 중…');
+  say(t('배치도 저장하는 중…'));
   const newFloors = draft.toFloors();
-  const response = await postLayout(store.conn, store.personId, newSeats, newFloors);
+  const response = await postLayout(store.conn, store.personId, newSeats, newFloors, newItems, newWalls);
   setBusy(false);
 
   if (!response.ok) {
-    say(response.message || '');
+    say(tm(response.message) || '');
     return;
   }
 
   viewFloorId = newFloors[clamp(draft.current, 0, newFloors.length - 1)].f;
   viewFloorChosen = true;
   draft = null;
-  say(lastState && lastState.published ? '배치도를 저장했어요.' : '배치도를 저장했어요. 다 됐으면 [공개] 를 켜 주세요.');
+  say(lastState && lastState.published ? t('배치도를 저장했어요.') : t('배치도를 저장했어요. 다 됐으면 [공개] 를 켜 주세요.'));
   render();
   await refresh(false);
 }
@@ -795,7 +843,7 @@ function render() {
 
   const admin = isAdmin();
   const state = lastState;
-  $('roomName').textContent = (state && state.room) || store.conn.room || '좌석 예약';
+  $('roomName').textContent = (state && state.room) || store.conn.room || t('좌석 예약');
   $('adminBadge').hidden = !admin;
   $('connFingerprint').textContent = connFingerprint || '—';
   if (document.activeElement !== $('myNameInput')) $('myNameInput').value = store.name;
@@ -809,10 +857,10 @@ function render() {
   $('statFree').textContent = open - reserved;
   $('statMine').textContent = mine.length ? mine.join(', ') : '—';
   $('statMeter').style.width = percent + '%';
-  $('reservedCount').textContent = open ? `${percent}% 찼어요` : '';
+  $('reservedCount').textContent = open ? t('{n}% 찼어요', { n: percent }) : '';
 
   const phase = !state ? 'loading' : !state.published ? 'off' : state.isOpen ? 'on' : 'closed';
-  $('statusChip').textContent = { loading: '불러오는 중', off: '공개 전', on: '예약 중', closed: '예약 시간 아님' }[phase];
+  $('statusChip').textContent = { loading: t('불러오는 중'), off: t('공개 전'), on: t('예약 중'), closed: t('예약 시간 아님') }[phase];
   $('statusChip').className = 'chip ' + phase;
 
   let mineText = '';
@@ -820,13 +868,13 @@ function render() {
     const shown = new Set(seats.map(seat => seat.id));
     const ghosts = state.taken.filter(item => item.mine && !shown.has(item.seat)).length;
     if (ghosts > 0) {
-      const ghostText = `배치도에 없는 자리의 내 예약 ${ghosts}개 — 관리자가 배치도를 한 번 저장하면 정리돼요`;
+      const ghostText = t('배치도에 없는 자리의 내 예약 {n}개 — 관리자가 배치도를 한 번 저장하면 정리돼요', { n: ghosts });
       mineText = mineText ? mineText + ' · ' + ghostText : ghostText;
     }
   }
   $('mySeats').textContent = mineText;
 
-  $('statusText').textContent = state ? statusText(state) : '불러오는 중…';
+  $('statusText').textContent = state ? statusText(state) : t('불러오는 중…');
   $('statusText').hidden = editing();
 
   $('adminPanel').hidden = !admin;
@@ -834,14 +882,18 @@ function render() {
     $('publishedToggle').checked = !!state.published;
     $('showNamesToggle').checked = state.showNames !== false;
     $('maxValue').textContent = state.maxPerPerson;
-    $('sessionText').textContent = `${state.session || 1}회차`;
+    $('sessionText').textContent = t('{n}회차', { n: state.session || 1 });
   }
   $('adminControls').hidden = editing();
   $('adminActions').hidden = editing();
   $('editorPanel').hidden = !editing();
   $('guideLink').href = admin ? 'guide.html#admin' : 'guide.html#member';
-  $('pinButton').textContent = hasPin() ? '비밀번호 바꾸기' : '비밀번호 정하기';
-  $('pinState').textContent = hasPin() ? '이 기기에서 비밀번호를 정해 뒀어요.' : '';
+  const gate = needsKeepGate();
+  $('keepGate').hidden = !gate;
+  $('statsRow').hidden = gate;
+  $('dashRow').hidden = gate;
+  $('pinButton').textContent = hasPin() ? t('비밀번호 바꾸기') : t('비밀번호 정하기');
+  $('pinState').textContent = hasPin() ? t('이 기기에서 비밀번호를 정해 뒀어요.') : '';
   $('pinState').hidden = !hasPin();
 
   if (editing()) syncEditorControls();
@@ -850,17 +902,192 @@ function render() {
 }
 
 function syncEditorControls() {
-  $('toolPanel').querySelectorAll('.pill').forEach(pill => pill.setAttribute('aria-checked', String(pill.dataset.tool === tool)));
+  $('editorPanel').querySelectorAll('.pill[data-tool]').forEach(pill => pill.setAttribute('aria-checked', String(pill.dataset.tool === tool)));
   const preset = shapePreset(draft.shape, draft.angle);
   $('shapePanel').querySelectorAll('.pill').forEach(pill => pill.setAttribute('aria-checked', String(pill.dataset.shape === preset)));
   const isArc = draft.shape === 'arc';
   $('anglePanel').hidden = !isArc;
   $('angleValue').textContent = draft.angle + '°';
-  $('colsLabel').textContent = isArc ? '첫 줄 자리' : '칸';
-  const floor = draft.floorCount > 1 ? floorName(draft.current) + ' · ' : '';
+  $('colsLabel').textContent = isArc ? t('첫 줄 자리') : t('칸');
+  const floor = draft.floorCount > 1 ? floorLabel(draft.current) + ' · ' : '';
   $('draftSize').textContent = isArc
-    ? `${floor}${draft.rows}줄 · 첫 줄 ${draft.cols}자리 · ${draft.angle}° · 의자 ${draft.seatCount}개`
-    : `${floor}판 ${draft.rows}줄 × ${draft.cols}칸 · 의자 ${draft.seatCount}개`;
+    ? floor + t('{rows}줄 · 첫 줄 {cols}자리 · {angle}° · 의자 {n}개', { rows: draft.rows, cols: draft.cols, angle: draft.angle, n: draft.seatCount })
+    : floor + t('판 {rows}줄 × {cols}칸 · 의자 {n}개', { rows: draft.rows, cols: draft.cols, n: draft.seatCount });
+  $('outlinePanel').hidden = tool !== 'outline';
+  $('itemHint').hidden = !isItemKind(tool);
+  $('deleteVertexButton').disabled = selectedVertex < 0 || !draft.cur.outline || draft.cur.outline.length <= 3;
+}
+
+function chooseTool(next) {
+  tool = next;
+  selectedItem = -1;
+  selectedVertex = -1;
+  if (tool === 'outline' && !draft.cur.outline) {
+    draft.setOutline(defaultOutline());
+    say(t('그려 둔 의자 · 물건을 외벽으로 감쌌어요. 동그라미(꼭짓점)를 끌어 모양을 맞추세요. 변 가운데 작은 점을 끌면 꼭짓점이 늘어요.'));
+  }
+  render();
+}
+
+const WRAP_PADDING = 24;
+const WRAP_MAX_POINTS = 16;
+
+function defaultOutline() {
+  const geo = draft.geometry;
+  const points = contentPoints(geo);
+
+  if (points.length === 0) {
+    const box = boundsOf(geo, allSlots(geo), [], 0);
+    const pad = 20;
+    if (geo.isArc) box.minY = Math.min(box.minY, 0);
+    return [[box.minX - pad, box.minY - pad], [box.maxX + pad, box.minY - pad], [box.maxX + pad, box.maxY + pad], [box.minX - pad, box.maxY + pad]];
+  }
+
+  const loop = simplifyLoop(convexHull(points), WRAP_MAX_POINTS);
+  return fitAround(loop, points, WRAP_PADDING).map(([x, y]) => [Math.round(x), Math.round(y)]);
+}
+
+// 줄인 다각형의 변 방향은 그대로 두고, 모든 점이 안쪽 padding 만큼 떨어지게 변마다 바깥으로 민다.
+function fitAround(loop, points, padding) {
+  if (loop.length < 3) return loop;
+  let signed = 0;
+  loop.forEach((point, i) => {
+    const next = loop[(i + 1) % loop.length];
+    signed += point[0] * next[1] - next[0] * point[1];
+  });
+  const turn = signed > 0 ? 1 : -1;
+
+  const lines = loop.map((point, i) => {
+    const next = loop[(i + 1) % loop.length];
+    const dx = next[0] - point[0];
+    const dy = next[1] - point[1];
+    const length = Math.hypot(dx, dy) || 1;
+    const nx = turn * dy / length;
+    const ny = -turn * dx / length;
+    let reach = -Infinity;
+    for (const [x, y] of points) reach = Math.max(reach, x * nx + y * ny);
+    return { nx, ny, c: reach + padding, dx, dy };
+  });
+
+  return lines.map((line, i) => {
+    const prev = lines[(i + lines.length - 1) % lines.length];
+    const det = prev.nx * line.ny - prev.ny * line.nx;
+    if (Math.abs(det) < 1e-6) return [loop[i][0] + line.nx * padding, loop[i][1] + line.ny * padding];
+    return [(prev.c * line.ny - line.c * prev.ny) / det, (prev.nx * line.c - line.nx * prev.c) / det];
+  });
+}
+
+function placedSlots() {
+  return [...draft.cur.cells.keys()].map(k => {
+    const [row, col] = k.split(',').map(Number);
+    return { row, col };
+  });
+}
+
+function contentPoints(geo) {
+  const points = frontCorners(frontRect(geo, placedSlots()));
+  const halfW = CELL_W / 2 - 3;
+  const halfH = CELL_H / 2 - 3;
+
+  for (const k of draft.cur.cells.keys()) {
+    const [row, col] = k.split(',').map(Number);
+    const { x, y, rotation } = geo.place(row, col);
+    const turn = (rotation || 0) * Math.PI / 180;
+    const cos = Math.cos(turn);
+    const sin = Math.sin(turn);
+    for (const [dx, dy] of [[-halfW, -halfH], [halfW, -halfH], [halfW, halfH], [-halfW, halfH]]) {
+      points.push([x + dx * cos - dy * sin, y + dx * sin + dy * cos]);
+    }
+  }
+
+  for (const item of draft.cur.items) {
+    for (const [dx, dy] of [[-30, -12], [30, -12], [30, 12], [-30, 12]]) points.push([item.x + dx, item.y + dy]);
+  }
+
+  if (geo.isArc && points.length > 0) {
+    const top = isHalfStage(geo) ? 0 : -Infinity;
+    const radius = stageRadius(geo);
+    for (let step = 0; step < 72; step++) {
+      const turn = step * Math.PI / 36;
+      const px = Math.sin(turn) * radius;
+      const py = Math.cos(turn) * radius;
+      if (py >= top) points.push([px, py]);
+    }
+  }
+
+  return points;
+}
+
+function convexHull(points) {
+  const sorted = points.slice().sort((a, b) => a[0] - b[0] || a[1] - b[1]);
+  if (sorted.length < 3) return sorted;
+  const cross = (o, a, b) => (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0]);
+  const lower = [];
+  for (const point of sorted) {
+    while (lower.length >= 2 && cross(lower[lower.length - 2], lower[lower.length - 1], point) <= 0) lower.pop();
+    lower.push(point);
+  }
+  const upper = [];
+  for (let i = sorted.length - 1; i >= 0; i--) {
+    const point = sorted[i];
+    while (upper.length >= 2 && cross(upper[upper.length - 2], upper[upper.length - 1], point) <= 0) upper.pop();
+    upper.push(point);
+  }
+  return lower.slice(0, -1).concat(upper.slice(0, -1));
+}
+
+function simplifyLoop(points, limit) {
+  const loop = points.slice();
+  const area = (a, b, c) => Math.abs((b[0] - a[0]) * (c[1] - a[1]) - (c[0] - a[0]) * (b[1] - a[1])) / 2;
+  while (loop.length > 3) {
+    let smallest = Infinity;
+    let at = -1;
+    for (let i = 0; i < loop.length; i++) {
+      const size = area(loop[(i + loop.length - 1) % loop.length], loop[i], loop[(i + 1) % loop.length]);
+      if (size < smallest) {
+        smallest = size;
+        at = i;
+      }
+    }
+    const crowded = loop.findIndex((point, i) => Math.hypot(point[0] - loop[(i + 1) % loop.length][0], point[1] - loop[(i + 1) % loop.length][1]) < 36);
+    if (crowded >= 0) {
+      loop.splice(crowded, 1);
+      continue;
+    }
+    if (loop.length <= limit && smallest > 400) break;
+    loop.splice(at, 1);
+  }
+  return loop;
+}
+
+function resetOutline() {
+  if (!draft || busy) return;
+  draft.setOutline(defaultOutline());
+  selectedVertex = -1;
+  say(t('지금 그려 둔 의자 · 물건을 다시 감쌌어요.'));
+  render();
+}
+
+function clearOutline() {
+  if (!draft || busy) return;
+  draft.setOutline(null);
+  selectedVertex = -1;
+  tool = 'chair';
+  say(t('외벽을 없앴어요. [저장] 해야 반영돼요.'));
+  render();
+}
+
+function deleteSelected() {
+  if (!draft || busy) return;
+  if (tool === 'outline' && selectedVertex >= 0 && draft.cur.outline && draft.cur.outline.length > 3) {
+    draft.cur.outline.splice(selectedVertex, 1);
+    selectedVertex = -1;
+    render();
+  } else if (isItemKind(tool) && selectedItem >= 0) {
+    draft.removeItem(selectedItem);
+    selectedItem = -1;
+    render();
+  }
 }
 
 function buildFloorPanel() {
@@ -880,15 +1107,15 @@ function buildFloorPanel() {
 
   if (editing()) {
     for (let position = 0; position < draft.floorCount; position++) {
-      addPill(floorName(position), position === draft.current, () => {
+      addPill(floorLabel(position), position === draft.current, () => {
         if (busy || position === draft.current) return;
         draft.selectFloor(position);
         render();
       });
     }
-    const add = addPill('+ 층', false, addFloor);
+    const add = addPill(t('+ 층'), false, addFloor);
     add.classList.add('ghosty');
-    if (draft.floorCount > 1) addPill(floorName(draft.current) + ' 지우기', false, removeFloor);
+    if (draft.floorCount > 1) addPill(t('{floor} 지우기', { floor: floorLabel(draft.current) }), false, removeFloor);
     panel.hidden = false;
     return;
   }
@@ -900,7 +1127,7 @@ function buildFloorPanel() {
 
   floors.forEach((floor, position) => {
     const mine = seats.some(seat => seat.f === floor.f && seat.state === 'mine');
-    addPill(floorName(position) + (mine ? ' · 내 자리' : ''), floor.f === viewFloorId, () => {
+    addPill(floorLabel(position) + (mine ? ' · ' + t('내 자리') : ''), floor.f === viewFloorId, () => {
       if (floor.f === viewFloorId) return;
       viewFloorId = floor.f;
       viewFloorChosen = true;
@@ -924,7 +1151,20 @@ function stageRadius(geo) {
 
 const isHalfStage = geo => geo.isArc && geo.angle <= 200;
 
-function layOut(geo, cells) {
+const SVG_NS = 'http://www.w3.org/2000/svg';
+const SNAP_KINDS = ['door', 'window', 'tv', 'ac'];
+const SNAP_DISTANCE = 40;
+const EDIT_MARGIN = 90;
+
+function allSlots(geo) {
+  const all = [];
+  for (let row = 0; row < geo.rows; row++) {
+    for (let col = 0; col < geo.capacity(row); col++) all.push({ row, col });
+  }
+  return all;
+}
+
+function boundsOf(geo, cells, extra, margin) {
   let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
   const halfW = geo.isArc ? HALF_DIAGONAL : CELL_W / 2;
   const halfH = geo.isArc ? HALF_DIAGONAL : CELL_H / 2;
@@ -945,19 +1185,61 @@ function layOut(geo, cells) {
     minY = isHalfStage(geo) ? Math.min(minY, stage - STAGE_VISIBLE) : Math.min(minY, -stage);
   }
 
-  if (minX > maxX) minX = maxX = minY = maxY = 0;
+  for (const [x, y] of extra) {
+    minX = Math.min(minX, x - 40);
+    maxX = Math.max(maxX, x + 40);
+    minY = Math.min(minY, y - 40);
+    maxY = Math.max(maxY, y + 40);
+  }
 
-  offsetX = -minX;
-  offsetY = -minY;
+  if (minX > maxX) minX = maxX = minY = maxY = 0;
+  return { minX: minX - margin, minY: minY - margin, maxX: maxX + margin, maxY: maxY + margin };
+}
+
+const FRONT_GAP = 10;
+const FRONT_HEIGHT = 28;
+
+function frontRect(geo, cells) {
+  if (geo.isArc || cells.length === 0) return null;
+  let left = Infinity, right = -Infinity;
+  for (const { row, col } of cells) {
+    const { x } = geo.place(row, col);
+    left = Math.min(left, x - CELL_W / 2);
+    right = Math.max(right, x + CELL_W / 2);
+  }
+  const bottom = -FRONT_GAP;
+  return { left: Math.min(left, 0), right: Math.max(right, geo.cols * CELL_W), top: bottom - FRONT_HEIGHT, bottom };
+}
+
+function frontCorners(rect) {
+  return rect ? [[rect.left, rect.top], [rect.right, rect.top], [rect.right, rect.bottom], [rect.left, rect.bottom]] : [];
+}
+
+function drawFront(rect) {
+  if (!rect) return;
+  const band = document.createElement('div');
+  band.className = 'front-stage';
+  band.textContent = t('앞 (강단)');
+  Object.assign(band.style, {
+    left: rect.left + offsetX + 'px', top: rect.top + offsetY + 'px',
+    width: rect.right - rect.left + 'px', height: rect.bottom - rect.top + 'px'
+  });
+  $('board').appendChild(band);
+}
+
+function layOut(geo, cells, extra = [], margin = 0) {
+  const box = boundsOf(geo, cells, extra, margin);
+  offsetX = -box.minX;
+  offsetY = -box.minY;
   const board = $('board');
-  board.style.width = Math.ceil(maxX - minX) + 'px';
-  board.style.height = Math.ceil(maxY - minY) + 'px';
+  board.style.width = Math.ceil(box.maxX - box.minX) + 'px';
+  board.style.height = Math.ceil(box.maxY - box.minY) + 'px';
 
   if (geo.isArc) {
     const radius = stageRadius(geo);
     const stage = document.createElement('div');
     stage.className = 'stage' + (isHalfStage(geo) ? ' half' : '');
-    stage.textContent = '무대';
+    stage.textContent = t('무대');
     Object.assign(stage.style, {
       width: radius * 2 + 'px', height: radius * 2 + 'px',
       left: offsetX - radius + 'px', top: offsetY - radius + 'px'
@@ -987,12 +1269,13 @@ function buildBoard() {
   const board = $('board');
   board.classList.toggle('editing', editing());
   board.classList.toggle('pan', editing() && $('panToggle').checked);
+  board.dataset.tool = editing() ? (tool === 'outline' ? 'outline' : isItemKind(tool) ? 'item' : 'paint') : '';
 
   if (editing()) buildEditor();
   else buildSeats();
 
-  const hasAnything = editing() || seats.length > 0;
-  $('frontBand').hidden = !hasAnything || !geometry || geometry.isArc;
+  const hasAnything = editing() || seats.length > 0 || items.length > 0 || walls.size > 0;
+  $('frontBand').hidden = true;
   $('emptyText').hidden = hasAnything;
   $('boardZoom').hidden = !hasAnything;
   updateZoom();
@@ -1000,22 +1283,29 @@ function buildBoard() {
 
 function buildSeats() {
   const cells = seats.filter(seat => seat.f === viewFloorId);
+  const things = items.filter(item => item.f === viewFloorId);
+  const outline = walls.get(viewFloorId) || null;
 
-  if (cells.length === 0) {
+  if (cells.length === 0 && things.length === 0 && !outline) {
     clearBoard();
     return;
   }
 
   const floor = floors.find(item => item.f === viewFloorId) || { shape: 'grid', angle: 0, rows: 0, cols: 0 };
-  const geo = new SeatGeometry(floor.shape, floor.angle, Math.max(floor.rows, Math.max(...cells.map(seat => seat.r)) + 1), Math.max(floor.cols, 1));
+  const geo = new SeatGeometry(floor.shape, floor.angle, Math.max(floor.rows, cells.length ? Math.max(...cells.map(seat => seat.r)) + 1 : 1), Math.max(floor.cols, 1));
   const shapeKey = 'view:' + floor.f + ':' + geo.isArc + ':' + geo.angle + ':' + geo.cols + ':' +
-    cells.map(seat => seat.id + '/' + seat.r + '/' + seat.c + '/' + seat.label + '/' + seat.kind + '/' + seat.bench).join('|');
+    cells.map(seat => seat.id + '/' + seat.r + '/' + seat.c + '/' + seat.label + '/' + seat.kind + '/' + seat.bench).join('|') + '#' +
+    JSON.stringify([things, outline]);
 
   if (shapeKey !== builtKey) {
     clearBoard();
     geometry = geo;
     builtKey = shapeKey;
-    layOut(geo, cells.map(seat => ({ row: seat.r, col: seat.c })));
+    const seatSlots = cells.map(seat => ({ row: seat.r, col: seat.c }));
+    const front = frontRect(geo, seatSlots);
+    layOut(geo, seatSlots, [...(outline || []), ...things.map(item => [item.x, item.y]), ...frontCorners(front)]);
+    drawOutline(outline, false);
+    drawFront(front);
 
     const benchCells = new Set(cells.filter(seat => seat.kind === 'pew' && seat.bench).map(seat => seat.r + ',' + seat.c + ',' + seat.bench));
 
@@ -1033,6 +1323,8 @@ function buildSeats() {
       if (rotation) txt.style.transform = `rotate(${-rotation}deg)`;
       seatButtons.set(seat.id, button);
     }
+
+    drawThings(things, outline, false);
 
     if (geo.isArc) {
       requestAnimationFrame(() => {
@@ -1060,9 +1352,9 @@ function buildSeats() {
     lb.textContent = seat.state === 'blocked' ? '×' : shortLabel(seat.label);
     txt.appendChild(lb);
 
-    const sub = seat.state === 'mine' ? (seat.name || '내 자리')
-      : seat.state === 'taken' ? (seat.name || '찜함')
-        : seat.kind === 'extra' ? '보조' : '';
+    const sub = seat.state === 'mine' ? (seat.name || t('내 자리'))
+      : seat.state === 'taken' ? (seat.name || t('찜함'))
+        : seat.kind === 'extra' ? t('보조') : '';
     if (sub) {
       const nm = document.createElement('span');
       nm.className = 'nm';
@@ -1070,8 +1362,8 @@ function buildSeats() {
       txt.appendChild(nm);
     }
 
-    const stateText = { mine: '내 자리', taken: seat.name || '찜함', blocked: '앉을 수 없는 자리', free: '빈자리' }[seat.state];
-    const tip = `${kindName(seat.kind)} · ${seat.label} · ${stateText}`;
+    const stateText = { mine: t('내 자리'), taken: seat.name || t('찜함'), blocked: t('앉을 수 없는 자리'), free: t('빈자리') }[seat.state];
+    const tip = `${t(kindName(seat.kind))} · ${seat.label} · ${stateText}`;
     button.title = tip;
     button.setAttribute('aria-label', tip);
   }
@@ -1081,13 +1373,13 @@ function buildEditor() {
   clearBoard();
   const geo = draft.geometry;
   geometry = geo;
-  const all = [];
-  for (let row = 0; row < geo.rows; row++) {
-    for (let col = 0; col < geo.capacity(row); col++) all.push({ row, col });
-  }
-  layOut(geo, all);
+  const all = allSlots(geo);
+  const outline = draft.cur.outline;
+  const front = frontRect(geo, placedSlots().length ? placedSlots() : all);
+  layOut(geo, all, [...(outline || []), ...draft.cur.items.map(item => [item.x, item.y]), ...frontCorners(front)], EDIT_MARGIN);
+  drawFront(front);
 
-  const shortKind = { desk: '책상', pew: '장', extra: '보조', chair: '의자' };
+  const shortKind = { desk: t('책상'), pew: t('장'), extra: t('보조'), chair: t('의자') };
 
   for (const { row, col } of all) {
     const value = draft.get(row, col);
@@ -1111,6 +1403,236 @@ function buildEditor() {
     if (rotation && box.firstChild) box.firstChild.style.transform = `rotate(${-rotation}deg)`;
     editorCells.set(row + ',' + col, cell);
   }
+
+  drawFree();
+}
+
+// ───────────── 외벽 · 물건 ─────────────
+
+let selectedItem = -1;
+let selectedVertex = -1;
+let freeDrag = null;
+let lastVertexTap = null;
+
+function drawFree() {
+  $('board').querySelectorAll('.free').forEach(node => node.remove());
+  drawOutline(draft.cur.outline, tool === 'outline');
+  drawThings(draft.cur.items, draft.cur.outline, isItemKind(tool));
+}
+
+function drawOutline(points, editable) {
+  if (!points || points.length < 3) return;
+  const board = $('board');
+  const svg = document.createElementNS(SVG_NS, 'svg');
+  svg.setAttribute('class', 'free outline' + (editable ? ' editable' : '') + (editing() ? ' over' : ''));
+  svg.setAttribute('width', board.style.width);
+  svg.setAttribute('height', board.style.height);
+  const at = ([x, y]) => [x + offsetX, y + offsetY];
+
+  const polygon = document.createElementNS(SVG_NS, 'polygon');
+  polygon.setAttribute('class', 'wall-line');
+  polygon.setAttribute('points', points.map(point => at(point).join(',')).join(' '));
+  svg.appendChild(polygon);
+
+  if (editable) {
+    const radius = matchMedia('(pointer: coarse)').matches ? 13 : 9;
+    points.forEach((point, index) => {
+      const next = points[(index + 1) % points.length];
+      const [mx, my] = at([(point[0] + next[0]) / 2, (point[1] + next[1]) / 2]);
+      const mid = document.createElementNS(SVG_NS, 'circle');
+      mid.setAttribute('class', 'mid');
+      mid.setAttribute('cx', mx);
+      mid.setAttribute('cy', my);
+      mid.setAttribute('r', radius * 0.6);
+      mid.dataset.mid = index;
+      svg.appendChild(mid);
+    });
+    points.forEach((point, index) => {
+      const [cx, cy] = at(point);
+      const vertex = document.createElementNS(SVG_NS, 'circle');
+      vertex.setAttribute('class', 'vertex' + (index === selectedVertex ? ' selected' : ''));
+      vertex.setAttribute('cx', cx);
+      vertex.setAttribute('cy', cy);
+      vertex.setAttribute('r', radius);
+      vertex.dataset.vertex = index;
+      svg.appendChild(vertex);
+    });
+  }
+
+  if (editing()) board.appendChild(svg);
+  else board.insertBefore(svg, board.firstChild);
+}
+
+function uprightAngle(angle) {
+  let a = ((angle % 360) + 360) % 360;
+  if (a > 180) a -= 360;
+  if (a > 90) a -= 180;
+  if (a <= -90) a += 180;
+  return a;
+}
+
+function insidePolygon(x, y, points) {
+  let inside = false;
+  for (let i = 0, j = points.length - 1; i < points.length; j = i++) {
+    const [xi, yi] = points[i];
+    const [xj, yj] = points[j];
+    if ((yi > y) !== (yj > y) && x < (xj - xi) * (y - yi) / (yj - yi) + xi) inside = !inside;
+  }
+  return inside;
+}
+
+function drawThings(things, outline, editable) {
+  const board = $('board');
+  things.forEach((item, index) => {
+    const info = ITEMS[item.kind];
+    if (!info) return;
+    const angle = uprightAngle(item.a || 0);
+    const radians = angle * Math.PI / 180;
+    const left = item.x + offsetX;
+    const top = item.y + offsetY;
+
+    const thing = document.createElement('div');
+    thing.className = 'free thing ' + item.kind + (editable ? ' editable' : '') + (editable && index === selectedItem ? ' selected' : '');
+    thing.dataset.index = index;
+    thing.title = t(info.name);
+    thing.style.left = left + 'px';
+    thing.style.top = top + 'px';
+    thing.style.transform = `translate(-50%, -50%) rotate(${angle}deg)`;
+    if (item.kind === 'speaker') thing.textContent = info.icon;
+    if (item.kind === 'pulpit') thing.textContent = t(info.name);
+    board.appendChild(thing);
+
+    if (['pillar', 'door', 'window', 'pulpit'].includes(item.kind)) return;
+    let nx = -Math.sin(radians);
+    let ny = Math.cos(radians);
+    if (outline && outline.length >= 3 && !insidePolygon(item.x + nx * 20, item.y + ny * 20, outline)) {
+      nx = -nx;
+      ny = -ny;
+    }
+    const gap = item.kind === 'speaker' ? 30 : 20;
+    const label = document.createElement('div');
+    label.className = 'free thing-label ' + item.kind;
+    label.textContent = (item.kind === 'speaker' ? '' : info.icon ? info.icon + ' ' : '') + t(info.name);
+    label.style.left = left + nx * gap + 'px';
+    label.style.top = top + ny * gap + 'px';
+    board.appendChild(label);
+  });
+
+  if (editable && things[selectedItem]) {
+    const item = things[selectedItem];
+    const remove = document.createElement('button');
+    remove.type = 'button';
+    remove.className = 'free thing-del';
+    remove.textContent = '×';
+    remove.title = t('이 물건 지우기');
+    remove.style.left = item.x + offsetX + 26 + 'px';
+    remove.style.top = item.y + offsetY - 26 + 'px';
+    board.appendChild(remove);
+  }
+}
+
+function boardPoint(event) {
+  const rect = $('board').getBoundingClientRect();
+  return { x: (event.clientX - rect.left) / zoom - offsetX, y: (event.clientY - rect.top) / zoom - offsetY };
+}
+
+function snapToWall(kind, x, y, fallbackAngle) {
+  const outline = draft.cur.outline;
+  if (!SNAP_KINDS.includes(kind) || !outline || outline.length < 3) return { x, y, a: fallbackAngle };
+  let best = null;
+  outline.forEach((point, index) => {
+    const next = outline[(index + 1) % outline.length];
+    const dx = next[0] - point[0];
+    const dy = next[1] - point[1];
+    const length2 = dx * dx + dy * dy;
+    if (length2 === 0) return;
+    const t = clamp(((x - point[0]) * dx + (y - point[1]) * dy) / length2, 0, 1);
+    const px = point[0] + t * dx;
+    const py = point[1] + t * dy;
+    const distance = Math.hypot(x - px, y - py);
+    if (!best || distance < best.distance) best = { distance, x: px, y: py, a: Math.atan2(dy, dx) * 180 / Math.PI };
+  });
+  return best && best.distance <= SNAP_DISTANCE ? { x: best.x, y: best.y, a: uprightAngle(best.a) } : { x, y, a: fallbackAngle };
+}
+
+function onFreeDown(event) {
+  const point = boardPoint(event);
+
+  if (tool === 'outline') {
+    const outline = draft.cur.outline;
+    const target = event.target;
+    if (!outline || !(target instanceof SVGElement)) return false;
+    if (target.dataset.vertex !== undefined) {
+      const index = Number(target.dataset.vertex);
+      const now = Date.now();
+      if (lastVertexTap && lastVertexTap.index === index && now - lastVertexTap.time < 450 && outline.length > 3) {
+        lastVertexTap = null;
+        selectedVertex = index;
+        deleteSelected();
+        return true;
+      }
+      lastVertexTap = { index, time: now };
+      selectedVertex = index;
+    } else if (target.dataset.mid !== undefined) {
+      if (outline.length >= MAX_WALL_POINTS) {
+        say(t('꼭짓점은 {n}개까지예요.', { n: MAX_WALL_POINTS }));
+        return true;
+      }
+      selectedVertex = Number(target.dataset.mid) + 1;
+      outline.splice(selectedVertex, 0, [Math.round(point.x), Math.round(point.y)]);
+    } else {
+      return false;
+    }
+    freeDrag = { type: 'vertex' };
+    drawFree();
+    syncEditorControls();
+    return true;
+  }
+
+  if (!isItemKind(tool)) return false;
+  const del = event.target.closest('.thing-del');
+  if (del) {
+    deleteSelected();
+    return true;
+  }
+
+  const hit = event.target.closest('.thing.editable');
+  if (hit) {
+    selectedItem = Number(hit.dataset.index);
+    const item = draft.cur.items[selectedItem];
+    freeDrag = { type: 'item', dx: item.x - point.x, dy: item.y - point.y };
+  } else {
+    const placed = snapToWall(tool, point.x, point.y, 0);
+    const error = draft.addItem(tool, placed.x, placed.y, placed.a);
+    if (error) {
+      say(error);
+      return true;
+    }
+    selectedItem = draft.cur.items.length - 1;
+    freeDrag = { type: 'item', dx: 0, dy: 0 };
+  }
+  drawFree();
+  return true;
+}
+
+function onFreeMove(event) {
+  const point = boardPoint(event);
+  if (freeDrag.type === 'vertex') {
+    const outline = draft.cur.outline;
+    if (!outline || !outline[selectedVertex]) return;
+    outline[selectedVertex] = [Math.round(point.x / 5) * 5, Math.round(point.y / 5) * 5];
+  } else {
+    const item = draft.cur.items[selectedItem];
+    if (!item) return;
+    const placed = snapToWall(item.kind, point.x + freeDrag.dx, point.y + freeDrag.dy, SNAP_KINDS.includes(item.kind) ? 0 : item.a);
+    draft.moveItem(selectedItem, placed.x, placed.y, placed.a);
+  }
+  drawFree();
+}
+
+function onFreeUp() {
+  freeDrag = null;
+  render();
 }
 
 function updateZoom() {
@@ -1174,6 +1696,13 @@ function hidePreview() {
 
 function onPointerDown(event) {
   if (!editing() || busy || $('panToggle').checked || event.button !== 0) return;
+  if (tool === 'outline' || isItemKind(tool)) {
+    if (onFreeDown(event)) {
+      if (freeDrag) $('board').setPointerCapture(event.pointerId);
+      event.preventDefault();
+    }
+    return;
+  }
   const cell = cellAt(event, false);
   if (!cell) return;
   dragStart = cell;
@@ -1184,6 +1713,10 @@ function onPointerDown(event) {
 }
 
 function onPointerMove(event) {
+  if (freeDrag) {
+    onFreeMove(event);
+    return;
+  }
   if (!dragStart) return;
   const cell = cellAt(event, true);
   if (cell && (cell.row !== dragEnd.row || cell.col !== dragEnd.col)) {
@@ -1193,6 +1726,10 @@ function onPointerMove(event) {
 }
 
 function onPointerUp() {
+  if (freeDrag) {
+    onFreeUp();
+    return;
+  }
   if (!dragStart) return;
   const start = dragStart;
   dragStart = null;
@@ -1201,6 +1738,7 @@ function onPointerUp() {
 }
 
 function onPointerCancel() {
+  if (freeDrag) onFreeUp();
   dragStart = null;
   hidePreview();
 }
@@ -1220,7 +1758,7 @@ function wire() {
   $('nameInput').addEventListener('keydown', event => { if (event.key === 'Enter') $('codeInput').focus(); });
   $('demoButton').addEventListener('click', () => {
     $('codeInput').value = 'demo';
-    if (!$('nameInput').value.trim()) $('nameInput').value = '체험자';
+    if (!$('nameInput').value.trim()) $('nameInput').value = t('체험자');
     connect();
   });
 
@@ -1244,7 +1782,15 @@ function wire() {
   $('board').addEventListener('pointermove', onPointerMove);
   $('board').addEventListener('pointerup', onPointerUp);
   $('board').addEventListener('pointercancel', onPointerCancel);
-  $('board').addEventListener('lostpointercapture', () => { if (dragStart) onPointerUp(); });
+  $('board').addEventListener('lostpointercapture', () => { if (dragStart || freeDrag) onPointerUp(); });
+  $('resetOutlineButton').addEventListener('click', resetOutline);
+  $('deleteVertexButton').addEventListener('click', deleteSelected);
+  $('clearOutlineButton').addEventListener('click', clearOutline);
+  document.addEventListener('keydown', event => {
+    if (!editing() || (event.key !== 'Delete' && event.key !== 'Backspace')) return;
+    if (event.target.closest && event.target.closest('input, textarea')) return;
+    deleteSelected();
+  });
 
   $('publishedToggle').addEventListener('change', event => saveSettings({ published: event.target.checked }));
   $('showNamesToggle').addEventListener('change', event => saveSettings({ showNames: event.target.checked }));
@@ -1257,13 +1803,15 @@ function wire() {
   $('myLinkButton').addEventListener('click', copyMyLink);
   $('pinButton').addEventListener('click', () => openPinDialog('set'));
   $('reclaimButton').addEventListener('click', () => openPinDialog('reclaim'));
+  $('gatePinButton').addEventListener('click', () => openPinDialog('set'));
+  $('gateLinkButton').addEventListener('click', copyMyLink);
+  $('gateReclaimButton').addEventListener('click', () => openPinDialog('reclaim'));
   $('pinForm').addEventListener('submit', submitPin);
 
-  $('toolPanel').addEventListener('click', event => {
-    const pill = event.target.closest('.pill');
+  $('editorPanel').addEventListener('click', event => {
+    const pill = event.target.closest('.pill[data-tool]');
     if (!pill || busy) return;
-    tool = pill.dataset.tool;
-    syncEditorControls();
+    chooseTool(pill.dataset.tool);
   });
   $('shapePanel').addEventListener('click', event => {
     const pill = event.target.closest('[data-shape]');
@@ -1292,7 +1840,37 @@ function wire() {
   });
 }
 
+function applyTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  const dark = theme === 'dark';
+  $('themeButton').textContent = dark ? '☀️' : '🌙';
+  $('themeButton').setAttribute('aria-label', dark ? t('밝은 화면으로') : t('어두운 화면으로'));
+  $('themeButton').title = dark ? t('밝은 화면으로') : t('어두운 화면으로');
+}
+
+function toggleTheme() {
+  const next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  try { localStorage.setItem('jjimkong.theme', next); } catch (e) { /* 개인 창 등 */ }
+  applyTheme(next);
+}
+
+function fillLanguages() {
+  const select = $('langSelect');
+  for (const item of LANGS) {
+    const option = document.createElement('option');
+    option.value = item.code;
+    option.textContent = item.name;
+    select.appendChild(option);
+  }
+  select.value = LANG;
+  select.addEventListener('change', () => setLang(select.value));
+}
+
 async function start() {
+  translatePage();
+  fillLanguages();
+  applyTheme(document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light');
+  $('themeButton').addEventListener('click', toggleTheme);
   wire();
   $('nameInput').value = store.name;
   await onConnectionChanged();

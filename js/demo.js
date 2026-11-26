@@ -1,16 +1,19 @@
 (() => {
 'use strict';
-const { DEMO_ADMIN_KEY } = window.Jjim;
+const { DEMO_ADMIN_KEY, t } = window.Jjim;
 // 구글 없이 화면을 시험하는 가짜 좌석 예약 서버. 응답 · 오류 문구는 Hagah Tools/seat-reservation/Code.gs 와 같아야 한다.
 
 
-const STORAGE_KEY = 'jjimkong.demo';
+const STORAGE_KEY = 'jjimkong.demo5';
 const SCHEMA_VERSION = 1;
 const SEAT_KINDS = ['chair', 'desk', 'pew', 'extra'];
 const SEAT_SHAPES = ['grid', 'arc'];
 const MAX_FLOORS = 9;
 const MAX_NAME_LENGTH = 20;
 const MAX_SEATS = 2000;
+const ITEM_KINDS = ['pulpit', 'door', 'window', 'ac', 'tv', 'speaker', 'pillar'];
+const MAX_ITEMS = 300;
+const MAX_WALL_POINTS = 64;
 
 let memory = null;
 
@@ -58,15 +61,30 @@ function seed() {
 
   return {
     settings: {
-      room: '찜콩 체험관 (demo)',
+      room: t('찜콩 체험관 (demo)'),
       published: true,
       maxPerPerson: 1,
       showNames: true,
       session: 1,
       layoutVersion: 1,
-      floors: [{ f: 0, shape: 'grid', angle: 0, rows, cols }]
+      floors: [{ f: 0, shape: 'grid', angle: 0, rows: rows + 1, cols }]
     },
     seats,
+    items: [
+      { f: 0, kind: 'tv', x: 403, y: -100, a: 0 },
+      { f: 0, kind: 'pulpit', x: 403, y: -58, a: 0 },
+      { f: 0, kind: 'speaker', x: 110, y: -64, a: 0 },
+      { f: 0, kind: 'speaker', x: 696, y: -64, a: 0 },
+      { f: 0, kind: 'pillar', x: 403, y: 175, a: 0 },
+      { f: 0, kind: 'ac', x: -16, y: 140, a: 90 },
+      { f: 0, kind: 'window', x: -16, y: 270, a: 90 },
+      { f: 0, kind: 'window', x: 822, y: 150, a: 90 },
+      { f: 0, kind: 'window', x: 822, y: 300, a: 90 },
+      { f: 0, kind: 'door', x: 37, y: 423, a: 39 },
+      { f: 0, kind: 'door', x: 640, y: 466, a: 0 },
+      { f: 0, kind: 'door', x: 740, y: 466, a: 0 }
+    ],
+    walls: [{ f: 0, points: [[-16, -100], [822, -100], [822, 466], [90, 466], [-16, 380]] }],
     reservations: [
       { seat: 'r0c2', device: 'demo-other-1', name: '김믿음', at },
       { seat: 'r2c8', device: 'demo-other-2', name: '이소망', at },
@@ -204,6 +222,8 @@ function buildState(state, device, isAdmin) {
     layoutVersion: toPositiveInt(settings.layoutVersion, 0),
     seats: [],
     floors: [],
+    items: [],
+    walls: [],
     taken: []
   };
 
@@ -211,6 +231,8 @@ function buildState(state, device, isAdmin) {
 
   result.seats = state.seats.map(s => ({ id: s.id, r: s.r, c: s.c, f: s.f, label: s.label, blocked: s.blocked, kind: s.kind, bench: s.bench }));
   result.floors = Array.isArray(settings.floors) ? settings.floors.map(f => ({ ...f })) : [];
+  result.items = Array.isArray(state.items) ? state.items.map(item => ({ ...item })) : [];
+  result.walls = Array.isArray(state.walls) ? state.walls.map(wall => ({ f: wall.f, points: wall.points.map(p => p.slice()) })) : [];
   result.taken = state.reservations.map(r => {
     const mine = device !== '' && r.device === device;
     const item = { seat: r.seat, mine };
@@ -322,7 +344,40 @@ function reclaim(state, rawName, pin) {
   return { ok: true, device };
 }
 
-function saveLayout(state, rawSeats, rawFloors) {
+function cleanItems(rawItems, floors) {
+  if (rawItems.length > MAX_ITEMS) throw userError('too-many', '물건은 ' + MAX_ITEMS + '개까지 그릴 수 있습니다.');
+  const floorIds = {};
+  floors.forEach(floor => { floorIds[floor.f] = true; });
+  return rawItems.map(raw => {
+    const item = { f: toInt(raw && raw.f, -1), kind: String((raw && raw.kind) || ''), x: Number(raw && raw.x), y: Number(raw && raw.y), a: Number((raw && raw.a) || 0) };
+    if (item.f < 0 || item.f > 99 || ITEM_KINDS.indexOf(item.kind) < 0 || (floors.length > 0 && !floorIds[item.f]) ||
+      !Number.isFinite(item.x) || !Number.isFinite(item.y) || !Number.isFinite(item.a) || Math.abs(item.x) > 20000 || Math.abs(item.y) > 20000) {
+      throw userError('bad-request', '배치도의 물건을 읽지 못했습니다.');
+    }
+    return { f: item.f, kind: item.kind, x: Math.round(item.x), y: Math.round(item.y), a: Math.round(item.a) % 360 };
+  });
+}
+
+function cleanWalls(rawWalls, floors) {
+  const floorIds = {};
+  floors.forEach(floor => { floorIds[floor.f] = true; });
+  const seen = {};
+  return rawWalls.map(raw => {
+    const f = toInt(raw && raw.f, -1);
+    const points = Array.isArray(raw && raw.points) ? raw.points.map(p => {
+      const x = Number(Array.isArray(p) ? p[0] : NaN);
+      const y = Number(Array.isArray(p) ? p[1] : NaN);
+      return Number.isFinite(x) && Number.isFinite(y) && Math.abs(x) <= 20000 && Math.abs(y) <= 20000 ? [Math.round(x), Math.round(y)] : null;
+    }) : [];
+    if (f < 0 || f > 99 || seen[f] || (floors.length > 0 && !floorIds[f]) || points.length < 3 || points.length > MAX_WALL_POINTS || points.includes(null)) {
+      throw userError('bad-request', '외벽을 읽지 못했습니다.');
+    }
+    seen[f] = true;
+    return { f, points };
+  });
+}
+
+function saveLayout(state, rawSeats, rawFloors, rawItems, rawWalls) {
   if (!Array.isArray(rawSeats)) throw userError('bad-request', '배치도를 읽지 못했습니다.');
   if (rawSeats.length > MAX_SEATS) throw userError('too-many', '좌석은 ' + MAX_SEATS + '개까지 만들 수 있습니다.');
 
@@ -357,6 +412,8 @@ function saveLayout(state, rawSeats, rawFloors) {
   state.seats = seats;
   state.reservations = state.reservations.filter(r => seen[r.seat] && !blocked[r.seat]);
   state.settings.floors = floors;
+  if (Array.isArray(rawItems)) state.items = cleanItems(rawItems, floors);
+  if (Array.isArray(rawWalls)) state.walls = cleanWalls(rawWalls, floors);
   state.settings.layoutVersion = toPositiveInt(state.settings.layoutVersion, 0) + 1;
   save(state);
   return { ok: true, count: seats.length };
@@ -418,7 +475,7 @@ function handle(request) {
   if (!isAdmin) throw userError('not-admin', '관리자만 할 수 있습니다. 관리자 QR 로 다시 연결해 주세요.');
 
   switch (action) {
-    case 'saveLayout': return saveLayout(state, request.seats, request.floors);
+    case 'saveLayout': return saveLayout(state, request.seats, request.floors, request.items, request.walls);
     case 'saveSettings': return saveSettings(state, request.settings || {});
     case 'forceCancel': return forceCancel(state, String(request.seat || ''), request.name);
     case 'nextSession': return nextSession(state);

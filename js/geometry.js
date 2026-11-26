@@ -1,5 +1,6 @@
 (() => {
 'use strict';
+const { t } = window.Jjim;
 const CELL_W = 62;
 const CELL_H = 50;
 const MAX_ARC_SEATS = 99;
@@ -10,6 +11,21 @@ const FAN_ANGLE = 120;
 const ROUND_ANGLE = 330;
 
 const KINDS = ['chair', 'desk', 'pew', 'extra'];
+
+const ITEMS = {
+  pulpit: { name: '강대상', icon: '' },
+  door: { name: '출입문', icon: '🚪' },
+  window: { name: '창문', icon: '🪟' },
+  ac: { name: '에어컨', icon: '❄️' },
+  tv: { name: 'TV · 화면', icon: '📺' },
+  speaker: { name: '스피커', icon: '🔊' },
+  pillar: { name: '기둥', icon: '' }
+};
+const ITEM_KINDS = Object.keys(ITEMS);
+const MAX_ITEMS = 300;
+const COORD_LIMIT = 20000;
+const MAX_WALL_POINTS = 64;
+const isItemKind = kind => ITEM_KINDS.includes(kind);
 
 function normalizeKind(kind) {
   return KINDS.includes(kind) ? kind : 'chair';
@@ -164,9 +180,10 @@ function seatId(floor, row, col) {
 }
 
 const key = (row, col) => row + ',' + col;
+const clampCoord = value => clamp(Math.round(value), -COORD_LIMIT, COORD_LIMIT);
 
 function makeFloor(id, shape, angle, rows, cols) {
-  return { id, shape, angle, rows, cols, cells: new Map() };
+  return { id, shape, angle, rows, cols, cells: new Map(), items: [], outline: null };
 }
 
 function floorGeometry(floor) {
@@ -188,10 +205,11 @@ class LayoutDraft {
   get angle() { return this.cur.angle; }
   get geometry() { return floorGeometry(this.cur); }
   get seatCount() { return this.floors.reduce((sum, floor) => sum + floor.cells.size, 0); }
+  get itemCount() { return this.floors.reduce((sum, floor) => sum + floor.items.length, 0); }
   get currentFloorSeatCount() { return this.cur.cells.size; }
   get floorCount() { return this.floors.length; }
 
-  static fromSeats(seats, floors) {
+  static fromSeats(seats, floors, items = [], walls = []) {
     const draft = new LayoutDraft();
     draft.floors = [];
 
@@ -208,6 +226,7 @@ class LayoutDraft {
     }
 
     const seatFloors = [...new Set(seats.map(seat => seat.f | 0))].sort((a, b) => a - b);
+    const validItems = (items || []).filter(item => item && isItemKind(item.kind) && Number.isFinite(item.x) && Number.isFinite(item.y));
     for (const id of seatFloors) {
       if (id >= 0 && draft.floors.every(floor => floor.id !== id) && draft.floors.length < MAX_FLOORS) {
         draft.floors.push(makeFloor(id, 'grid', 0, DEFAULT_ROWS, DEFAULT_COLS));
@@ -244,6 +263,16 @@ class LayoutDraft {
 
         floor.cells.set(key(seat.r, seat.c), { kind, bench, blocked: !!seat.blocked });
       }
+
+      const wall = (walls || []).find(entry => (entry.f | 0) === floor.id);
+      if (wall && Array.isArray(wall.points) && wall.points.length >= 3) {
+        floor.outline = wall.points.slice(0, MAX_WALL_POINTS).map(point => [Math.round(point[0]), Math.round(point[1])]);
+      }
+
+      floor.items = validItems
+        .filter(item => (item.f | 0) === floor.id)
+        .slice(0, MAX_ITEMS)
+        .map(item => ({ kind: item.kind, x: Math.round(item.x), y: Math.round(item.y), a: Math.round(item.a || 0) }));
     }
 
     return draft;
@@ -260,10 +289,10 @@ class LayoutDraft {
   }
 
   addFloor() {
-    if (this.floors.length >= MAX_FLOORS) return `층은 ${MAX_FLOORS}개까지 만들 수 있어요.`;
+    if (this.floors.length >= MAX_FLOORS) return t('층은 {n}개까지 만들 수 있어요.', { n: MAX_FLOORS });
     let id = 0;
     while (id <= MAX_FLOOR_ID && this.usedFloorIds.has(id)) id++;
-    if (id > MAX_FLOOR_ID) return '층을 너무 여러 번 지웠다 더했어요. 한 번 저장한 뒤 다시 더해 주세요.';
+    if (id > MAX_FLOOR_ID) return t('층을 너무 여러 번 지웠다 더했어요. 한 번 저장한 뒤 다시 더해 주세요.');
     this.usedFloorIds.add(id);
     const model = this.cur;
     this.floors.push(makeFloor(id, model.shape, model.angle, model.rows, model.cols));
@@ -309,6 +338,31 @@ class LayoutDraft {
     return this.cur.cells.get(key(row, col)) || null;
   }
 
+  // ── 외벽 · 물건(칸에 매이지 않는 자유 좌표) ──
+
+  addItem(kind, x, y, a) {
+    if (!isItemKind(kind)) return null;
+    if (this.itemCount >= MAX_ITEMS) return t('물건은 {n}개까지 놓을 수 있어요.', { n: MAX_ITEMS });
+    this.cur.items.push({ kind, x: clampCoord(x), y: clampCoord(y), a: Math.round(a || 0) });
+    return null;
+  }
+
+  moveItem(index, x, y, a) {
+    const item = this.cur.items[index];
+    if (!item) return;
+    item.x = clampCoord(x);
+    item.y = clampCoord(y);
+    item.a = Math.round(a || 0);
+  }
+
+  removeItem(index) {
+    this.cur.items.splice(index, 1);
+  }
+
+  setOutline(points) {
+    this.cur.outline = points ? points.slice(0, MAX_WALL_POINTS).map(point => [clampCoord(point[0]), clampCoord(point[1])]) : null;
+  }
+
   apply(tool, row1, col1, row2, col2) {
     const cells = this.geometry.cellsBetween(row1, col1, row2, col2);
     const board = this.cur.cells;
@@ -326,7 +380,7 @@ class LayoutDraft {
     }
 
     const added = cells.filter(cell => !board.has(key(cell.row, cell.col))).length;
-    if (this.seatCount + added > MAX_SEATS) return `좌석은 ${MAX_SEATS}개까지 만들 수 있어요.`;
+    if (this.seatCount + added > MAX_SEATS) return t('좌석은 {n}개까지 만들 수 있어요.', { n: MAX_SEATS });
 
     const kind = normalizeKind(tool);
     const byRow = new Map();
@@ -357,6 +411,20 @@ class LayoutDraft {
 
   toFloors() {
     return this.floors.map(floor => ({ f: floor.id, shape: floor.shape, angle: floor.angle, rows: floor.rows, cols: floor.cols }));
+  }
+
+  toWalls() {
+    return this.floors
+      .filter(floor => floor.outline && floor.outline.length >= 3)
+      .map(floor => ({ f: floor.id, points: floor.outline.map(point => [Math.round(point[0]), Math.round(point[1])]) }));
+  }
+
+  toItems() {
+    const result = [];
+    for (const floor of this.floors) {
+      for (const item of floor.items) result.push({ f: floor.id, kind: item.kind, x: item.x, y: item.y, a: item.a });
+    }
+    return result;
   }
 
   toSeats() {
@@ -406,5 +474,5 @@ class LayoutDraft {
     return result;
   }
 }
-Object.assign(window.Jjim = window.Jjim || {}, { CELL_W, CELL_H, MAX_ARC_SEATS, MIN_ANGLE, MAX_ANGLE, MIN_DRAW_RADIUS, FAN_ANGLE, ROUND_ANGLE, KINDS, normalizeKind, normalizeShape, kindName, SeatGeometry, MAX_ROWS, MAX_COLS, MAX_SEATS, MAX_FLOORS, DEFAULT_ROWS, DEFAULT_COLS, floorName, rowName, seatId, LayoutDraft });
+Object.assign(window.Jjim = window.Jjim || {}, { CELL_W, CELL_H, MAX_ARC_SEATS, MIN_ANGLE, MAX_ANGLE, MIN_DRAW_RADIUS, FAN_ANGLE, ROUND_ANGLE, KINDS, ITEMS, ITEM_KINDS, MAX_ITEMS, MAX_WALL_POINTS, isItemKind, normalizeKind, normalizeShape, kindName, SeatGeometry, MAX_ROWS, MAX_COLS, MAX_SEATS, MAX_FLOORS, DEFAULT_ROWS, DEFAULT_COLS, floorName, rowName, seatId, LayoutDraft });
 })();

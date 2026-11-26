@@ -1,5 +1,6 @@
 (() => {
 'use strict';
+const { t } = window.Jjim;
 const DEMO_URL = 'demo://jjimkong';
 const DEMO_ADMIN_KEY = 'demoAdminKey0000';
 const MAX_CODE_LENGTH = 500;
@@ -104,9 +105,9 @@ function buildInvite(memberUrl) {
 
 function buildShareText(link, room, fingerprint) {
   const title = String(room || '').replace(/\s+/g, ' ').trim();
-  const name = title ? title + ' 좌석 예약' : '좌석 예약';
-  const check = fingerprint ? `확인 번호: ${fingerprint} — 화면에 보이는 번호가 이것과 다르면 연결하지 마세요.\n` : '';
-  return `[${name}]\n아래 링크를 눌러 이름을 적고 [연결] 을 누른 뒤, 빈자리를 찜하세요!\n${check}${link}`;
+  const name = title ? title + ' ' + t('좌석 예약') : t('좌석 예약');
+  const check = fingerprint ? t('확인 번호: {code} — 화면에 보이는 번호가 이것과 다르면 연결하지 마세요.', { code: fingerprint }) + '\n' : '';
+  return `[${name}]\n${t('아래 링크를 눌러 이름을 적고 [연결] 을 누른 뒤, 빈자리를 찜하세요!')}\n${check}${link}`;
 }
 
 async function fingerprint(memberUrl) {
