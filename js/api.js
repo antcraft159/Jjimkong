@@ -1,7 +1,6 @@
-
-import { DEMO_URL } from './links.js';
-import { handleDemo } from './demo.js';
-
+(() => {
+'use strict';
+const { DEMO_URL, handleDemo } = window.Jjim;
 const TIMEOUT_MS = 30000;
 
 const FULL_STATE_EVERY = 30;
@@ -11,7 +10,7 @@ const fail = (error, message) => ({ ok: false, error, message });
 let layout = null; // { url, key, seats, floors }
 let statesSinceFull = 0;
 
-export function forgetLayout() {
+function forgetLayout() {
   layout = null;
   statesSinceFull = 0;
 }
@@ -65,7 +64,7 @@ async function send(url, body) {
   }
 }
 
-export function post(connection, personId, action, extra = {}) {
+function post(connection, personId, action, extra = {}) {
   const body = { ...extra, action, device: personId };
   if (connection.adminKey) body.admin = connection.adminKey;
   return send(connection.url, body);
@@ -80,7 +79,7 @@ function normalize(state) {
   return state;
 }
 
-export async function getState(connection, personId) {
+async function getState(connection, personId) {
   let knownKey = null;
 
   if (layout && layout.url === connection.url) {
@@ -117,9 +116,11 @@ export async function getState(connection, personId) {
   return normalize(full);
 }
 
-export async function saveLayout(connection, personId, seats, floors) {
+async function saveLayout(connection, personId, seats, floors) {
   forgetLayout();
   const response = await post(connection, personId, 'saveLayout', { seats, floors });
   forgetLayout();
   return response;
 }
+Object.assign(window.Jjim = window.Jjim || {}, { forgetLayout, post, getState, saveLayout });
+})();

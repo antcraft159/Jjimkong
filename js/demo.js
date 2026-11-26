@@ -1,6 +1,8 @@
+(() => {
+'use strict';
+const { DEMO_ADMIN_KEY } = window.Jjim;
 // 구글 없이 화면을 시험하는 가짜 좌석 예약 서버. 응답 · 오류 문구는 Hagah Tools/seat-reservation/Code.gs 와 같아야 한다.
 
-import { DEMO_ADMIN_KEY } from './links.js';
 
 const STORAGE_KEY = 'jjimkong.demo';
 const SCHEMA_VERSION = 1;
@@ -291,6 +293,35 @@ function rename(state, device, rawName) {
   return { ok: true };
 }
 
+function requirePin(pin) {
+  if (typeof pin !== 'string' || !/^\d{4}$/.test(pin)) throw userError('bad-pin', '비밀번호는 숫자 4자리로 적어 주세요.');
+}
+
+function pinKey(name, pin) {
+  return plainName(name).replace(/\s+/g, '').toLowerCase() + '|' + pin;
+}
+
+function setPin(state, device, rawName, pin) {
+  requireDevice(device);
+  const name = cleanName(rawName);
+  requirePin(pin);
+  state.pins = state.pins || {};
+  const key = pinKey(name, pin);
+  if (state.pins[key] && state.pins[key] !== device) throw userError('pin-used', '같은 이름에 같은 비밀번호를 쓰는 분이 있어요. 다른 번호를 골라 주세요.');
+  for (const other of Object.keys(state.pins)) if (state.pins[other] === device) delete state.pins[other];
+  state.pins[key] = device;
+  save(state);
+  return { ok: true };
+}
+
+function reclaim(state, rawName, pin) {
+  const name = cleanName(rawName);
+  requirePin(pin);
+  const device = (state.pins || {})[pinKey(name, pin)];
+  if (!device) throw userError('pin-wrong', '이름이나 비밀번호가 맞지 않아요. 비밀번호를 정할 때 쓴 이름 그대로 적어 주세요.');
+  return { ok: true, device };
+}
+
 function saveLayout(state, rawSeats, rawFloors) {
   if (!Array.isArray(rawSeats)) throw userError('bad-request', '배치도를 읽지 못했습니다.');
   if (rawSeats.length > MAX_SEATS) throw userError('too-many', '좌석은 ' + MAX_SEATS + '개까지 만들 수 있습니다.');
@@ -380,6 +411,8 @@ function handle(request) {
     case 'move': return move(state, device, request.name, String(request.from || ''), String(request.seat || ''), isAdmin);
     case 'cancel': return cancel(state, device, String(request.seat || ''));
     case 'rename': return rename(state, device, request.name);
+    case 'setPin': return setPin(state, device, request.name, request.pin);
+    case 'reclaim': return reclaim(state, request.name, request.pin);
   }
 
   if (!isAdmin) throw userError('not-admin', '관리자만 할 수 있습니다. 관리자 QR 로 다시 연결해 주세요.');
@@ -394,7 +427,7 @@ function handle(request) {
   throw userError('bad-action', '모르는 요청입니다. 앱을 최신 판으로 올려 주세요.');
 }
 
-export function handleDemo(body) {
+function handleDemo(body) {
   let result;
   try {
     result = handle(body && typeof body === 'object' ? body : {});
@@ -406,3 +439,5 @@ export function handleDemo(body) {
   result.schema = SCHEMA_VERSION;
   return result;
 }
+Object.assign(window.Jjim = window.Jjim || {}, { handleDemo });
+})();

@@ -1,22 +1,19 @@
-import {
-  SeatGeometry, LayoutDraft, CELL_W, CELL_H, FAN_ANGLE, ROUND_ANGLE, MIN_ANGLE, MAX_ANGLE,
-  MAX_ROWS, MAX_COLS, floorName, normalizeKind, normalizeShape, kindName
-} from './geometry.js';
-import {
-  parseCode, memberUrlFromParams, buildInvite, buildShareText, fingerprint, TEMPLATE_COPY_URL, DEMO_URL
-} from './links.js';
-import { post, getState, saveLayout as postLayout, forgetLayout } from './api.js';
-
+(() => {
+'use strict';
+const { SeatGeometry, LayoutDraft, CELL_W, CELL_H, FAN_ANGLE, ROUND_ANGLE, MIN_ANGLE, MAX_ANGLE, MAX_ROWS, MAX_COLS, floorName, normalizeKind, normalizeShape, kindName, parseCode, memberUrlFromParams, buildInvite, buildShareText, fingerprint, TEMPLATE_COPY_URL, DEMO_URL, post, getState, saveLayout: postLayout, forgetLayout } = window.Jjim;
 const REFRESH_MS = 20000;
 const STORE_KEY = 'jjimkong.v1';
 const HALF_DIAGONAL = 40;
 const STAGE_VISIBLE = 40;
 const MIN_ZOOM = 0.5;
+const MAX_ZOOM = 1.8;
 
 const $ = id => document.getElementById(id);
 const clamp = (v, min, max) => Math.min(Math.max(v, min), max);
 
 // ───────────── 저장 ─────────────
+
+const PERSON_PATTERN = /^[A-Za-z0-9-]{8,64}$/;
 
 function randomId() {
   const bytes = new Uint8Array(16);
@@ -27,8 +24,9 @@ function randomId() {
 function loadStore() {
   let data = {};
   try { data = JSON.parse(localStorage.getItem(STORE_KEY) || '{}') || {}; } catch (e) { data = {}; }
-  if (typeof data.personId !== 'string' || !/^[a-f0-9]{32}$/.test(data.personId)) data.personId = randomId();
+  if (typeof data.personId !== 'string' || !PERSON_PATTERN.test(data.personId)) data.personId = randomId();
   if (typeof data.name !== 'string') data.name = '';
+  if (!data.pins || typeof data.pins !== 'object') data.pins = {};
   if (!data.conn || typeof data.conn.url !== 'string') data.conn = null;
   return data;
 }
@@ -110,6 +108,9 @@ async function connect() {
     return;
   }
 
+  const own = readOwnKey($('codeInput').value.replace(/\s+/g, ''));
+  if (own.key) store.personId = own.key;
+  if (own.name && !$('nameInput').value.trim()) $('nameInput').value = own.name;
   store.name = $('nameInput').value.trim();
   saveStore();
 
@@ -147,7 +148,10 @@ async function disconnect() {
     ? '연결을 끊어도 찜해 둔 자리는 그대로 남아요. 이 브라우저에서 같은 코드로 다시 연결하면 내 자리로 보여요. 끊을까요?'
     : '좌석 예약 연결을 끊을까요? 같은 코드로 언제든 다시 연결할 수 있어요.';
   if (!await confirmBox('연결 끊기', text)) return;
+  await dropConnection();
+}
 
+async function dropConnection() {
   store.conn = null;
   saveStore();
   forgetLayout();
@@ -191,10 +195,55 @@ function readHash() {
 
   if (/(^|&)s=/.test(hash)) {
     const url = memberUrlFromParams(hash);
+    const own = readOwnKey('#' + hash);
     history.replaceState(null, '', location.pathname + location.search);
-    if (url) acceptInvite(url);
-    else say('초대 링크를 읽지 못했어요. 링크가 잘렸을 수 있어요. 관리자에게 다시 받아 주세요.');
+    if (!url) say('초대 링크를 읽지 못했어요. 링크가 잘렸을 수 있어요. 관리자에게 다시 받아 주세요.');
+    else if (own.key) acceptMyLink(url, own.key, own.name);
+    else acceptInvite(url);
   }
+}
+
+function readOwnKey(text) {
+  const key = /[#&]k=([A-Za-z0-9-]{8,64})(?=&|$)/.exec(text);
+  const name = /[#&]n=([^&]*)/.exec(text);
+  let decoded = '';
+  try { decoded = name ? decodeURIComponent(name[1]).trim().slice(0, 20) : ''; } catch (e) { decoded = ''; }
+  return { key: key ? key[1] : '', name: decoded };
+}
+
+const OWN_LINK_DONE = '내 자리 링크로 들어왔어요. 찜해 둔 자리가 내 자리로 보여요.';
+
+async function acceptMyLink(url, key, name) {
+  if (store.conn && store.conn.url !== url) {
+    if (!await confirmBox('내 자리 링크', '지금 다른 좌석 예약에 연결돼 있어요. 링크의 좌석 예약으로 바꿀까요?')) return;
+    await dropConnection();
+  }
+
+  if (store.conn) {
+    await adoptPerson(key, name, OWN_LINK_DONE);
+    return;
+  }
+
+  store.personId = key;
+  if (name) store.name = name;
+  saveStore();
+  $('nameInput').value = store.name;
+  $('codeInput').value = url;
+  await connect();
+  if (isConnected()) say(OWN_LINK_DONE);
+}
+
+async function adoptPerson(personId, name, doneText) {
+  if (personId !== store.personId) {
+    const hasMine = seats.some(seat => seat.state === 'mine');
+    if (hasMine && !await confirmBox('내 자리 되찾기',
+      '이 브라우저에서 새로 찜한 자리는 더 이상 내 자리로 보이지 않아요(남아 있으면 관리자가 취소할 수 있어요). 바꿀까요?')) return;
+    store.personId = personId;
+  }
+  if (name) store.name = name;
+  saveStore();
+  await refresh(false);
+  say(doneText);
 }
 
 async function updateCodeCheck() {
@@ -476,11 +525,13 @@ async function copyInvite() {
     return;
   }
 
-  const text = buildShareText(link, lastState ? lastState.room : '', connFingerprint);
+  await copyText(buildShareText(link, lastState ? lastState.room : '', connFingerprint), '초대 글을 복사했어요. 카톡 단체방에 붙여 넣으세요.');
+}
 
+async function copyText(text, doneText) {
   try {
     await navigator.clipboard.writeText(text);
-    say('초대 글을 복사했어요. 카톡 단체방에 붙여 넣으세요.');
+    say(doneText);
   } catch (e) {
     const area = document.createElement('textarea');
     area.value = text;
@@ -488,7 +539,97 @@ async function copyInvite() {
     area.select();
     const ok = document.execCommand && document.execCommand('copy');
     area.remove();
-    say(ok ? '초대 글을 복사했어요. 카톡 단체방에 붙여 넣으세요.' : '복사하지 못했어요. 다시 눌러 주세요.');
+    say(ok ? doneText : '복사하지 못했어요. 다시 눌러 주세요.');
+  }
+}
+
+// ───────────── 내 자리 지키기 ─────────────
+
+function myLink() {
+  const invite = inviteLink();
+  if (!invite) return null;
+  return invite + '&k=' + store.personId + (store.name ? '&n=' + encodeURIComponent(store.name) : '');
+}
+
+async function copyMyLink() {
+  const link = myLink();
+  if (!link) {
+    say(store.conn && store.conn.url === DEMO_URL ? '체험 모드에서는 내 자리 링크를 만들 수 없어요.' : '이 연결 주소로는 내 자리 링크를 만들 수 없어요.');
+    return;
+  }
+  const room = String(lastState ? lastState.room : '').trim();
+  const text = `[${room ? room + ' ' : ''}내 자리 링크]\n나만 갖고 계세요. 이 링크를 누르면 어느 기기에서든 내가 찜한 자리로 들어가요.\n${link}`;
+  await copyText(text, "내 자리 링크를 복사했어요. 카톡 '나와의 채팅'이나 메모에 붙여 두세요.");
+}
+
+let pinMode = 'set';
+
+function openPinDialog(mode) {
+  pinMode = mode;
+  const setting = mode === 'set';
+  $('pinTitle').textContent = setting ? (hasPin() ? '비밀번호 바꾸기' : '비밀번호 정하기') : '내 자리 되찾기';
+  $('pinText').textContent = setting
+    ? '기록을 지우거나 기기를 바꿨을 때 이 이름과 비밀번호로 내 자리를 되찾아요. 생일처럼 남이 짐작하기 쉬운 번호는 피해 주세요.'
+    : '비밀번호를 정할 때 쓴 이름과 비밀번호를 넣으세요. 그때 찜한 자리가 다시 내 자리로 보여요.';
+  $('pinNameInput').value = store.name;
+  $('pinInput').value = '';
+  showPinMessage('');
+  $('pinOkButton').disabled = false;
+  $('pinDialog').showModal();
+  ($('pinNameInput').value ? $('pinInput') : $('pinNameInput')).focus();
+}
+
+function showPinMessage(text) {
+  $('pinMessage').textContent = text;
+  $('pinMessage').hidden = !text;
+}
+
+function hasPin() {
+  return !!(store.conn && store.pins[store.conn.url]);
+}
+
+async function submitPin(event) {
+  if (event.submitter && event.submitter.value !== 'yes') return;
+  event.preventDefault();
+  if (!store.conn || $('pinOkButton').disabled) return;
+
+  const name = $('pinNameInput').value.trim();
+  const pin = $('pinInput').value.trim();
+  if (!name) return showPinMessage('이름을 적어 주세요.');
+  if (!/^\d{4}$/.test(pin)) return showPinMessage('비밀번호는 숫자 4자리로 적어 주세요.');
+
+  const conn = store.conn;
+  $('pinOkButton').disabled = true;
+  showPinMessage('보내는 중…');
+  const response = await post(conn, store.personId, pinMode === 'set' ? 'setPin' : 'reclaim', { name, pin });
+  $('pinOkButton').disabled = false;
+
+  if (!response.ok) {
+    showPinMessage(response.error === 'bad-action'
+      ? '이 좌석 예약 시트가 아직 옛 판이라 비밀번호를 쓸 수 없어요. 관리자에게 시트를 새 판으로 배포해 달라고 해 주세요.'
+      : response.message || '되지 않았어요. 다시 해 주세요.');
+    return;
+  }
+  if (pinMode === 'reclaim' && !PERSON_PATTERN.test(String(response.device || ''))) {
+    showPinMessage('답을 읽지 못했어요. 다시 해 주세요.');
+    return;
+  }
+
+  $('pinDialog').close();
+
+  if (pinMode === 'set') {
+    store.pins[conn.url] = true;
+    saveStore();
+    render();
+    say('비밀번호를 정했어요. 이름과 함께 꼭 기억해 두세요.');
+    return;
+  }
+
+  await adoptPerson(response.device, name, '내 자리를 되찾았어요.');
+  if (store.personId === response.device && store.conn === conn) {
+    store.pins[conn.url] = true;
+    saveStore();
+    render();
   }
 }
 
@@ -699,6 +840,9 @@ function render() {
   $('adminActions').hidden = editing();
   $('editorPanel').hidden = !editing();
   $('guideLink').href = admin ? 'guide.html#admin' : 'guide.html#member';
+  $('pinButton').textContent = hasPin() ? '비밀번호 바꾸기' : '비밀번호 정하기';
+  $('pinState').textContent = hasPin() ? '이 기기에서 비밀번호를 정해 뒀어요.' : '';
+  $('pinState').hidden = !hasPin();
 
   if (editing()) syncEditorControls();
   buildFloorPanel();
@@ -975,9 +1119,15 @@ function updateZoom() {
   inner.style.transform = '';
   const width = inner.offsetWidth;
   const height = inner.offsetHeight;
-  const available = $('boardScroll').clientWidth;
-  zoom = !editing() && available > 0 && width > available ? clamp(available / width, MIN_ZOOM, 1) : 1;
-  inner.style.transform = zoom < 1 ? `scale(${zoom})` : '';
+  const box = $('boardScroll');
+  const availableWidth = box.clientWidth - 2;
+  const availableHeight = box.clientHeight - 2;
+  const wide = matchMedia('(min-width: 961px)').matches;
+  const canFit = !editing() || !matchMedia('(pointer: coarse)').matches;
+  let fit = width > 0 ? availableWidth / width : 1;
+  if (wide && height > 0 && availableHeight > 0) fit = Math.min(fit, availableHeight / height);
+  zoom = canFit && availableWidth > 0 ? clamp(fit, MIN_ZOOM, wide ? MAX_ZOOM : 1) : 1;
+  inner.style.transform = zoom !== 1 ? `scale(${zoom})` : '';
   zoomBox.style.width = Math.ceil(width * zoom) + 'px';
   zoomBox.style.height = Math.ceil(height * zoom) + 'px';
 }
@@ -1104,6 +1254,10 @@ function wire() {
   $('nextSessionButton').addEventListener('click', nextSession);
   $('inviteCopyButton').addEventListener('click', copyInvite);
   $('inviteQrButton').addEventListener('click', showQr);
+  $('myLinkButton').addEventListener('click', copyMyLink);
+  $('pinButton').addEventListener('click', () => openPinDialog('set'));
+  $('reclaimButton').addEventListener('click', () => openPinDialog('reclaim'));
+  $('pinForm').addEventListener('submit', submitPin);
 
   $('toolPanel').addEventListener('click', event => {
     const pill = event.target.closest('.pill');
@@ -1114,10 +1268,10 @@ function wire() {
   $('shapePanel').addEventListener('click', event => {
     const pill = event.target.closest('[data-shape]');
     if (pill) setShapePreset(pill.dataset.shape);
-    const angle = event.target.closest('[data-angle]');
-    if (angle) changeAngle(Number(angle.dataset.angle));
   });
   $('editorPanel').addEventListener('click', event => {
+    const angle = event.target.closest('[data-angle]');
+    if (angle) changeAngle(Number(angle.dataset.angle));
     const button = event.target.closest('[data-resize]');
     if (!button) return;
     const action = button.dataset.resize;
@@ -1128,7 +1282,7 @@ function wire() {
   $('cancelEditButton').addEventListener('click', cancelEdit);
 
   window.addEventListener('hashchange', readHash);
-  window.addEventListener('resize', () => { if (isConnected()) updateZoom(); });
+  new ResizeObserver(() => { if (isConnected()) updateZoom(); }).observe($('boardScroll'));
   document.addEventListener('visibilitychange', () => { if (!document.hidden) refresh(true); });
   window.addEventListener('beforeunload', event => {
     if (editing()) {
@@ -1151,3 +1305,4 @@ async function start() {
 }
 
 start();
+})();

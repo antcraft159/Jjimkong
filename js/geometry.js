@@ -1,30 +1,31 @@
+(() => {
+'use strict';
+const CELL_W = 62;
+const CELL_H = 50;
+const MAX_ARC_SEATS = 99;
+const MIN_ANGLE = 30;
+const MAX_ANGLE = 360;
+const MIN_DRAW_RADIUS = CELL_W * 1.5;
+const FAN_ANGLE = 120;
+const ROUND_ANGLE = 330;
 
-export const CELL_W = 62;
-export const CELL_H = 50;
-export const MAX_ARC_SEATS = 99;
-export const MIN_ANGLE = 30;
-export const MAX_ANGLE = 360;
-export const MIN_DRAW_RADIUS = CELL_W * 1.5;
-export const FAN_ANGLE = 120;
-export const ROUND_ANGLE = 330;
+const KINDS = ['chair', 'desk', 'pew', 'extra'];
 
-export const KINDS = ['chair', 'desk', 'pew', 'extra'];
-
-export function normalizeKind(kind) {
+function normalizeKind(kind) {
   return KINDS.includes(kind) ? kind : 'chair';
 }
 
-export function normalizeShape(shape) {
+function normalizeShape(shape) {
   return shape === 'arc' ? 'arc' : 'grid';
 }
 
-export function kindName(kind) {
+function kindName(kind) {
   return { desk: '책상 의자', pew: '장의자', extra: '보조 의자' }[kind] || '1인 의자';
 }
 
 const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
 
-export class SeatGeometry {
+class SeatGeometry {
   constructor(shape, angle, rows, cols) {
     this.isArc = normalizeShape(shape) === 'arc';
     this.angle = this.isArc ? clamp(angle | 0, MIN_ANGLE, MAX_ANGLE) : 0;
@@ -135,19 +136,19 @@ export class SeatGeometry {
 
 // ───────────── 배치도 그리기 판 ─────────────
 
-export const MAX_ROWS = 30;
-export const MAX_COLS = 40;
-export const MAX_SEATS = 2000;
-export const MAX_FLOORS = 9;
-export const DEFAULT_ROWS = 12;
-export const DEFAULT_COLS = 16;
+const MAX_ROWS = 30;
+const MAX_COLS = 40;
+const MAX_SEATS = 2000;
+const MAX_FLOORS = 9;
+const DEFAULT_ROWS = 12;
+const DEFAULT_COLS = 16;
 const MAX_FLOOR_ID = 99;
 
-export function floorName(position) {
+function floorName(position) {
   return (position + 1) + '층';
 }
 
-export function rowName(index) {
+function rowName(index) {
   let text = '';
   let value = index;
   do {
@@ -157,7 +158,7 @@ export function rowName(index) {
   return text;
 }
 
-export function seatId(floor, row, col) {
+function seatId(floor, row, col) {
   const id = 'r' + row + 'c' + col;
   return floor === 0 ? id : 'f' + floor + id;
 }
@@ -172,7 +173,7 @@ function floorGeometry(floor) {
   return new SeatGeometry(floor.shape, floor.angle, floor.rows, floor.cols);
 }
 
-export class LayoutDraft {
+class LayoutDraft {
   constructor() {
     this.floors = [makeFloor(0, 'grid', 0, DEFAULT_ROWS, DEFAULT_COLS)];
     this.usedFloorIds = new Set([0]);
@@ -405,3 +406,5 @@ export class LayoutDraft {
     return result;
   }
 }
+Object.assign(window.Jjim = window.Jjim || {}, { CELL_W, CELL_H, MAX_ARC_SEATS, MIN_ANGLE, MAX_ANGLE, MIN_DRAW_RADIUS, FAN_ANGLE, ROUND_ANGLE, KINDS, normalizeKind, normalizeShape, kindName, SeatGeometry, MAX_ROWS, MAX_COLS, MAX_SEATS, MAX_FLOORS, DEFAULT_ROWS, DEFAULT_COLS, floorName, rowName, seatId, LayoutDraft });
+})();

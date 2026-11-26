@@ -169,6 +169,17 @@
           <p class="status" id="statusText"></p>
         </div>
 
+        <div class="panel">
+          <div class="panel-title">내 자리 지키기</div>
+          <p class="hint">브라우저 기록을 지우거나 기기를 바꿔도 내 자리를 되찾을 수 있게 둘 중 하나를 해 두세요.</p>
+          <div class="keep-actions">
+            <button class="btn" id="myLinkButton" type="button">내 자리 링크 복사</button>
+            <button class="btn" id="pinButton" type="button">비밀번호 정하기</button>
+          </div>
+          <p class="muted" id="pinState" hidden></p>
+          <button class="link-btn" id="reclaimButton" type="button">다른 기기에서 찜했나요? 내 자리 되찾기</button>
+        </div>
+
         <div class="panel admin" id="adminPanel" hidden>
           <div class="panel-title">관리</div>
           <div class="admin-block" id="adminControls">
@@ -253,6 +264,26 @@
   </form>
 </dialog>
 
+<dialog id="pinDialog">
+  <form method="dialog" id="pinForm">
+    <h3 id="pinTitle"></h3>
+    <p id="pinText"></p>
+    <label class="field">
+      <span>이름</span>
+      <input id="pinNameInput" type="text" maxlength="20" autocomplete="name">
+    </label>
+    <label class="field">
+      <span>비밀번호 <small>(숫자 4자리)</small></span>
+      <input id="pinInput" type="password" inputmode="numeric" pattern="\d{4}" maxlength="4" autocomplete="off">
+    </label>
+    <p class="message" id="pinMessage" hidden></p>
+    <div class="row end">
+      <button class="btn ghost" value="no" formnovalidate>그만</button>
+      <button class="btn primary" value="yes" id="pinOkButton">확인</button>
+    </div>
+  </form>
+</dialog>
+
 <dialog id="qrDialog">
   <form method="dialog">
     <h3>초대 QR</h3>
@@ -266,6 +297,10 @@
 <footer class="foot">찜콩</footer>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" defer></script>
-<script type="module" src="js/app.js"></script>
+<script src="js/geometry.js" defer></script>
+<script src="js/links.js" defer></script>
+<script src="js/demo.js" defer></script>
+<script src="js/api.js" defer></script>
+<script src="js/app.js" defer></script>
 </body>
 </html>
