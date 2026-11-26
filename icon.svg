@@ -5,6 +5,4 @@
   <circle cx="22" cy="28" r="2.4" fill="#2a3a22"/>
   <circle cx="30" cy="37" r="2.4" fill="#2a3a22"/>
   <path d="M21 40q5 5 11 1" stroke="#2a3a22" stroke-width="2.4" fill="none" stroke-linecap="round"/>
-  <circle cx="49" cy="15" r="6" fill="#f2c14e"/>
-  <path d="M46 15l2 2 4-4" stroke="#3f7d3a" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>
