@@ -642,6 +642,9 @@ function render() {
   const connected = isConnected();
   $('connectView').hidden = connected;
   $('seatView').hidden = !connected;
+  $('roomLine').hidden = !connected;
+  $('topbarSep').hidden = !connected;
+  $('topbarActions').hidden = !connected;
 
   if (!connected) {
     $('nameInput').value = $('nameInput').value || store.name;
@@ -658,10 +661,20 @@ function render() {
 
   const open = seats.filter(seat => seat.state !== 'blocked').length;
   const reserved = seats.filter(seat => seat.state === 'taken' || seat.state === 'mine').length;
-  $('reservedCount').textContent = open ? `${reserved} / ${open}자리 찜함` : '';
-
   const mine = seats.filter(seat => seat.state === 'mine').map(seat => seat.label);
-  let mineText = mine.length ? '내 자리: ' + mine.join(', ') : '';
+  const percent = open ? Math.round(reserved / open * 100) : 0;
+  $('statTotal').textContent = open;
+  $('statReserved').textContent = reserved;
+  $('statFree').textContent = open - reserved;
+  $('statMine').textContent = mine.length ? mine.join(', ') : '—';
+  $('statMeter').style.width = percent + '%';
+  $('reservedCount').textContent = open ? `${percent}% 찼어요` : '';
+
+  const phase = !state ? 'loading' : !state.published ? 'off' : state.isOpen ? 'on' : 'closed';
+  $('statusChip').textContent = { loading: '불러오는 중', off: '공개 전', on: '예약 중', closed: '예약 시간 아님' }[phase];
+  $('statusChip').className = 'chip ' + phase;
+
+  let mineText = '';
   if (state) {
     const shown = new Set(seats.map(seat => seat.id));
     const ghosts = state.taken.filter(item => item.mine && !shown.has(item.seat)).length;
@@ -680,7 +693,7 @@ function render() {
     $('publishedToggle').checked = !!state.published;
     $('showNamesToggle').checked = state.showNames !== false;
     $('maxValue').textContent = state.maxPerPerson;
-    $('sessionText').textContent = `회차 ${state.session || 1}`;
+    $('sessionText').textContent = `${state.session || 1}회차`;
   }
   $('adminControls').hidden = editing();
   $('adminActions').hidden = editing();
