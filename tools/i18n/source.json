@@ -1,0 +1,1077 @@
+{
+ "keys": [
+  {
+   "key": "관리자가 나눠 준 링크로 들어왔다면 이름만 적고 <b>[연결]</b> 을 누르세요.",
+   "context": "HTML(태그 유지) section#connectView > div.connect-head > p.lead"
+  },
+  {
+   "key": "내 이름 <small>(좌석표에 보여요)</small>",
+   "context": "HTML(태그 유지) div.panel > label.field > span"
+  },
+  {
+   "key": "관리자 공지의 번호와 같은지 보세요. <b>다르면 가짜 링크</b>일 수 있으니 연결하지 마세요.",
+   "context": "HTML(태그 유지) div.panel > div#codeCheck.check > p"
+  },
+  {
+   "key": "시트의 <b>[2. 연결 QR 보기]</b> 에 있는 <b>관리자용 글</b>을 연결 코드 칸에 붙여 넣으면 관리자로 들어와요.",
+   "context": "HTML(태그 유지) div.side-stack > div.panel > p.hint"
+  },
+  {
+   "key": "브라우저 기록을 지우거나 휴대폰을 바꾸면 찜한 자리가 내 것으로 안 보일 수 있어요. 아래 <b>둘 중 하나</b>만 해 두면 언제든 되찾을 수 있어요.",
+   "context": "HTML(태그 유지) section#seatView > div#keepGate.gate > p.lead"
+  },
+  {
+   "key": "비밀번호 <small>(숫자 4자리)</small>",
+   "context": "HTML(태그 유지) form#pinForm > label.field > span"
+  },
+  {
+   "key": "찜!",
+   "context": "화면 글자 div#splash.splash > div.splash-stage > div.splash-pop"
+  },
+  {
+   "key": "관리자",
+   "context": "화면 글자 div.topbar-inner > div#roomLine.room-line > span#adminBadge.chip.warn"
+  },
+  {
+   "key": "새로 고침",
+   "context": "화면 글자 div.topbar-inner > nav#topbarActions.topbar-actions > button#refreshButton.btn.ghost.small"
+  },
+  {
+   "key": "사용법",
+   "context": "화면 글자 div.topbar-inner > nav#topbarActions.topbar-actions > a#guideLink.btn.ghost.small / 화면 글자 div.panel > div.row > a.btn.ghost"
+  },
+  {
+   "key": "연결 끊기",
+   "context": "화면 글자 div.topbar-inner > nav#topbarActions.topbar-actions > button#disconnectButton.btn.ghost.small / app.js:153: if (!await confirmBox(t('연결 끊기'), text)) return;"
+  },
+  {
+   "key": "자리 찜하기",
+   "context": "화면 글자 section#connectView > div.connect-head > h1"
+  },
+  {
+   "key": "연결",
+   "context": "화면 글자 div.connect-grid > div.panel > div.panel-title / 화면 글자 div.connect-grid > div.panel > button#connectButton.btn.primary.big"
+  },
+  {
+   "key": "연결 코드",
+   "context": "화면 글자 div.panel > label.field > span"
+  },
+  {
+   "key": "확인 번호",
+   "context": "화면 글자 div.panel > div#codeCheck.check > span.check-label / 화면 글자 div.panel > div.kv > span / 화면 글자 dialog#qrDialog > form > p.check-line"
+  },
+  {
+   "key": "처음이라면",
+   "context": "화면 글자 div.side-stack > div.panel > div.panel-title"
+  },
+  {
+   "key": "실제 시트 없이 좌석표를 눌러 볼 수 있어요.",
+   "context": "화면 글자 div.side-stack > div.panel > p.hint"
+  },
+  {
+   "key": "체험해 보기",
+   "context": "화면 글자 div.panel > div.row > button#demoButton.btn"
+  },
+  {
+   "key": "관리자(교회)",
+   "context": "화면 글자 div.side-stack > div.panel > div.panel-title"
+  },
+  {
+   "key": "좌석 예약 시트를 내 구글 드라이브에 만들어 쓰세요. PC 에서 하시는 게 편해요.",
+   "context": "화면 글자 div.side-stack > div.panel > p.hint"
+  },
+  {
+   "key": "시트 만들기",
+   "context": "화면 글자 div.panel > div.row > a#templateLink.btn"
+  },
+  {
+   "key": "관리자 사용법",
+   "context": "화면 글자 div.panel > div.row > a.btn.ghost"
+  },
+  {
+   "key": "예약 기록과 이름은 관리자의 구글 시트에만 저장돼요. 찜콩은 따로 모으지 않아요.",
+   "context": "화면 글자 main > section#connectView > p.fine"
+  },
+  {
+   "key": "1. 내 자리 지키기",
+   "context": "화면 글자 div#keepGate.gate > div.gate-steps > b"
+  },
+  {
+   "key": "2. 자리 찜하기",
+   "context": "화면 글자 div#keepGate.gate > div.gate-steps > span"
+  },
+  {
+   "key": "찜하기 전에, 내 자리부터 지켜 두세요",
+   "context": "화면 글자 section#seatView > div#keepGate.gate > h1"
+  },
+  {
+   "key": "추천",
+   "context": "화면 글자 div.gate-grid > div.panel.gate-option > span.gate-tag"
+  },
+  {
+   "key": "비밀번호 정하기",
+   "context": "화면 글자 div.gate-grid > div.panel.gate-option > h2 / 화면 글자 div.gate-grid > div.panel.gate-option > button#gatePinButton.btn.primary.big / 화면 글자 div.panel > div.keep-actions > button#pinButton.btn"
+  },
+  {
+   "key": "이름과 숫자 4자리만 기억하면 어느 기기에서든 내 자리로 돌아와요.",
+   "context": "화면 글자 div.gate-grid > div.panel.gate-option > p.hint"
+  },
+  {
+   "key": "내 자리 링크 저장",
+   "context": "화면 글자 div.gate-grid > div.panel.gate-option > h2"
+  },
+  {
+   "key": "카톡 '나와의 채팅'이나 메모에 링크를 보내 두세요. 링크를 누르면 바로 내 자리예요.",
+   "context": "화면 글자 div.gate-grid > div.panel.gate-option > p.hint"
+  },
+  {
+   "key": "내 자리 링크 보내기",
+   "context": "화면 글자 div.gate-grid > div.panel.gate-option > button#gateLinkButton.btn.big"
+  },
+  {
+   "key": "전에 비밀번호를 정해 두었나요? 내 자리 되찾기",
+   "context": "화면 글자 section#seatView > div#keepGate.gate > button#gateReclaimButton.link-btn.gate-reclaim"
+  },
+  {
+   "key": "전체 좌석",
+   "context": "화면 글자 div#statsRow.stats > div.stat > span.stat-label"
+  },
+  {
+   "key": "찜함",
+   "context": "화면 글자 div#statsRow.stats > div.stat > span.stat-label / app.js:1356: : seat.state === 'taken' ? (seat.name || t('찜함')) / app.js:1365: const stateText = { mine: t('내 자리'), taken: seat.name || t('찜함'), blocked: t('앉을 수 없는 자리'), free: t('빈자리') }[seat.state];"
+  },
+  {
+   "key": "빈자리",
+   "context": "화면 글자 div#statsRow.stats > div.stat > span.stat-label / 화면 글자 div.board-toolbar > div.legend > span / app.js:1365: const stateText = { mine: t('내 자리'), taken: seat.name || t('찜함'), blocked: t('앉을 수 없는 자리'), free: t('빈자리') }[seat.state];"
+  },
+  {
+   "key": "내 자리",
+   "context": "화면 글자 div#statsRow.stats > div.stat.accent > span.stat-label / 화면 글자 div.board-toolbar > div.legend > span / app.js:1130: addPill(floorLabel(position) + (mine ? ' · ' + t('내 자리') : ''), floor.f === viewFloorId, () => {"
+  },
+  {
+   "key": "예약됨",
+   "context": "화면 글자 div.board-toolbar > div.legend > span"
+  },
+  {
+   "key": "앉을 수 없음",
+   "context": "화면 글자 div.board-toolbar > div.legend > span / 화면 글자 div#editorPanel.editor > div#toolPanel.seg > button.pill"
+  },
+  {
+   "key": "책상",
+   "context": "화면 글자 div.board-toolbar > div.legend > span / app.js:1382: const shortKind = { desk: t('책상'), pew: t('장'), extra: t('보조'), chair: t('의자') };"
+  },
+  {
+   "key": "장의자",
+   "context": "화면 글자 div.board-toolbar > div.legend > span / 화면 글자 div#editorPanel.editor > div#toolPanel.seg > button.pill / 의자 종류: 여러 명이 앉는 긴 의자(pew)"
+  },
+  {
+   "key": "보조",
+   "context": "화면 글자 div.board-toolbar > div.legend > span / app.js:1357: : seat.kind === 'extra' ? t('보조') : ''; / app.js:1382: const shortKind = { desk: t('책상'), pew: t('장'), extra: t('보조'), chair: t('의자') };"
+  },
+  {
+   "key": "출입문",
+   "context": "화면 글자 div.board-toolbar > div.legend > span / 배치도 물건 이름: 출입문(door)"
+  },
+  {
+   "key": "창문",
+   "context": "화면 글자 div.board-toolbar > div.legend > span / 배치도 물건 이름: 창문(window)"
+  },
+  {
+   "key": "앞 (강단)",
+   "context": "화면 글자 div#boardZoom.board-zoom > div#boardInner.board-inner > div#frontBand.front / app.js:1222: band.textContent = t('앞 (강단)');"
+  },
+  {
+   "key": "아직 좌석표가 없어요.",
+   "context": "화면 글자 div.panel.board-panel > div#boardScroll.board-scroll > p#emptyText.empty"
+  },
+  {
+   "key": "내 정보",
+   "context": "화면 글자 aside.side-stack > div.panel > div.panel-title"
+  },
+  {
+   "key": "내 이름",
+   "context": "화면 글자 div.panel > label.field.compact > span"
+  },
+  {
+   "key": "내 자리 지키기",
+   "context": "화면 글자 aside.side-stack > div.panel > div.panel-title"
+  },
+  {
+   "key": "브라우저 기록을 지우거나 기기를 바꿔도 내 자리를 되찾을 수 있게 둘 중 하나를 해 두세요.",
+   "context": "화면 글자 aside.side-stack > div.panel > p.hint"
+  },
+  {
+   "key": "내 자리 링크 복사",
+   "context": "화면 글자 div.panel > div.keep-actions > button#myLinkButton.btn"
+  },
+  {
+   "key": "다른 기기에서 찜했나요? 내 자리 되찾기",
+   "context": "화면 글자 aside.side-stack > div.panel > button#reclaimButton.link-btn"
+  },
+  {
+   "key": "관리",
+   "context": "화면 글자 aside.side-stack > div#adminPanel.panel.admin > div.panel-title"
+  },
+  {
+   "key": "공개",
+   "context": "화면 글자 div#adminControls.admin-block > label.switch > span"
+  },
+  {
+   "key": "이름 보이기",
+   "context": "화면 글자 div#adminControls.admin-block > label.switch > span"
+  },
+  {
+   "key": "1인 최대",
+   "context": "화면 글자 div#adminControls.admin-block > div.stepper > span"
+  },
+  {
+   "key": "회차",
+   "context": "화면 글자 div#adminControls.admin-block > div.kv > span"
+  },
+  {
+   "key": "배치도 고치기",
+   "context": "화면 글자 div#adminPanel.panel.admin > div#adminActions.admin-actions > button#editLayoutButton.btn"
+  },
+  {
+   "key": "초대 링크 복사",
+   "context": "화면 글자 div#adminPanel.panel.admin > div#adminActions.admin-actions > button#inviteCopyButton.btn"
+  },
+  {
+   "key": "초대 QR",
+   "context": "화면 글자 div#adminPanel.panel.admin > div#adminActions.admin-actions > button#inviteQrButton.btn / 화면 글자 dialog#qrDialog > form > h3"
+  },
+  {
+   "key": "다음 회차로",
+   "context": "화면 글자 div#adminPanel.panel.admin > div#adminActions.admin-actions > button#nextSessionButton.btn.ghost / app.js:523: if (!await confirmBox(t('다음 회차로'), t('지금 예약 {n}자리를 \\'지난 예약\\' 탭으로 옮기고 좌석표를 비워요. 배치도와 공개 상태는 그대로예요. 할까요?', { n: count }))) return;"
+  },
+  {
+   "key": "의자",
+   "context": "화면 글자 div#adminPanel.panel.admin > div#editorPanel.editor > div.sub-title / app.js:1382: const shortKind = { desk: t('책상'), pew: t('장'), extra: t('보조'), chair: t('의자') };"
+  },
+  {
+   "key": "1인 의자",
+   "context": "화면 글자 div#editorPanel.editor > div#toolPanel.seg > button.pill / 의자 종류: 혼자 앉는 의자"
+  },
+  {
+   "key": "책상 의자",
+   "context": "화면 글자 div#editorPanel.editor > div#toolPanel.seg > button.pill / 의자 종류: 책상이 붙은 의자"
+  },
+  {
+   "key": "보조 의자",
+   "context": "화면 글자 div#editorPanel.editor > div#toolPanel.seg > button.pill / 의자 종류: 임시로 놓는 보조 의자"
+  },
+  {
+   "key": "통로 (지우기)",
+   "context": "화면 글자 div#editorPanel.editor > div#toolPanel.seg > button.pill"
+  },
+  {
+   "key": "외벽 · 물건",
+   "context": "화면 글자 div#adminPanel.panel.admin > div#editorPanel.editor > div.sub-title"
+  },
+  {
+   "key": "⬠ 외벽",
+   "context": "화면 글자 div#editorPanel.editor > div#itemPanel.seg > button.pill"
+  },
+  {
+   "key": "강대상",
+   "context": "화면 글자 div#editorPanel.editor > div#itemPanel.seg > button.pill / 배치도 물건 이름: 설교자가 서는 받침대(pulpit/lectern)"
+  },
+  {
+   "key": "🚪 출입문",
+   "context": "화면 글자 div#editorPanel.editor > div#itemPanel.seg > button.pill"
+  },
+  {
+   "key": "🪟 창문",
+   "context": "화면 글자 div#editorPanel.editor > div#itemPanel.seg > button.pill"
+  },
+  {
+   "key": "❄️ 에어컨",
+   "context": "화면 글자 div#editorPanel.editor > div#itemPanel.seg > button.pill"
+  },
+  {
+   "key": "📺 TV · 화면",
+   "context": "화면 글자 div#editorPanel.editor > div#itemPanel.seg > button.pill"
+  },
+  {
+   "key": "🔊 스피커",
+   "context": "화면 글자 div#editorPanel.editor > div#itemPanel.seg > button.pill"
+  },
+  {
+   "key": "기둥",
+   "context": "화면 글자 div#editorPanel.editor > div#itemPanel.seg > button.pill / 배치도 물건 이름: 기둥(pillar)"
+  },
+  {
+   "key": "동그라미(꼭짓점)를 끌어 옮기세요. 변 가운데 작은 점을 끌면 꼭짓점이 생겨요. 꼭짓점을 두 번 누르면 지워져요.",
+   "context": "화면 글자 div#editorPanel.editor > div#outlinePanel.free-help > p.muted"
+  },
+  {
+   "key": "다시 감싸기",
+   "context": "화면 글자 div#outlinePanel.free-help > div.row > button#resetOutlineButton.btn.small"
+  },
+  {
+   "key": "꼭짓점 지우기",
+   "context": "화면 글자 div#outlinePanel.free-help > div.row > button#deleteVertexButton.btn.small"
+  },
+  {
+   "key": "외벽 없애기",
+   "context": "화면 글자 div#outlinePanel.free-help > div.row > button#clearOutlineButton.btn.small.ghost"
+  },
+  {
+   "key": "빈 곳을 누르면 놓여요. 끌어서 옮기고, 출입문 · 창문 · TV · 에어컨은 외벽 가까이 가면 벽에 붙어요. 고른 물건의 ×로 지워요.",
+   "context": "화면 글자 div#adminPanel.panel.admin > div#editorPanel.editor > p#itemHint.muted.free-help"
+  },
+  {
+   "key": "모양",
+   "context": "화면 글자 div#adminPanel.panel.admin > div#editorPanel.editor > div.sub-title"
+  },
+  {
+   "key": "네모",
+   "context": "화면 글자 div#editorPanel.editor > div#shapePanel.seg > button.pill"
+  },
+  {
+   "key": "부채꼴",
+   "context": "화면 글자 div#editorPanel.editor > div#shapePanel.seg > button.pill"
+  },
+  {
+   "key": "원형",
+   "context": "화면 글자 div#editorPanel.editor > div#shapePanel.seg > button.pill"
+  },
+  {
+   "key": "각도",
+   "context": "화면 글자 div#editorPanel.editor > div#anglePanel.stepper > span"
+  },
+  {
+   "key": "줄",
+   "context": "화면 글자 div#editorPanel.editor > div.stepper > span"
+  },
+  {
+   "key": "칸",
+   "context": "화면 글자 div#editorPanel.editor > div.stepper > span#colsLabel / app.js:911: $('colsLabel').textContent = isArc ? t('첫 줄 자리') : t('칸');"
+  },
+  {
+   "key": "화면 움직이기",
+   "context": "화면 글자 div#editorPanel.editor > label.switch.touch-only > span"
+  },
+  {
+   "key": "그만",
+   "context": "화면 글자 div#editorPanel.editor > div.row.end > button#cancelEditButton.btn.ghost / 화면 글자 form#pinForm > div.row.end > button.btn.ghost"
+  },
+  {
+   "key": "저장",
+   "context": "화면 글자 div#editorPanel.editor > div.row.end > button#saveLayoutButton.btn.primary"
+  },
+  {
+   "key": "아니요",
+   "context": "화면 글자 form > div.row.end > button.btn.ghost"
+  },
+  {
+   "key": "네",
+   "context": "화면 글자 form > div.row.end > button.btn.primary"
+  },
+  {
+   "key": "이름",
+   "context": "화면 글자 form#pinForm > label.field > span / placeholder 속성 div.panel > label.field.compact > input#myNameInput"
+  },
+  {
+   "key": "확인",
+   "context": "화면 글자 form#pinForm > div.row.end > button#pinOkButton.btn.primary"
+  },
+  {
+   "key": "닫기",
+   "context": "화면 글자 form > div.row.end > button.btn.primary"
+  },
+  {
+   "key": "찜콩",
+   "context": "화면 글자 footer.foot"
+  },
+  {
+   "key": "찜콩 처음으로",
+   "context": "aria-label 속성 header.topbar > div.topbar-inner > a.brand-link"
+  },
+  {
+   "key": "언어 · Language",
+   "context": "title 속성 header.topbar > div.topbar-inner > label.lang-pick / aria-label 속성 div.topbar-inner > label.lang-pick > select#langSelect"
+  },
+  {
+   "key": "어두운 화면으로",
+   "context": "title 속성 header.topbar > div.topbar-inner > button#themeButton.btn.ghost.small.theme-toggle / aria-label 속성 header.topbar > div.topbar-inner > button#themeButton.btn.ghost.small.theme-toggle / app.js:1847: $('themeButton').setAttribute('aria-label', dark ? t('밝은 화면으로') : t('어두운 화면으로'));"
+  },
+  {
+   "key": "예: 김찜콩",
+   "context": "placeholder 속성 div.panel > label.field > input#nameInput"
+  },
+  {
+   "key": "초대 링크나 https://script.google.com/macros/s/…/exec",
+   "context": "placeholder 속성 div.panel > label.field > textarea#codeInput"
+  },
+  {
+   "key": "관리자 공지의 확인 번호와 같아야 진짜 좌석 예약이에요",
+   "context": "title 속성 aside.side-stack > div.panel > div.kv"
+  },
+  {
+   "key": "1인 최대 줄이기",
+   "context": "aria-label 속성 div.stepper > span.stepper-ctl > button#maxMinus.btn.small"
+  },
+  {
+   "key": "1인 최대 늘리기",
+   "context": "aria-label 속성 div.stepper > span.stepper-ctl > button#maxPlus.btn.small"
+  },
+  {
+   "key": "도구",
+   "context": "aria-label 속성 div#adminPanel.panel.admin > div#editorPanel.editor > div#toolPanel.seg"
+  },
+  {
+   "key": "찜콩 · 좌석 찜하기",
+   "context": "브라우저 탭 제목"
+  },
+  {
+   "key": "연결 코드를 읽지 못했어요. 관리자가 준 링크나 https://script.google.com/… 주소를 그대로 붙여 넣어 주세요.",
+   "context": "app.js:110: say(t('연결 코드를 읽지 못했어요. 관리자가 준 링크나 https://script.google.com/… 주소를 그대로 붙여 넣어 주세요.'));"
+  },
+  {
+   "key": "연결하는 중…",
+   "context": "app.js:122: say(t('연결하는 중…'));"
+  },
+  {
+   "key": "연결하지 못했어요.",
+   "context": "app.js:127: say(tm(state.message) || t('연결하지 못했어요.'));"
+  },
+  {
+   "key": "관리자 키가 맞지 않아요. 시트에서 관리자 QR 을 다시 열어 주세요(키를 새로 만들었을 수 있어요).",
+   "context": "app.js:132: say(t('관리자 키가 맞지 않아요. 시트에서 관리자 QR 을 다시 열어 주세요(키를 새로 만들었을 수 있어요).'));"
+  },
+  {
+   "key": "연결을 끊어도 찜해 둔 자리는 그대로 남아요. 이 브라우저에서 같은 코드로 다시 연결하면 내 자리로 보여요. 끊을까요?",
+   "context": "app.js:151: ? t('연결을 끊어도 찜해 둔 자리는 그대로 남아요. 이 브라우저에서 같은 코드로 다시 연결하면 내 자리로 보여요. 끊을까요?')"
+  },
+  {
+   "key": "좌석 예약 연결을 끊을까요? 같은 코드로 언제든 다시 연결할 수 있어요.",
+   "context": "app.js:152: : t('좌석 예약 연결을 끊을까요? 같은 코드로 언제든 다시 연결할 수 있어요.');"
+  },
+  {
+   "key": "초대 링크로 들어왔어요. 이름을 적고 [연결] 을 눌러 주세요.",
+   "context": "app.js:181: say(t('초대 링크로 들어왔어요. 이름을 적고 [연결] 을 눌러 주세요.'));"
+  },
+  {
+   "key": "이미 이 좌석 예약에 연결돼 있어요.",
+   "context": "app.js:187: say(t('이미 이 좌석 예약에 연결돼 있어요.'));"
+  },
+  {
+   "key": "다른 좌석 예약에 연결돼 있어요. 초대받은 곳으로 바꾸려면 [연결 끊기] 를 누른 뒤 연결해 주세요(코드는 넣어 둘게요).",
+   "context": "app.js:191: say(t('다른 좌석 예약에 연결돼 있어요. 초대받은 곳으로 바꾸려면 [연결 끊기] 를 누른 뒤 연결해 주세요(코드는 넣어 둘게요).'));"
+  },
+  {
+   "key": "초대 링크를 읽지 못했어요. 링크가 잘렸을 수 있어요. 관리자에게 다시 받아 주세요.",
+   "context": "app.js:203: if (!url) say(t('초대 링크를 읽지 못했어요. 링크가 잘렸을 수 있어요. 관리자에게 다시 받아 주세요.'));"
+  },
+  {
+   "key": "내 자리 링크로 들어왔어요. 찜해 둔 자리가 내 자리로 보여요.",
+   "context": "app.js:217: const OWN_LINK_DONE = t('내 자리 링크로 들어왔어요. 찜해 둔 자리가 내 자리로 보여요.');"
+  },
+  {
+   "key": "내 자리 링크",
+   "context": "app.js:221: if (!await confirmBox(t('내 자리 링크'), t('지금 다른 좌석 예약에 연결돼 있어요. 링크의 좌석 예약으로 바꿀까요?'))) return; / app.js:577: const text = `[${room ? room + ' ' : ''}${t('내 자리 링크')}]\\n${t('나만 갖고 계세요. 이 링크를 누르면 어느 기기에서든 내가 찜한 자리로 들어가요.')}\\n${link}`;"
+  },
+  {
+   "key": "지금 다른 좌석 예약에 연결돼 있어요. 링크의 좌석 예약으로 바꿀까요?",
+   "context": "app.js:221: if (!await confirmBox(t('내 자리 링크'), t('지금 다른 좌석 예약에 연결돼 있어요. 링크의 좌석 예약으로 바꿀까요?'))) return;"
+  },
+  {
+   "key": "내 자리 되찾기",
+   "context": "app.js:242: if (hasMine && !await confirmBox(t('내 자리 되찾기'), / app.js:611: $('pinTitle').textContent = setting ? (hasPin() ? t('비밀번호 바꾸기') : t('비밀번호 정하기')) : t('내 자리 되찾기');"
+  },
+  {
+   "key": "이 브라우저에서 새로 찜한 자리는 더 이상 내 자리로 보이지 않아요(남아 있으면 관리자가 취소할 수 있어요). 바꿀까요?",
+   "context": "app.js:243: t('이 브라우저에서 새로 찜한 자리는 더 이상 내 자리로 보이지 않아요(남아 있으면 관리자가 취소할 수 있어요). 바꿀까요?'))) return;"
+  },
+  {
+   "key": "공개 전이에요. 성도에게는 아직 좌석표가 보이지 않아요.",
+   "context": "app.js:347: ? t('공개 전이에요. 성도에게는 아직 좌석표가 보이지 않아요.')"
+  },
+  {
+   "key": "아직 예약을 받지 않아요. 관리자가 좌석표를 열면 여기에 보여요.",
+   "context": "app.js:348: : t('아직 예약을 받지 않아요. 관리자가 좌석표를 열면 여기에 보여요.');"
+  },
+  {
+   "key": "지금은 예약 시간이 아니에요({opens} ~ {closes}).",
+   "context": "app.js:354: if (opens && closes) return t('지금은 예약 시간이 아니에요({opens} ~ {closes}).', { opens, closes });"
+  },
+  {
+   "key": "{opens}부터 예약할 수 있어요.",
+   "context": "app.js:355: return opens ? t('{opens}부터 예약할 수 있어요.', { opens }) : t('예약이 마감됐어요.');"
+  },
+  {
+   "key": "예약이 마감됐어요.",
+   "context": "app.js:355: return opens ? t('{opens}부터 예약할 수 있어요.', { opens }) : t('예약이 마감됐어요.');"
+  },
+  {
+   "key": "빈자리를 누르면 찜! 한 사람이 {n}자리까지 잡을 수 있어요.",
+   "context": "app.js:359: ? t('빈자리를 누르면 찜! 한 사람이 {n}자리까지 잡을 수 있어요.', { n: state.maxPerPerson })"
+  },
+  {
+   "key": "빈자리를 누르면 찜! 다른 빈자리를 누르면 그리로 옮겨요.",
+   "context": "app.js:360: : t('빈자리를 누르면 찜! 다른 빈자리를 누르면 그리로 옮겨요.');"
+  },
+  {
+   "key": "{n}층",
+   "context": "app.js:364: return t('{n}층', { n: position + 1 });"
+  },
+  {
+   "key": "이름을 바꾸지 못했어요.",
+   "context": "app.js:386: say(t('이름을 바꾸지 못했어요.') + ' ' + (tm(response.message) || ''));"
+  },
+  {
+   "key": "이름을 바꿨어요.",
+   "context": "app.js:391: say(t('이름을 바꿨어요.'));"
+  },
+  {
+   "key": "앉을 수 없는 자리예요.",
+   "context": "app.js:407: say(t('앉을 수 없는 자리예요.'));"
+  },
+  {
+   "key": "{seat} 은(는) {name} 님 자리예요.",
+   "context": "app.js:418: else say(seat.name ? t('{seat} 은(는) {name} 님 자리예요.', { seat: seat.label, name: seat.name }) : t('{seat} 은(는) 이미 찜한 자리예요.', { seat: seat.label }));"
+  },
+  {
+   "key": "{seat} 은(는) 이미 찜한 자리예요.",
+   "context": "app.js:418: else say(seat.name ? t('{seat} 은(는) {name} 님 자리예요.', { seat: seat.label, name: seat.name }) : t('{seat} 은(는) 이미 찜한 자리예요.', { seat: seat.label }));"
+  },
+  {
+   "key": "위의 이름 칸에 이름을 먼저 적어 주세요.",
+   "context": "app.js:429: say(t('위의 이름 칸에 이름을 먼저 적어 주세요.'));"
+  },
+  {
+   "key": "{from} → {seat} 로 옮기는 중…",
+   "context": "app.js:445: say(isMove ? t('{from} → {seat} 로 옮기는 중…', { from: mine[0].label, seat: seat.label }) : t('{seat} 찜하는 중…', { seat: seat.label }));"
+  },
+  {
+   "key": "{seat} 찜하는 중…",
+   "context": "app.js:445: say(isMove ? t('{from} → {seat} 로 옮기는 중…', { from: mine[0].label, seat: seat.label }) : t('{seat} 찜하는 중…', { seat: seat.label }));"
+  },
+  {
+   "key": "{seat} 로 옮겼어요.",
+   "context": "app.js:454: say(response.ok ? (isMove ? t('{seat} 로 옮겼어요.', { seat: seat.label }) : t('{seat} 찜콩! 자리를 잡았어요.', { seat: seat.label })) : tm(response.message) || '');"
+  },
+  {
+   "key": "{seat} 찜콩! 자리를 잡았어요.",
+   "context": "app.js:454: say(response.ok ? (isMove ? t('{seat} 로 옮겼어요.', { seat: seat.label }) : t('{seat} 찜콩! 자리를 잡았어요.', { seat: seat.label })) : tm(response.message) || '');"
+  },
+  {
+   "key": "찜 취소",
+   "context": "app.js:459: if (!await confirmBox(t('찜 취소'), t('{seat} 예약을 취소할까요?', { seat: seat.label }))) return;"
+  },
+  {
+   "key": "{seat} 예약을 취소할까요?",
+   "context": "app.js:459: if (!await confirmBox(t('찜 취소'), t('{seat} 예약을 취소할까요?', { seat: seat.label }))) return;"
+  },
+  {
+   "key": "{seat} 예약을 취소했어요.",
+   "context": "app.js:465: say(response.ok ? t('{seat} 예약을 취소했어요.', { seat: seat.label }) : tm(response.message) || ''); / app.js:481: say(response.ok ? t('{seat} 예약을 취소했어요.', { seat: seat.label }) : tm(response.message) || '');"
+  },
+  {
+   "key": "{name} 님의 {seat} 예약을 관리자 권한으로 취소할까요?",
+   "context": "app.js:471: ? t('{name} 님의 {seat} 예약을 관리자 권한으로 취소할까요?', { name: seat.name, seat: seat.label })"
+  },
+  {
+   "key": "{seat} 예약을 관리자 권한으로 취소할까요?",
+   "context": "app.js:472: : t('{seat} 예약을 관리자 권한으로 취소할까요?', { seat: seat.label });"
+  },
+  {
+   "key": "관리자 취소",
+   "context": "app.js:473: if (!await confirmBox(t('관리자 취소'), question)) return;"
+  },
+  {
+   "key": "배치도를 먼저 만들어 저장해 주세요.",
+   "context": "app.js:492: say(t('배치도를 먼저 만들어 저장해 주세요.'));"
+  },
+  {
+   "key": "공개했어요. 이제 성도가 찜할 수 있어요.",
+   "context": "app.js:501: say(settings.published ? t('공개했어요. 이제 성도가 찜할 수 있어요.') : t('공개를 멈췄어요.'));"
+  },
+  {
+   "key": "공개를 멈췄어요.",
+   "context": "app.js:501: say(settings.published ? t('공개했어요. 이제 성도가 찜할 수 있어요.') : t('공개를 멈췄어요.'));"
+  },
+  {
+   "key": "지금 예약 {n}자리를 '지난 예약' 탭으로 옮기고 좌석표를 비워요. 배치도와 공개 상태는 그대로예요. 할까요?",
+   "context": "app.js:523: if (!await confirmBox(t('다음 회차로'), t('지금 예약 {n}자리를 \\'지난 예약\\' 탭으로 옮기고 좌석표를 비워요. 배치도와 공개 상태는 그대로예요. 할까요?', { n: count }))) return;"
+  },
+  {
+   "key": "다음 회차로 넘겼어요.",
+   "context": "app.js:527: say(response.ok ? t('다음 회차로 넘겼어요.') : tm(response.message) || '');"
+  },
+  {
+   "key": "체험 모드에서는 초대 링크를 만들 수 없어요.",
+   "context": "app.js:538: say(store.conn && store.conn.url === DEMO_URL ? t('체험 모드에서는 초대 링크를 만들 수 없어요.') : t('이 연결 주소로는 초대 링크를 만들 수 없어요.'));"
+  },
+  {
+   "key": "이 연결 주소로는 초대 링크를 만들 수 없어요.",
+   "context": "app.js:538: say(store.conn && store.conn.url === DEMO_URL ? t('체험 모드에서는 초대 링크를 만들 수 없어요.') : t('이 연결 주소로는 초대 링크를 만들 수 없어요.'));"
+  },
+  {
+   "key": "초대 글을 복사했어요. 카톡 단체방에 붙여 넣으세요.",
+   "context": "app.js:542: await copyText(buildShareText(link, lastState ? lastState.room : '', connFingerprint), t('초대 글을 복사했어요. 카톡 단체방에 붙여 넣으세요.'));"
+  },
+  {
+   "key": "복사하지 못했어요. 다시 눌러 주세요.",
+   "context": "app.js:557: say(ok ? doneText : t('복사하지 못했어요. 다시 눌러 주세요.'));"
+  },
+  {
+   "key": "체험 모드에서는 내 자리 링크를 만들 수 없어요.",
+   "context": "app.js:573: say(store.conn && store.conn.url === DEMO_URL ? t('체험 모드에서는 내 자리 링크를 만들 수 없어요.') : t('이 연결 주소로는 내 자리 링크를 만들 수 없어요.'));"
+  },
+  {
+   "key": "이 연결 주소로는 내 자리 링크를 만들 수 없어요.",
+   "context": "app.js:573: say(store.conn && store.conn.url === DEMO_URL ? t('체험 모드에서는 내 자리 링크를 만들 수 없어요.') : t('이 연결 주소로는 내 자리 링크를 만들 수 없어요.'));"
+  },
+  {
+   "key": "나만 갖고 계세요. 이 링크를 누르면 어느 기기에서든 내가 찜한 자리로 들어가요.",
+   "context": "app.js:577: const text = `[${room ? room + ' ' : ''}${t('내 자리 링크')}]\\n${t('나만 갖고 계세요. 이 링크를 누르면 어느 기기에서든 내가 찜한 자리로 들어가요.')}\\n${link}`;"
+  },
+  {
+   "key": "내 자리 링크를 보냈어요. '나와의 채팅'에 잘 들어갔는지 한 번 봐 주세요.",
+   "context": "app.js:584: say(t(\"내 자리 링크를 보냈어요. '나와의 채팅'에 잘 들어갔는지 한 번 봐 주세요.\"));"
+  },
+  {
+   "key": "내 자리 링크를 복사했어요. 카톡 '나와의 채팅'이나 메모에 붙여 두세요.",
+   "context": "app.js:591: if (!done) done = await copyText(text, t(\"내 자리 링크를 복사했어요. 카톡 '나와의 채팅'이나 메모에 붙여 두세요.\"));"
+  },
+  {
+   "key": "비밀번호 바꾸기",
+   "context": "app.js:611: $('pinTitle').textContent = setting ? (hasPin() ? t('비밀번호 바꾸기') : t('비밀번호 정하기')) : t('내 자리 되찾기'); / app.js:895: $('pinButton').textContent = hasPin() ? t('비밀번호 바꾸기') : t('비밀번호 정하기');"
+  },
+  {
+   "key": "기록을 지우거나 기기를 바꿨을 때 이 이름과 비밀번호로 내 자리를 되찾아요. 생일처럼 남이 짐작하기 쉬운 번호는 피해 주세요.",
+   "context": "app.js:613: ? t('기록을 지우거나 기기를 바꿨을 때 이 이름과 비밀번호로 내 자리를 되찾아요. 생일처럼 남이 짐작하기 쉬운 번호는 피해 주세요.')"
+  },
+  {
+   "key": "비밀번호를 정할 때 쓴 이름과 비밀번호를 넣으세요. 그때 찜한 자리가 다시 내 자리로 보여요.",
+   "context": "app.js:614: : t('비밀번호를 정할 때 쓴 이름과 비밀번호를 넣으세요. 그때 찜한 자리가 다시 내 자리로 보여요.');"
+  },
+  {
+   "key": "이름을 적어 주세요.",
+   "context": "app.js:639: if (!name) return showPinMessage(t('이름을 적어 주세요.'));"
+  },
+  {
+   "key": "비밀번호는 숫자 4자리로 적어 주세요.",
+   "context": "app.js:640: if (!/^\\d{4}$/.test(pin)) return showPinMessage(t('비밀번호는 숫자 4자리로 적어 주세요.')); / 서버(구글 시트) 오류 문구: bad-pin"
+  },
+  {
+   "key": "보내는 중…",
+   "context": "app.js:644: showPinMessage(t('보내는 중…'));"
+  },
+  {
+   "key": "이 좌석 예약 시트가 아직 옛 판이라 비밀번호를 쓸 수 없어요. 관리자에게 시트를 새 판으로 배포해 달라고 해 주세요.",
+   "context": "app.js:650: ? t('이 좌석 예약 시트가 아직 옛 판이라 비밀번호를 쓸 수 없어요. 관리자에게 시트를 새 판으로 배포해 달라고 해 주세요.')"
+  },
+  {
+   "key": "되지 않았어요. 다시 해 주세요.",
+   "context": "app.js:651: : tm(response.message) || t('되지 않았어요. 다시 해 주세요.'));"
+  },
+  {
+   "key": "답을 읽지 못했어요. 다시 해 주세요.",
+   "context": "app.js:655: showPinMessage(t('답을 읽지 못했어요. 다시 해 주세요.'));"
+  },
+  {
+   "key": "비밀번호를 정했어요. 이름과 함께 꼭 기억해 두세요. 이제 자리를 찜하세요!",
+   "context": "app.js:665: say(t('비밀번호를 정했어요. 이름과 함께 꼭 기억해 두세요. 이제 자리를 찜하세요!'));"
+  },
+  {
+   "key": "내 자리를 되찾았어요.",
+   "context": "app.js:669: await adoptPerson(response.device, name, t('내 자리를 되찾았어요.'));"
+  },
+  {
+   "key": "체험 모드에서는 초대 QR 을 만들 수 없어요.",
+   "context": "app.js:680: say(store.conn && store.conn.url === DEMO_URL ? t('체험 모드에서는 초대 QR 을 만들 수 없어요.') : t('이 연결 주소로는 초대 QR 을 만들 수 없어요.'));"
+  },
+  {
+   "key": "이 연결 주소로는 초대 QR 을 만들 수 없어요.",
+   "context": "app.js:680: say(store.conn && store.conn.url === DEMO_URL ? t('체험 모드에서는 초대 QR 을 만들 수 없어요.') : t('이 연결 주소로는 초대 QR 을 만들 수 없어요.'));"
+  },
+  {
+   "key": "QR 그리기를 불러오지 못했어요. 인터넷 연결을 확인하고 다시 눌러 주세요.",
+   "context": "app.js:684: say(t('QR 그리기를 불러오지 못했어요. 인터넷 연결을 확인하고 다시 눌러 주세요.'));"
+  },
+  {
+   "key": "도구를 고르고 칸을 누르거나 끌어서 의자를 그리세요. 장의자는 한 줄로 끌면 한 덩어리가 돼요.",
+   "context": "app.js:707: ? t('도구를 고르고 칸을 누르거나 끌어서 의자를 그리세요. 장의자는 한 줄로 끌면 한 덩어리가 돼요.')"
+  },
+  {
+   "key": "도구를 고르고 칸을 누르거나 끌어서 고치세요. 다 되면 [저장].",
+   "context": "app.js:708: : t('도구를 고르고 칸을 누르거나 끌어서 고치세요. 다 되면 [저장].'));"
+  },
+  {
+   "key": "판 줄이기",
+   "context": "app.js:732: if (lost > 0 && !await confirmBox(t('판 줄이기'), t('판 밖으로 나가는 의자 {n}개가 지워져요. 줄일까요?', { n: lost }))) return;"
+  },
+  {
+   "key": "판 밖으로 나가는 의자 {n}개가 지워져요. 줄일까요?",
+   "context": "app.js:732: if (lost > 0 && !await confirmBox(t('판 줄이기'), t('판 밖으로 나가는 의자 {n}개가 지워져요. 줄일까요?', { n: lost }))) return;"
+  },
+  {
+   "key": "모양 바꾸기",
+   "context": "app.js:743: if (lost > 0 && !await confirmBox(t('모양 바꾸기'), t('새 모양에 들어가지 않는 의자 {n}개가 지워져요. 바꿀까요?', { n: lost }))) {"
+  },
+  {
+   "key": "새 모양에 들어가지 않는 의자 {n}개가 지워져요. 바꿀까요?",
+   "context": "app.js:743: if (lost > 0 && !await confirmBox(t('모양 바꾸기'), t('새 모양에 들어가지 않는 의자 {n}개가 지워져요. 바꿀까요?', { n: lost }))) {"
+  },
+  {
+   "key": "{floor}을 더했어요. 모양을 고르고 의자를 그리세요.",
+   "context": "app.js:767: say(error || t('{floor}을 더했어요. 모양을 고르고 의자를 그리세요.', { floor: floorLabel(draft.current) }));"
+  },
+  {
+   "key": "층 지우기",
+   "context": "app.js:774: if (draft.currentFloorSeatCount > 0 && !await confirmBox(t('층 지우기'), t('{floor}의 의자 {n}개가 함께 지워져요. 지울까요?', { floor: name, n: draft.currentFloorSeatCount }))) return;"
+  },
+  {
+   "key": "{floor}의 의자 {n}개가 함께 지워져요. 지울까요?",
+   "context": "app.js:774: if (draft.currentFloorSeatCount > 0 && !await confirmBox(t('층 지우기'), t('{floor}의 의자 {n}개가 함께 지워져요. 지울까요?', { floor: name, n: draft.currentFloorSeatCount }))) return;"
+  },
+  {
+   "key": "{floor}을 지웠어요. [저장] 해야 반영돼요.",
+   "context": "app.js:776: say(t('{floor}을 지웠어요. [저장] 해야 반영돼요.', { floor: name }));"
+  },
+  {
+   "key": "의자를 하나 이상 그려 주세요.",
+   "context": "app.js:785: say(t('의자를 하나 이상 그려 주세요.'));"
+  },
+  {
+   "key": "배치도 저장",
+   "context": "app.js:793: if (lost > 0 && !await confirmBox(t('배치도 저장'), t('지우거나 비워 두는 자리에 예약이 {n}개 있어요. 저장하면 그 예약은 취소돼요(기록 탭에 남아요). 저장할까요?', { n: lost }))) return; / app.js:799: !await confirmBox(t('배치도 저장'), t('이 좌석 예약 시트가 옛 판이라 외벽 · 물건은 저장되지 않아요(관리자 사용법의 새 판 배포를 해 주세요). 의자만 저장할까요?'))) return;"
+  },
+  {
+   "key": "지우거나 비워 두는 자리에 예약이 {n}개 있어요. 저장하면 그 예약은 취소돼요(기록 탭에 남아요). 저장할까요?",
+   "context": "app.js:793: if (lost > 0 && !await confirmBox(t('배치도 저장'), t('지우거나 비워 두는 자리에 예약이 {n}개 있어요. 저장하면 그 예약은 취소돼요(기록 탭에 남아요). 저장할까요?', { n: lost }))) return;"
+  },
+  {
+   "key": "이 좌석 예약 시트가 옛 판이라 외벽 · 물건은 저장되지 않아요(관리자 사용법의 새 판 배포를 해 주세요). 의자만 저장할까요?",
+   "context": "app.js:799: !await confirmBox(t('배치도 저장'), t('이 좌석 예약 시트가 옛 판이라 외벽 · 물건은 저장되지 않아요(관리자 사용법의 새 판 배포를 해 주세요). 의자만 저장할까요?'))) return;"
+  },
+  {
+   "key": "배치도 저장하는 중…",
+   "context": "app.js:802: say(t('배치도 저장하는 중…'));"
+  },
+  {
+   "key": "배치도를 저장했어요.",
+   "context": "app.js:815: say(lastState && lastState.published ? t('배치도를 저장했어요.') : t('배치도를 저장했어요. 다 됐으면 [공개] 를 켜 주세요.'));"
+  },
+  {
+   "key": "배치도를 저장했어요. 다 됐으면 [공개] 를 켜 주세요.",
+   "context": "app.js:815: say(lastState && lastState.published ? t('배치도를 저장했어요.') : t('배치도를 저장했어요. 다 됐으면 [공개] 를 켜 주세요.'));"
+  },
+  {
+   "key": "좌석 예약",
+   "context": "app.js:846: $('roomName').textContent = (state && state.room) || store.conn.room || t('좌석 예약'); / links.js:108: const name = title ? title + ' ' + t('좌석 예약') : t('좌석 예약');"
+  },
+  {
+   "key": "{n}% 찼어요",
+   "context": "app.js:860: $('reservedCount').textContent = open ? t('{n}% 찼어요', { n: percent }) : '';"
+  },
+  {
+   "key": "불러오는 중",
+   "context": "app.js:863: $('statusChip').textContent = { loading: t('불러오는 중'), off: t('공개 전'), on: t('예약 중'), closed: t('예약 시간 아님') }[phase];"
+  },
+  {
+   "key": "공개 전",
+   "context": "app.js:863: $('statusChip').textContent = { loading: t('불러오는 중'), off: t('공개 전'), on: t('예약 중'), closed: t('예약 시간 아님') }[phase];"
+  },
+  {
+   "key": "예약 중",
+   "context": "app.js:863: $('statusChip').textContent = { loading: t('불러오는 중'), off: t('공개 전'), on: t('예약 중'), closed: t('예약 시간 아님') }[phase];"
+  },
+  {
+   "key": "예약 시간 아님",
+   "context": "app.js:863: $('statusChip').textContent = { loading: t('불러오는 중'), off: t('공개 전'), on: t('예약 중'), closed: t('예약 시간 아님') }[phase];"
+  },
+  {
+   "key": "배치도에 없는 자리의 내 예약 {n}개 — 관리자가 배치도를 한 번 저장하면 정리돼요",
+   "context": "app.js:871: const ghostText = t('배치도에 없는 자리의 내 예약 {n}개 — 관리자가 배치도를 한 번 저장하면 정리돼요', { n: ghosts });"
+  },
+  {
+   "key": "불러오는 중…",
+   "context": "app.js:877: $('statusText').textContent = state ? statusText(state) : t('불러오는 중…');"
+  },
+  {
+   "key": "{n}회차",
+   "context": "app.js:885: $('sessionText').textContent = t('{n}회차', { n: state.session || 1 });"
+  },
+  {
+   "key": "이 기기에서 비밀번호를 정해 뒀어요.",
+   "context": "app.js:896: $('pinState').textContent = hasPin() ? t('이 기기에서 비밀번호를 정해 뒀어요.') : '';"
+  },
+  {
+   "key": "첫 줄 자리",
+   "context": "app.js:911: $('colsLabel').textContent = isArc ? t('첫 줄 자리') : t('칸');"
+  },
+  {
+   "key": "{rows}줄 · 첫 줄 {cols}자리 · {angle}° · 의자 {n}개",
+   "context": "app.js:914: ? floor + t('{rows}줄 · 첫 줄 {cols}자리 · {angle}° · 의자 {n}개', { rows: draft.rows, cols: draft.cols, angle: draft.angle, n: draft.seatCount })"
+  },
+  {
+   "key": "판 {rows}줄 × {cols}칸 · 의자 {n}개",
+   "context": "app.js:915: : floor + t('판 {rows}줄 × {cols}칸 · 의자 {n}개', { rows: draft.rows, cols: draft.cols, n: draft.seatCount });"
+  },
+  {
+   "key": "그려 둔 의자 · 물건을 외벽으로 감쌌어요. 동그라미(꼭짓점)를 끌어 모양을 맞추세요. 변 가운데 작은 점을 끌면 꼭짓점이 늘어요.",
+   "context": "app.js:927: say(t('그려 둔 의자 · 물건을 외벽으로 감쌌어요. 동그라미(꼭짓점)를 끌어 모양을 맞추세요. 변 가운데 작은 점을 끌면 꼭짓점이 늘어요.'));"
+  },
+  {
+   "key": "지금 그려 둔 의자 · 물건을 다시 감쌌어요.",
+   "context": "app.js:1067: say(t('지금 그려 둔 의자 · 물건을 다시 감쌌어요.'));"
+  },
+  {
+   "key": "외벽을 없앴어요. [저장] 해야 반영돼요.",
+   "context": "app.js:1076: say(t('외벽을 없앴어요. [저장] 해야 반영돼요.'));"
+  },
+  {
+   "key": "+ 층",
+   "context": "app.js:1116: const add = addPill(t('+ 층'), false, addFloor);"
+  },
+  {
+   "key": "{floor} 지우기",
+   "context": "app.js:1118: if (draft.floorCount > 1) addPill(t('{floor} 지우기', { floor: floorLabel(draft.current) }), false, removeFloor);"
+  },
+  {
+   "key": "무대",
+   "context": "app.js:1242: stage.textContent = t('무대');"
+  },
+  {
+   "key": "앉을 수 없는 자리",
+   "context": "app.js:1365: const stateText = { mine: t('내 자리'), taken: seat.name || t('찜함'), blocked: t('앉을 수 없는 자리'), free: t('빈자리') }[seat.state];"
+  },
+  {
+   "key": "장",
+   "context": "app.js:1382: const shortKind = { desk: t('책상'), pew: t('장'), extra: t('보조'), chair: t('의자') };"
+  },
+  {
+   "key": "이 물건 지우기",
+   "context": "app.js:1527: remove.title = t('이 물건 지우기');"
+  },
+  {
+   "key": "꼭짓점은 {n}개까지예요.",
+   "context": "app.js:1578: say(t('꼭짓점은 {n}개까지예요.', { n: MAX_WALL_POINTS }));"
+  },
+  {
+   "key": "체험자",
+   "context": "app.js:1761: if (!$('nameInput').value.trim()) $('nameInput').value = t('체험자');"
+  },
+  {
+   "key": "밝은 화면으로",
+   "context": "app.js:1847: $('themeButton').setAttribute('aria-label', dark ? t('밝은 화면으로') : t('어두운 화면으로')); / app.js:1848: $('themeButton').title = dark ? t('밝은 화면으로') : t('어두운 화면으로');"
+  },
+  {
+   "key": "응답이 늦어요. 잠시 뒤 다시 해 주세요.",
+   "context": "api.js:37: if (error && error.name === 'AbortError') return fail('timeout', t('응답이 늦어요. 잠시 뒤 다시 해 주세요.'));"
+  },
+  {
+   "key": "인터넷에 연결되어 있는지 확인해 주세요.",
+   "context": "api.js:38: if (navigator.onLine === false) return fail('network', t('인터넷에 연결되어 있는지 확인해 주세요.'));"
+  },
+  {
+   "key": "좌석 예약 서버와 연결하지 못했어요. 관리자에게 웹 앱 배포가 살아 있고 액세스 권한이 '모든 사용자' 인지 확인해 달라고 해 주세요.",
+   "context": "api.js:39: return fail('network', t('좌석 예약 서버와 연결하지 못했어요. 관리자에게 웹 앱 배포가 살아 있고 액세스 권한이 \\'모든 사용자\\' 인지 확인해 달라고 해 주세요.'));"
+  },
+  {
+   "key": "좌석 예약 서버를 찾지 못했어요(404). 관리자에게 연결 코드가 맞는지 확인해 달라고 해 주세요.",
+   "context": "api.js:46: if (code === 404) return fail('server', t('좌석 예약 서버를 찾지 못했어요(404). 관리자에게 연결 코드가 맞는지 확인해 달라고 해 주세요.'));"
+  },
+  {
+   "key": "좌석 예약 서버가 접근을 막았어요({code}). 웹 앱 액세스 권한이 '모든 사용자' 여야 해요.",
+   "context": "api.js:47: if (code === 401 || code === 403) return fail('server', t('좌석 예약 서버가 접근을 막았어요({code}). 웹 앱 액세스 권한이 \\'모든 사용자\\' 여야 해요.', { code }));"
+  },
+  {
+   "key": "지금 예약하는 분이 많아요. 잠시 뒤 다시 해 주세요.",
+   "context": "api.js:48: if (code === 429) return fail('server', t('지금 예약하는 분이 많아요. 잠시 뒤 다시 해 주세요.'));"
+  },
+  {
+   "key": "좌석 예약 서버에 문제가 생겼어요({code}). 잠시 뒤 다시 해 주세요.",
+   "context": "api.js:49: return fail('server', code >= 500 ? t('좌석 예약 서버에 문제가 생겼어요({code}). 잠시 뒤 다시 해 주세요.', { code }) : t('좌석 예약 서버가 요청을 받지 않았어요({code}).', { code }));"
+  },
+  {
+   "key": "좌석 예약 서버가 요청을 받지 않았어요({code}).",
+   "context": "api.js:49: return fail('server', code >= 500 ? t('좌석 예약 서버에 문제가 생겼어요({code}). 잠시 뒤 다시 해 주세요.', { code }) : t('좌석 예약 서버가 요청을 받지 않았어요({code}).', { code }));"
+  },
+  {
+   "key": "좌석 예약 서버가 올바른 답을 주지 않았어요. 웹 앱 액세스 권한이 '모든 사용자' 인지 확인해 주세요.",
+   "context": "api.js:55: return fail('bad-response', t('좌석 예약 서버가 올바른 답을 주지 않았어요. 웹 앱 액세스 권한이 \\'모든 사용자\\' 인지 확인해 주세요.'));"
+  },
+  {
+   "key": "요청이 받아들여지지 않았어요.",
+   "context": "api.js:60: if (!parsed.ok && !parsed.message) parsed.message = t('요청이 받아들여지지 않았어요.');"
+  },
+  {
+   "key": "답을 읽지 못했어요.",
+   "context": "api.js:63: return fail('bad-response', t('답을 읽지 못했어요.')); / api.js:119: if (full.layoutSame) return fail('bad-response', t('답을 읽지 못했어요.'));"
+  },
+  {
+   "key": "확인 번호: {code} — 화면에 보이는 번호가 이것과 다르면 연결하지 마세요.",
+   "context": "links.js:109: const check = fingerprint ? t('확인 번호: {code} — 화면에 보이는 번호가 이것과 다르면 연결하지 마세요.', { code: fingerprint }) + '\\n' : '';"
+  },
+  {
+   "key": "아래 링크를 눌러 이름을 적고 [연결] 을 누른 뒤, 빈자리를 찜하세요!",
+   "context": "links.js:110: return `[${name}]\\n${t('아래 링크를 눌러 이름을 적고 [연결] 을 누른 뒤, 빈자리를 찜하세요!')}\\n${check}${link}`;"
+  },
+  {
+   "key": "층은 {n}개까지 만들 수 있어요.",
+   "context": "geometry.js:292: if (this.floors.length >= MAX_FLOORS) return t('층은 {n}개까지 만들 수 있어요.', { n: MAX_FLOORS });"
+  },
+  {
+   "key": "층을 너무 여러 번 지웠다 더했어요. 한 번 저장한 뒤 다시 더해 주세요.",
+   "context": "geometry.js:295: if (id > MAX_FLOOR_ID) return t('층을 너무 여러 번 지웠다 더했어요. 한 번 저장한 뒤 다시 더해 주세요.');"
+  },
+  {
+   "key": "물건은 {n}개까지 놓을 수 있어요.",
+   "context": "geometry.js:345: if (this.itemCount >= MAX_ITEMS) return t('물건은 {n}개까지 놓을 수 있어요.', { n: MAX_ITEMS });"
+  },
+  {
+   "key": "좌석은 {n}개까지 만들 수 있어요.",
+   "context": "geometry.js:383: if (this.seatCount + added > MAX_SEATS) return t('좌석은 {n}개까지 만들 수 있어요.', { n: MAX_SEATS });"
+  },
+  {
+   "key": "찜콩 체험관 (demo)",
+   "context": "demo.js:64: room: t('찜콩 체험관 (demo)'),"
+  },
+  {
+   "key": "관리자만 할 수 있습니다. 관리자 QR 로 다시 연결해 주세요.",
+   "context": "서버(구글 시트) 오류 문구: not-admin"
+  },
+  {
+   "key": "모르는 요청입니다. 앱을 최신 판으로 올려 주세요.",
+   "context": "서버(구글 시트) 오류 문구: bad-action"
+  },
+  {
+   "key": "그 사이 다른 분이 먼저 잡았어요. 다른 자리를 골라 주세요.",
+   "context": "서버(구글 시트) 오류 문구: taken"
+  },
+  {
+   "key": "이미 자리를 잡으셨어요. 자리를 바꾸려면 내 자리를 먼저 누르세요.",
+   "context": "서버(구글 시트) 오류 문구: limit"
+  },
+  {
+   "key": "한 사람이 {n}자리까지 잡을 수 있어요.",
+   "context": "서버(구글 시트) 오류 문구: limit, n = 숫자"
+  },
+  {
+   "key": "내 자리만 바꿀 수 있어요. 좌석표를 새로 불러올게요.",
+   "context": "서버(구글 시트) 오류 문구: not-mine"
+  },
+  {
+   "key": "이미 잡으신 자리예요. 좌석표를 새로 불러올게요.",
+   "context": "서버(구글 시트) 오류 문구: already-mine"
+  },
+  {
+   "key": "내 자리만 취소할 수 있어요.",
+   "context": "서버(구글 시트) 오류 문구: not-mine"
+  },
+  {
+   "key": "같은 이름에 같은 비밀번호를 쓰는 분이 있어요. 다른 번호를 골라 주세요.",
+   "context": "서버(구글 시트) 오류 문구: pin-used"
+  },
+  {
+   "key": "이름이나 비밀번호가 맞지 않아요. 비밀번호를 정할 때 쓴 이름 그대로 적어 주세요.",
+   "context": "서버(구글 시트) 오류 문구: pin-wrong"
+  },
+  {
+   "key": "틀린 횟수가 많아요. 10분 뒤에 다시 해 주세요.",
+   "context": "서버(구글 시트) 오류 문구: pin-locked"
+  },
+  {
+   "key": "배치도를 읽지 못했습니다.",
+   "context": "서버(구글 시트) 오류 문구: bad-request"
+  },
+  {
+   "key": "좌석은 {n}개까지 만들 수 있습니다.",
+   "context": "서버(구글 시트) 오류 문구: too-many, n = 숫자"
+  },
+  {
+   "key": "배치도에 잘못된 자리가 있습니다: {id}",
+   "context": "서버(구글 시트) 오류 문구: bad-request, id = 좌석 ID(번역 안 함)"
+  },
+  {
+   "key": "같은 좌석ID 가 두 번 있습니다: {id}",
+   "context": "서버(구글 시트) 오류 문구: bad-request, id = 좌석 ID"
+  },
+  {
+   "key": "없는 층의 자리가 있습니다: {id}",
+   "context": "서버(구글 시트) 오류 문구: bad-request, id = 좌석 ID"
+  },
+  {
+   "key": "그 사이 예약한 분이 바뀌었어요. 좌석표를 새로 불러올게요.",
+   "context": "서버(구글 시트) 오류 문구: changed"
+  },
+  {
+   "key": "층은 {n}개까지 만들 수 있습니다.",
+   "context": "서버(구글 시트) 오류 문구: too-many, n = 숫자"
+  },
+  {
+   "key": "층 모양을 읽지 못했습니다.",
+   "context": "서버(구글 시트) 오류 문구: bad-request"
+  },
+  {
+   "key": "물건은 {n}개까지 그릴 수 있습니다.",
+   "context": "서버(구글 시트) 오류 문구: too-many, n = 숫자"
+  },
+  {
+   "key": "배치도의 물건을 읽지 못했습니다.",
+   "context": "서버(구글 시트) 오류 문구: bad-request"
+  },
+  {
+   "key": "외벽을 읽지 못했습니다.",
+   "context": "서버(구글 시트) 오류 문구: bad-request"
+  },
+  {
+   "key": "비워 둔 자리라 예약할 수 없어요.",
+   "context": "서버(구글 시트) 오류 문구: blocked"
+  },
+  {
+   "key": "배치도가 바뀌었어요. 좌석표를 새로 불러올게요.",
+   "context": "서버(구글 시트) 오류 문구: no-seat"
+  },
+  {
+   "key": "사람이 많아 잠시 밀렸어요. 조금 뒤 다시 눌러 주세요.",
+   "context": "서버(구글 시트) 오류 문구: busy"
+  },
+  {
+   "key": "아직 예약을 받지 않아요.",
+   "context": "서버(구글 시트) 오류 문구: not-published"
+  },
+  {
+   "key": "지금은 예약 시간이 아니에요.",
+   "context": "서버(구글 시트) 오류 문구: closed"
+  },
+  {
+   "key": "기기 정보가 없습니다. 앱을 다시 켜 주세요.",
+   "context": "서버(구글 시트) 오류 문구: bad-request"
+  },
+  {
+   "key": "이름을 먼저 적어 주세요.",
+   "context": "서버(구글 시트) 오류 문구: no-name"
+  },
+  {
+   "key": "요청을 읽지 못했습니다.",
+   "context": "서버(구글 시트) 오류 문구: bad-request"
+  },
+  {
+   "key": "서버에서 문제가 생겼습니다. 잠시 뒤 다시 해 주세요.",
+   "context": "서버(구글 시트) 오류 문구: server"
+  },
+  {
+   "key": "에어컨",
+   "context": "배치도 물건 이름: 에어컨"
+  },
+  {
+   "key": "TV · 화면",
+   "context": "배치도 물건 이름: TV/프로젝터 화면"
+  },
+  {
+   "key": "스피커",
+   "context": "배치도 물건 이름: 스피커"
+  },
+  {
+   "key": "찜콩 사용법",
+   "context": "사용법 페이지 브라우저 탭 제목"
+  }
+ ],
+ "guide": "<a class=\"back\" href=\"./\">← 찜콩으로</a>\n  <h1>찜콩 사용법</h1>\n  <p>찜콩은 전도집회에 초청한 분이 앉을 강의실 자리를 <strong>미리 찜해 두는</strong> 웹페이지예요. 앱을 깔 필요 없이 휴대폰 · PC 브라우저에서 바로 돼요.</p>\n\n  <nav class=\"toc\" aria-label=\"목차\">\n    <strong>목차</strong>\n    <ul>\n      <li><a href=\"#member\">성도용 — 자리 찜하기</a></li>\n      <li><a href=\"#admin\">관리자용 — 좌석 예약 열기</a></li>\n    </ul>\n  </nav>\n\n  <!-- ───────────── 성도용 ───────────── -->\n  <h2 id=\"member\">성도용 — 자리 찜하기</h2>\n\n  <h3>한눈에 보기</h3>\n  <ul>\n    <li>관리자가 단체방에 올린 <strong>찜콩 초대 링크</strong>를 누르면 시작돼요.</li>\n    <li><strong>빈자리를 누르면</strong> 내 자리가 돼요.</li>\n    <li><strong>내 자리를 다시 누르면</strong> 취소돼요.</li>\n    <li>좌석표는 <strong>20초마다</strong> 저절로 새로 고쳐져요.</li>\n  </ul>\n\n  <h3>처음 연결하기</h3>\n  <ol>\n    <li>단체방에 올라온 <strong>찜콩 초대 링크</strong>를 누르세요. 초대 QR 이면 휴대폰 카메라로 찍으세요.</li>\n    <li>찜콩이 열리고 연결 코드가 저절로 들어가 있어요.</li>\n    <li><strong>내 이름</strong> 칸에 이름을 적으세요. 좌석표에 이 이름이 보여요.</li>\n    <li>연결 코드 아래 <strong>확인 번호</strong>(8자리)가 관리자 <strong>공지</strong>의 번호와 같은지 보세요.</li>\n    <li>같으면 <strong>[연결]</strong>을 누르세요.</li>\n  </ol>\n  <div class=\"warn\">\n    <strong>확인 번호가 다르면 연결하지 마세요</strong>\n    가짜 링크일 수 있어요. 관리자에게 먼저 물어보세요.\n  </div>\n  <p>연결은 한 번이면 돼요. 같은 기기 · 같은 브라우저로 다시 오면 바로 좌석표가 보여요.</p>\n\n  <h3>자리 찜하기 · 옮기기 · 취소</h3>\n  <ol>\n    <li><strong>빈자리</strong>를 누르면 바로 찜돼요. 내 자리는 금색으로 바뀌고, 위에 <strong>내 자리: A5</strong> 처럼 보여요.</li>\n    <li>다른 <strong>빈자리</strong>를 누르면 그리로 <strong>옮겨져요</strong>(한 사람 한 자리일 때).</li>\n    <li><strong>내 자리(금색)</strong>를 다시 누르면 취소할지 물어요. <strong>예</strong>를 누르면 취소돼요.</li>\n  </ol>\n  <ul class=\"sub\">\n    <li>이름 칸이 비어 있으면 찜이 안 돼요. 이름부터 적어 주세요.</li>\n    <li>관리자가 한 사람이 여러 자리(가족 몫)를 잡게 해 두었으면, 옮기지 않고 <strong>한 자리 더</strong> 잡혀요. 몇 자리까지인지는 좌석표 위 안내 글에 나와요.</li>\n    <li>강의실이 2층 이상이면 위쪽 <strong>1층 · 2층</strong> 단추로 층을 바꿔 보세요.</li>\n  </ul>\n\n  <h3>좌석표 읽기</h3>\n  <ul>\n    <li><strong>빈자리</strong>: 눌러서 찜할 수 있어요.</li>\n    <li><strong>내 자리</strong>: 금색이에요.</li>\n    <li><strong>예약됨</strong>: 다른 분 자리예요. 관리자가 켜 두면 이름도 보여요.</li>\n    <li><strong>앉을 수 없음(×)</strong>: 관리자가 막아 둔 자리예요.</li>\n    <li><strong>책상 의자</strong>는 위쪽 변이 굵고, <strong>보조 의자</strong>는 주황 테두리예요. <strong>장의자</strong>는 붙은 긴 의자로, 한 칸이 한 사람 자리예요.</li>\n    <li>부채꼴 · 원형 강의실은 무대에 가까운 줄부터 A, B, … 예요.</li>\n  </ul>\n\n  <h3>이렇게 보이면</h3>\n  <ul>\n    <li><strong>\"그 사이 다른 분이 먼저 잡았어요\"</strong>: 다른 자리를 골라 주세요.</li>\n    <li><strong>\"아직 예약을 받지 않아요\"</strong>: 관리자가 아직 열지 않았어요. 열리면 저절로 보여요.</li>\n    <li><strong>\"○○부터 예약할 수 있어요\" · \"예약이 마감됐어요\"</strong>: 정해진 예약 시간이 아니에요.</li>\n    <li><strong>\"인터넷에 연결되어 있는지 확인해 주세요\"</strong>: 와이파이나 데이터를 켜 주세요.</li>\n  </ul>\n\n  <div class=\"warn\">\n    <strong>브라우저 기록을 지우거나 기기를 바꾸면</strong>\n    \"나\"는 그 브라우저에만 기억돼요. 찜한 뒤 오른쪽 <b>[내 자리 지키기]</b> 에서 둘 중 하나를 해 두세요.\n    <ul>\n      <li><b>내 자리 링크 복사</b>: 카톡 '나와의 채팅'이나 메모에 붙여 두세요. 어느 기기에서든 그 링크를 누르면 내 자리로 들어가요. 남에게 보내지 마세요.</li>\n      <li><b>비밀번호 정하기</b>: 이름과 숫자 4자리를 정해 두면, 새 기기에서 초대 링크로 연결한 뒤 <b>[내 자리 되찾기]</b> 로 돌아올 수 있어요.</li>\n    </ul>\n    둘 다 안 해 뒀다면 관리자에게 그 자리를 취소해 달라고 한 뒤 다시 찜해 주세요.\n  </div>\n\n  <div class=\"note\">\n    <strong>개인정보</strong>\n    예약 기록과 이름은 관리자(교회)의 구글 시트에만 저장돼요. 찜콩은 따로 모으지 않아요.\n  </div>\n\n  <!-- ───────────── 관리자용 ───────────── -->\n  <h2 id=\"admin\">관리자용 — 좌석 예약 열기</h2>\n  <p>구글 시트 하나로 좌석 예약을 받아요. 시트 · 예약 기록 · 이름은 모두 <strong>관리자의 구글 드라이브에만</strong> 있어요. 처음 준비는 PC 에서 한 번, 10분쯤 걸려요.</p>\n  <p class=\"muted\">Hagah 앱의 좌석 예약과 같은 시트를 써요. Hagah 로 만든 시트도 찜콩에서 그대로 돼요.</p>\n\n  <h3>① 시트 복사하고 처음 설정</h3>\n  <ol>\n    <li>구글 계정으로 로그인한 PC 브라우저에서 <a href=\"https://docs.google.com/spreadsheets/d/1qVZ3K_eEbeQo93u29RSlG7cqdCcTn0BaObz9WkMTUT8/copy\" target=\"_blank\" rel=\"noopener\">템플릿 시트 사본 만들기</a>를 여세요.</li>\n    <li><strong>[사본 만들기]</strong>를 누르세요. 내 드라이브에 시트가 생겨요.</li>\n    <li>사본 시트가 열리면 잠시 기다리거나 새로 고치세요. 위 메뉴 끝에 <strong>[좌석 예약]</strong>이 생겨요.</li>\n    <li><strong>[좌석 예약] → [1. 처음 설정 시작]</strong>을 누르세요.</li>\n    <li>\"승인 필요\" 창에서 <strong>[확인]</strong> → 계정 고르기. 팝업이 막히면 주소창 오른쪽에서 허용해 주세요.</li>\n    <li>\"Google에서 확인하지 않은 앱\" 경고가 나오면 <strong>[고급]</strong> → 맨 아래 <strong>\"…(으)로 이동(안전하지 않음)\"</strong>을 누르세요. 개발자는 관리자 자신이에요. 내 시트를 내 스크립트가 고치는 거라 안전해요.</li>\n    <li>권한 화면에서 <strong>\"모두 선택\"</strong>에 체크하고 <strong>[계속]</strong>을 누르세요.</li>\n    <li>\"좌석 예약 처음 설정\" 창에 <strong>강의실 이름</strong>을 넣고 [확인]. 탭 5개(설정 · 좌석 · 예약 · 지난 예약 · 기록)가 생겨요.</li>\n  </ol>\n  <div class=\"warn\">\n    <strong>가장 막히기 쉬운 곳 — \"모두 선택\"</strong>\n    권한 화면의 체크 상자는 <strong>처음엔 비어 있어요.</strong> 체크하지 않고 계속을 누르면 나중에 찜콩 연결이 안 돼요. 꼭 \"모두 선택\"(Select all)을 누르세요. 단추가 아래에 있어 화면을 내려야 보일 수 있어요.\n  </div>\n\n  <h3>② 웹 앱 만들기(배포)</h3>\n  <ol>\n    <li>시트 위 메뉴 <strong>[확장 프로그램] → [Apps Script]</strong>. 코드는 건드리지 않아요.</li>\n    <li>오른쪽 위 <strong>[배포] → [새 배포]</strong>.</li>\n    <li>\"유형 선택\" 옆 톱니바퀴 → <strong>[웹 앱]</strong>.</li>\n    <li>실행: <strong>나</strong> · 액세스 권한: <strong>모든 사용자</strong> → <strong>[배포]</strong>.</li>\n    <li>\"액세스 승인\"이 나오면 ①과 같은 순서로 한 번 더 허락하세요(<strong>모두 선택</strong> 잊지 마세요).</li>\n    <li><strong>웹 앱 URL</strong> 아래 <strong>[복사]</strong> → [완료].</li>\n  </ol>\n  <div class=\"warn\">\n    <strong>액세스는 그냥 \"모든 사용자\"</strong>\n    \"Google 계정이 있는 모든 사용자\"를 고르면 성도가 연결되지 않아요.\n  </div>\n\n  <h3>③ 찜콩에 관리자로 연결</h3>\n  <ol>\n    <li>시트로 돌아와 <strong>[좌석 예약] → [2. 연결 QR 보기]</strong>.</li>\n    <li>처음 한 번 웹 앱 주소를 물어요. 복사한 주소(<code>https://script.google.com/macros/s/…/exec</code>)를 붙여 넣으세요.</li>\n    <li>오른쪽 <strong>관리자용</strong> QR 아래 글(<code>…/exec#admin=…</code>)을 복사하세요.</li>\n    <li>찜콩 첫 화면에서 이름을 적고, <strong>연결 코드</strong> 칸에 붙여 넣은 뒤 <strong>[연결]</strong>.</li>\n    <li>강의실 이름 옆에 <strong>관리자</strong> 표시가 보이면 돼요.</li>\n  </ol>\n  <div class=\"note\">\n    <strong>시트에 'Hagah' 라고 적혀 있어도 괜찮아요</strong>\n    시트 대화상자 문구는 Hagah 앱 기준이에요. 같은 글을 찜콩에 붙여 넣으면 그대로 돼요. 주소를 잘못 넣었으면 <strong>[좌석 예약] → [웹 앱 주소 다시 넣기]</strong>.\n  </div>\n  <div class=\"warn\">\n    <strong>관리자 글은 남에게 보여 주지 마세요</strong>\n    받은 사람은 배치도를 고치고 예약을 지울 수 있어요. 새어 나갔으면 시트 메뉴 <strong>[좌석 예약] → [관리자 키 새로 만들기]</strong>를 누르고, 새 관리자 글로 다시 연결하세요. 성도 초대 링크는 그대로 써도 돼요.\n  </div>\n\n  <h3>④ 배치도 그리기</h3>\n  <ol>\n    <li><strong>[배치도 고치기]</strong>를 누르세요.</li>\n    <li>도구를 고르고 칸을 <strong>누르거나 끌어</strong> 칠하세요.\n      <ul>\n        <li><strong>1인 의자 · 책상 의자 · 장의자 · 보조 의자</strong>: 그 의자를 놓아요. 장의자는 한 줄로 끌면 긴 의자 하나가 돼요.</li>\n        <li><strong>앉을 수 없음</strong>: 자리는 두되 찜은 못 하게 막아요(×). 다시 칠하면 풀려요.</li>\n        <li><strong>통로(지우기)</strong>: 의자를 없애요.</li>\n      </ul>\n    </li>\n    <li>의자 · 물건을 다 놓은 뒤 <strong>⬠ 외벽</strong>을 누르면 그것들과 맨 앞의 <strong>강단</strong>까지 감싸는 외벽이 저절로 생겨요(<strong>[다시 감싸기]</strong>로 언제든 다시). 꼭짓점(동그라미)을 끌어 옮기고, 변 가운데 작은 점을 끌면 꼭짓점이 늘어요.\n      꼭짓점을 두 번 누르면 지워져요. 세모 · 오각형 · ㄱ자 같은 강의실도 그릴 수 있어요.</li>\n    <li><strong>강대상 · 출입문 · 창문 · 에어컨 · TV · 스피커 · 기둥</strong>은 고른 뒤 빈 곳을 누르면 놓여요. 끌어서 옮기고,\n      출입문 · 창문 · TV · 에어컨은 외벽 가까이 가면 벽에 착 붙어요. 고른 물건의 빨간 ×로 지워요.\n      <ul>\n        <li>의자 칸과 상관없이 어디든 놓을 수 있어요.</li>\n      </ul>\n    </li>\n    <li>모양을 고르세요. <strong>네모 · 부채꼴 · 원형</strong>. 부채꼴 · 원형은 각도를 <strong>15°씩</strong> 늘리고 줄여요.</li>\n    <li>줄 · 칸 단추로 판을 늘리고 줄이세요.</li>\n    <li>2층 이상이면 <strong>+ 층</strong>으로 층을 더하세요(최대 9층). 층마다 모양을 따로 고를 수 있어요.</li>\n    <li>다 그렸으면 <strong>[저장]</strong>. 그만두려면 [그만].</li>\n  </ol>\n  <ul class=\"sub\">\n    <li>의자는 모든 층을 합해 <strong>2000석</strong>까지예요.</li>\n    <li>이름표(A1, A2, …)는 저장할 때 저절로 붙어요.</li>\n    <li>외벽 · 물건은 새 판 시트에서만 저장돼요. 옛 판이면 저장 전에 알려 줘요(위 ②의 [새 버전] 배포).</li>\n    <li>예약이 있는 자리를 지우면 저장 전에 알려 줘요. 남은 자리의 예약은 그대로예요.</li>\n  </ul>\n\n  <h3>⑤ 예약 받기</h3>\n  <ol>\n    <li><strong>[공개]</strong>를 켜세요. 그래야 성도에게 좌석표가 보여요.</li>\n    <li><strong>[초대 링크 복사]</strong> 또는 <strong>[초대 QR]</strong>로 단체방에 나눠 주세요.</li>\n    <li>이름 옆 <strong>확인 번호</strong>(8자리)도 단체방 <strong>공지</strong>에 적어 두세요. 가짜 링크를 가려내는 데 써요.</li>\n  </ol>\n  <div class=\"warn\">\n    <strong>성도에게는 찜콩 초대 링크 · QR 을 주세요</strong>\n    시트의 <strong>성도용 QR</strong>(웹 앱 주소)을 휴대폰 카메라로 바로 찍으면 Apps Script 안내 페이지만 떠요. 꼭 찜콩의 [초대 링크 복사] · [초대 QR]을 쓰세요.\n  </div>\n\n  <h3>필요할 때 쓰는 것</h3>\n  <ul>\n    <li><strong>이름 보이기</strong>: 끄면 성도에게는 남의 자리가 \"예약됨\"으로만 보여요. 관리자에게는 늘 보여요.</li>\n    <li><strong>1인 최대</strong>: 가족 몫까지 잡게 하려면 늘리세요. 1이면 다른 자리를 누를 때 옮기기가 돼요.</li>\n    <li><strong>관리자 취소</strong>: 남의 예약 자리를 누르면 취소할지 물어요. 기기를 바꿔 자기 자리를 못 지우는 분께 써 주세요.</li>\n    <li><strong>[다음 회차로]</strong>: 예약을 모두 시트의 '지난 예약' 탭으로 옮기고 좌석표를 비워요. 배치도와 공개는 그대로예요.</li>\n    <li><strong>여는 · 닫는 시각</strong>: 시트 <strong>[설정] 탭</strong>에 손으로 넣어요. 예: <code>2026-12-01 21:00</code>. 비워 두면 공개하자마자 받고 닫지 않아요.</li>\n  </ul>\n\n  <h3>이럴 땐</h3>\n  <ul>\n    <li><strong>[좌석 예약] 메뉴가 안 보여요</strong>: 시트를 새로 고치고 10초쯤 기다리세요.</li>\n    <li><strong>찜콩 연결이 안 돼요</strong>: 대개 \"모두 선택\"을 안 했거나 액세스가 \"모든 사용자\"가 아니에요. Apps Script <strong>[배포] → [배포 관리] → 연필</strong>에서 고치고 <strong>버전 [새 버전] → [배포]</strong> 하세요. 주소는 그대로예요.</li>\n    <li><strong>스크립트를 고쳤어요</strong>: 위와 같이 <strong>[배포 관리] → 연필 → 새 버전</strong>으로 다시 배포하세요.</li>\n    <li>같은 자리를 동시에 누르면 먼저 온 한 사람만 잡혀요. 수십 명이 한 시각에 몰리는 \"선착순 오픈\"에는 맞지 않아요.</li>\n  </ul>\n\n  <div class=\"note\">\n    <strong>개인정보</strong>\n    예약 기록과 이름은 관리자의 구글 시트에만 저장돼요. 찜콩은 따로 모으지 않아요.\n  </div>\n\n  <p class=\"muted\"><a href=\"#member\">성도용으로</a> · <a href=\"./\">← 찜콩으로</a></p>"
+}
