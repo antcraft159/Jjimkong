@@ -1855,15 +1855,70 @@ function toggleTheme() {
 }
 
 function fillLanguages() {
-  const select = $('langSelect');
+  const button = $('langButton');
+  const list = $('langList');
+  const current = LANGS.find(item => item.code === LANG) || LANGS[0];
+  $('langFlag').className = 'fi fi-' + current.flag;
+  $('langName').textContent = current.name;
+
   for (const item of LANGS) {
-    const option = document.createElement('option');
-    option.value = item.code;
-    option.textContent = item.name;
-    select.appendChild(option);
+    const option = document.createElement('button');
+    option.type = 'button';
+    option.className = 'lang-option';
+    option.setAttribute('role', 'option');
+    option.setAttribute('aria-selected', String(item.code === LANG));
+    option.lang = item.code;
+    const flag = document.createElement('span');
+    flag.className = 'fi fi-' + item.flag;
+    const name = document.createElement('span');
+    name.className = 'lang-label';
+    name.textContent = item.name;
+    option.append(flag, name);
+    if (item.code === LANG) {
+      const check = document.createElement('span');
+      check.className = 'lang-check';
+      check.textContent = '✓';
+      option.appendChild(check);
+    }
+    option.addEventListener('click', () => {
+      if (item.code === LANG) closeLanguages(true);
+      else setLang(item.code);
+    });
+    list.appendChild(option);
   }
-  select.value = LANG;
-  select.addEventListener('change', () => setLang(select.value));
+
+  button.addEventListener('click', () => (list.hidden ? openLanguages() : closeLanguages(false)));
+  document.addEventListener('pointerdown', event => {
+    if (!list.hidden && !event.target.closest('.lang-menu')) closeLanguages(false);
+  });
+  list.addEventListener('keydown', event => {
+    const options = [...list.querySelectorAll('.lang-option')];
+    const at = options.indexOf(document.activeElement);
+    const columns = getComputedStyle(list).gridTemplateColumns.split(' ').length;
+    const step = { ArrowDown: columns, ArrowUp: -columns, ArrowRight: 1, ArrowLeft: -1 }[event.key];
+    if (step) {
+      event.preventDefault();
+      options[Math.min(Math.max(at + step, 0), options.length - 1)].focus();
+    } else if (event.key === 'Home' || event.key === 'End') {
+      event.preventDefault();
+      options[event.key === 'Home' ? 0 : options.length - 1].focus();
+    } else if (event.key === 'Escape') {
+      closeLanguages(true);
+    }
+  });
+}
+
+function openLanguages() {
+  const list = $('langList');
+  list.hidden = false;
+  $('langButton').setAttribute('aria-expanded', 'true');
+  (list.querySelector('[aria-selected="true"]') || list.firstElementChild).focus();
+}
+
+function closeLanguages(focusButton) {
+  $('langList').hidden = true;
+  $('langButton').setAttribute('aria-expanded', 'false');
+  if (focusButton) $('langButton').focus();
 }
 
 async function start() {

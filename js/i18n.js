@@ -1,26 +1,26 @@
 (() => {
 'use strict';
 const LANGS = [
-  { code: 'ko', name: '한국어', locale: 'ko-KR' },
-  { code: 'en', name: 'English', locale: 'en-US' },
-  { code: 'es', name: 'Español', locale: 'es-ES' },
-  { code: 'ru', name: 'Русский', locale: 'ru-RU' },
-  { code: 'mn', name: 'Монгол', locale: 'mn-MN' },
-  { code: 'fr', name: 'Français', locale: 'fr-FR' },
-  { code: 'de', name: 'Deutsch', locale: 'de-DE' },
-  { code: 'ja', name: '日本語', locale: 'ja-JP' },
-  { code: 'zh-CN', name: '简体中文', locale: 'zh-CN' },
-  { code: 'zh-TW', name: '繁體中文', locale: 'zh-TW' },
-  { code: 'tl', name: 'Tagalog', locale: 'fil-PH' },
-  { code: 'ceb', name: 'Cebuano', locale: 'en-PH' },
-  { code: 'it', name: 'Italiano', locale: 'it-IT' },
-  { code: 'th', name: 'ไทย', locale: 'th-TH' },
-  { code: 'ne', name: 'नेपाली', locale: 'ne-NP' },
-  { code: 'id', name: 'Bahasa Indonesia', locale: 'id-ID' },
-  { code: 'pt', name: 'Português', locale: 'pt-BR' },
-  { code: 'ky', name: 'Кыргызча', locale: 'ky-KG' },
-  { code: 'km', name: 'ខ្មែរ', locale: 'km-KH' },
-  { code: 'vi', name: 'Tiếng Việt', locale: 'vi-VN' }
+  { code: 'ko', flag: 'kr', name: '한국어', locale: 'ko-KR' },
+  { code: 'en', flag: 'us', name: 'English', locale: 'en-US' },
+  { code: 'es', flag: 'es', name: 'Español', locale: 'es-ES' },
+  { code: 'ru', flag: 'ru', name: 'Русский', locale: 'ru-RU' },
+  { code: 'mn', flag: 'mn', name: 'Монгол', locale: 'mn-MN' },
+  { code: 'fr', flag: 'fr', name: 'Français', locale: 'fr-FR' },
+  { code: 'de', flag: 'de', name: 'Deutsch', locale: 'de-DE' },
+  { code: 'ja', flag: 'jp', name: '日本語', locale: 'ja-JP' },
+  { code: 'zh-CN', flag: 'cn', name: '简体中文', locale: 'zh-CN' },
+  { code: 'zh-TW', flag: 'tw', name: '繁體中文', locale: 'zh-TW' },
+  { code: 'tl', flag: 'ph', name: 'Tagalog', locale: 'fil-PH' },
+  { code: 'ceb', flag: 'ph', name: 'Cebuano', locale: 'en-PH' },
+  { code: 'it', flag: 'it', name: 'Italiano', locale: 'it-IT' },
+  { code: 'th', flag: 'th', name: 'ไทย', locale: 'th-TH' },
+  { code: 'ne', flag: 'np', name: 'नेपाली', locale: 'ne-NP' },
+  { code: 'id', flag: 'id', name: 'Bahasa Indonesia', locale: 'id-ID' },
+  { code: 'pt', flag: 'br', name: 'Português', locale: 'pt-BR' },
+  { code: 'ky', flag: 'kg', name: 'Кыргызча', locale: 'ky-KG' },
+  { code: 'km', flag: 'kh', name: 'ខ្មែរ', locale: 'km-KH' },
+  { code: 'vi', flag: 'vn', name: 'Tiếng Việt', locale: 'vi-VN' }
 ];
 
 const LANG = LANGS.some(item => item.code === window.JJIM_LANG) ? window.JJIM_LANG : 'ko';

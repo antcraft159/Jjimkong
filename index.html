@@ -10,7 +10,8 @@
 <meta property="og:description" content="링크를 누르고 빈자리를 찜하세요.">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
-<link rel="stylesheet" href="css/style.css?v=20261126f">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flag-icons@7.2.3/css/flag-icons.min.css">
+<link rel="stylesheet" href="css/style.css?v=20261126g">
 <script>
   (function () {
     var codes = ['ko', 'en', 'es', 'ru', 'mn', 'fr', 'de', 'ja', 'zh-CN', 'zh-TW', 'tl', 'ceb', 'it', 'th', 'ne', 'id', 'pt', 'ky', 'km', 'vi'];
@@ -36,7 +37,7 @@
     window.JJIM_LANG = lang;
     document.documentElement.lang = lang;
     document.documentElement.setAttribute('data-theme', theme);
-    if (lang !== 'ko') document.write('<script src="js/lang/' + lang + '.js?v=20261126f"><\/script>');
+    if (lang !== 'ko') document.write('<script src="js/lang/' + lang + '.js?v=20261126g"><\/script>');
   })();
 </script>
 </head>
@@ -79,10 +80,14 @@
       <a class="btn ghost small" id="guideLink" href="guide.html">사용법</a>
       <button class="btn ghost small" id="disconnectButton" type="button">연결 끊기</button>
     </nav>
-    <label class="lang-pick" title="언어 · Language">
-      <span aria-hidden="true">🌐</span>
-      <select id="langSelect" aria-label="언어 · Language" data-i18n-skip></select>
-    </label>
+    <div class="lang-menu" data-i18n-skip>
+      <button class="lang-button" id="langButton" type="button" aria-haspopup="listbox" aria-expanded="false" aria-label="Language">
+        <span class="fi" id="langFlag"></span>
+        <span class="lang-current" id="langName"></span>
+        <svg class="lang-chevron" viewBox="0 0 12 12" aria-hidden="true"><path d="M3 4.5 6 7.5 9 4.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="lang-list" id="langList" role="listbox" aria-label="Language" hidden></div>
+    </div>
     <button class="btn ghost small theme-toggle" id="themeButton" type="button" aria-label="어두운 화면으로">🌙</button>
   </div>
 </header>
@@ -373,11 +378,11 @@
 <footer class="foot">찜콩</footer>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" defer></script>
-<script src="js/i18n.js?v=20261126f" defer></script>
-<script src="js/geometry.js?v=20261126f" defer></script>
-<script src="js/links.js?v=20261126f" defer></script>
-<script src="js/demo.js?v=20261126f" defer></script>
-<script src="js/api.js?v=20261126f" defer></script>
-<script src="js/app.js?v=20261126f" defer></script>
+<script src="js/i18n.js?v=20261126g" defer></script>
+<script src="js/geometry.js?v=20261126g" defer></script>
+<script src="js/links.js?v=20261126g" defer></script>
+<script src="js/demo.js?v=20261126g" defer></script>
+<script src="js/api.js?v=20261126g" defer></script>
+<script src="js/app.js?v=20261126g" defer></script>
 </body>
 </html>
