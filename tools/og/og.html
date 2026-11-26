@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<style>
+  html, body { margin: 0; width: 1200px; height: 630px; overflow: hidden; }
+  body { font-family: "Pretendard Variable", Pretendard, sans-serif; background: linear-gradient(135deg, #f0fdf4 0%, #ffffff 55%, #ecfdf5 100%); color: #14281a; position: relative; }
+  .left { position: absolute; left: 96px; top: 0; bottom: 0; display: flex; flex-direction: column; justify-content: center; }
+  .brand { display: flex; align-items: center; gap: 28px; }
+  .brand svg { width: 150px; height: 150px; border-radius: 38px; box-shadow: 0 14px 34px rgba(22, 101, 52, .25); }
+  .name { font-size: 132px; font-weight: 800; letter-spacing: -4px; line-height: 1; }
+  .sub { margin-top: 40px; font-size: 46px; font-weight: 700; color: #15803d; letter-spacing: -1px; }
+  .desc { margin-top: 14px; font-size: 32px; font-weight: 500; color: #4b5563; letter-spacing: -.5px; }
+  .map { position: absolute; right: 90px; top: 50%; transform: translateY(-50%); padding: 30px 30px 34px; background: #fff; border-radius: 28px; box-shadow: 0 18px 50px rgba(15, 60, 30, .12); }
+  .stage { height: 30px; border-radius: 10px; background: #dcfce7; color: #166534; font-size: 18px; font-weight: 700; display: flex; align-items: center; justify-content: center; margin-bottom: 22px; }
+  .grid { display: grid; grid-template-columns: repeat(5, 54px); gap: 14px; }
+  .s { width: 54px; height: 48px; border-radius: 12px 12px 8px 8px; background: #e5e7eb; position: relative; }
+  .s.t { background: #9ca3af; }
+  .s.me { background: #16a34a; box-shadow: 0 0 0 5px #bbf7d0; }
+  .s.me::after { content: ""; position: absolute; left: 13px; top: 8px; width: 28px; height: 28px; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cpath d='M22 14c9-4 19 1 21 9 1 5-3 7-3 11s5 6 4 12c-2 8-13 11-22 7S8 40 9 30s4-13 13-16z' fill='%23c9e3a8'/%3E%3Ccircle cx='22' cy='28' r='3' fill='%232a3a22'/%3E%3Ccircle cx='30' cy='37' r='3' fill='%232a3a22'/%3E%3C/svg%3E") center/contain no-repeat; }
+</style>
+</head>
+<body>
+  <div class="left">
+    <div class="brand">
+      <svg viewBox="0 0 64 64">
+        <rect width="64" height="64" rx="16" fill="#3f7d3a"/>
+        <path d="M22 14c9-4 19 1 21 9 1 5-3 7-3 11s5 6 4 12c-2 8-13 11-22 7S8 40 9 30s4-13 13-16z" fill="#c9e3a8"/>
+        <path d="M33 21c-3 3-3 8 0 11" stroke="#7fae5d" stroke-width="3" fill="none" stroke-linecap="round"/>
+        <circle cx="22" cy="28" r="2.4" fill="#2a3a22"/>
+        <circle cx="30" cy="37" r="2.4" fill="#2a3a22"/>
+        <path d="M21 40q5 5 11 1" stroke="#2a3a22" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+      </svg>
+      <div class="name">찜콩</div>
+    </div>
+    <div class="sub">좌석 찜하기</div>
+    <div class="desc">링크를 누르고 빈자리를 찜하세요</div>
+  </div>
+  <div class="map">
+    <div class="stage">앞 (강단)</div>
+    <div class="grid">
+      <div class="s t"></div><div class="s t"></div><div class="s"></div><div class="s t"></div><div class="s t"></div>
+      <div class="s t"></div><div class="s"></div><div class="s t"></div><div class="s"></div><div class="s t"></div>
+      <div class="s"></div><div class="s t"></div><div class="s me"></div><div class="s"></div><div class="s"></div>
+      <div class="s"></div><div class="s"></div><div class="s t"></div><div class="s"></div><div class="s t"></div>
+      <div class="s"></div><div class="s"></div><div class="s"></div><div class="s"></div><div class="s"></div>
+    </div>
+  </div>
+</body>
+</html>
