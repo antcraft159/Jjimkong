@@ -29,9 +29,7 @@
 <script>
   (function () {
     var splash = document.getElementById('splash');
-    var seen = false;
-    try { seen = sessionStorage.getItem('jjimkong.splash') === '1'; sessionStorage.setItem('jjimkong.splash', '1'); } catch (e) {}
-    if (seen || location.hash || matchMedia('(prefers-reduced-motion: reduce)').matches) { splash.remove(); return; }
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) { splash.remove(); return; }
     function close() { splash.classList.add('out'); setTimeout(function () { splash.remove(); }, 600); }
     splash.addEventListener('click', close);
     setTimeout(close, 2300);
