@@ -66,6 +66,18 @@ function setBusy(value) {
   ['connectButton', 'refreshButton', 'editLayoutButton', 'nextSessionButton', 'saveLayoutButton', 'cancelEditButton',
     'publishedToggle', 'showNamesToggle', 'maxMinus', 'maxPlus'].forEach(id => { $(id).disabled = value; });
   $('editorPanel').querySelectorAll('button').forEach(b => { b.disabled = value; });
+  updateConnectButton();
+}
+
+function needsName() {
+  if ($('nameInput').value.trim()) return false;
+  const raw = $('codeInput').value;
+  const link = parseCode(raw);
+  return !!link && !link.adminKey && link.url !== DEMO_URL && !readOwnKey(raw.replace(/\s+/g, '')).key;
+}
+
+function updateConnectButton() {
+  $('connectButton').disabled = busy || needsName();
 }
 
 // ───────────── 알림 ─────────────
@@ -108,6 +120,12 @@ async function connect() {
 
   if (!link) {
     say(t('연결 코드를 읽지 못했어요. 관리자가 준 링크나 https://script.google.com/… 주소를 그대로 붙여 넣어 주세요.'));
+    return;
+  }
+
+  if (needsName()) {
+    say(t('이름을 적어 주세요.'));
+    $('nameInput').focus();
     return;
   }
 
@@ -252,6 +270,7 @@ async function adoptPerson(personId, name, doneText) {
 async function updateCodeCheck() {
   const link = parseCode($('codeInput').value);
   const code = link && link.url !== DEMO_URL ? await fingerprint(link.url) : '';
+  updateConnectButton();
   $('codeFingerprint').textContent = code;
   $('codeCheck').hidden = !code;
 }
@@ -1756,6 +1775,7 @@ function wire() {
     }
   });
   $('nameInput').addEventListener('keydown', event => { if (event.key === 'Enter') $('codeInput').focus(); });
+  $('nameInput').addEventListener('input', updateConnectButton);
   $('demoButton').addEventListener('click', () => {
     $('codeInput').value = 'demo';
     if (!$('nameInput').value.trim()) $('nameInput').value = t('체험자');
