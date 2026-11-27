@@ -272,6 +272,7 @@ class LayoutDraft {
 
       floor.items = validItems
         .filter(item => (item.f | 0) === floor.id)
+        .filter((item, index, list) => item.kind !== 'pulpit' || list.findIndex(other => other.kind === 'pulpit') === index)
         .slice(0, MAX_ITEMS)
         .map(item => ({ kind: item.kind, x: Math.round(item.x), y: Math.round(item.y), a: Math.round(item.a || 0) }));
     }
@@ -343,6 +344,10 @@ class LayoutDraft {
 
   addItem(kind, x, y, a) {
     if (!isItemKind(kind)) return null;
+    if (kind === 'pulpit') {
+      const index = this.cur.items.findIndex(item => item.kind === 'pulpit');
+      if (index >= 0) this.cur.items.splice(index, 1);
+    }
     if (this.itemCount >= MAX_ITEMS) return t('물건은 {n}개까지 놓을 수 있어요.', { n: MAX_ITEMS });
     this.cur.items.push({ kind, x: clampCoord(x), y: clampCoord(y), a: Math.round(a || 0) });
     return null;
