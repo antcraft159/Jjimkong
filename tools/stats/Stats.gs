@@ -4,7 +4,7 @@ const ID_PATTERN = /^[a-f0-9]{16,64}$/;
 
 function doGet(e) {
   const p = (e && e.parameter) || {};
-  if (KINDS[p.k]) return json(record(p.k, String(p.id || '')));
+  if (Object.prototype.hasOwnProperty.call(KINDS, p.k)) return json(record(p.k, String(p.id || '')));
   return json(summary());
 }
 

@@ -64,8 +64,15 @@ function readInvite(text) {
   return undefined;
 }
 
+function pickLink(code) {
+  const raw = String(code || '');
+  const found = /(?:https:\/\/|hagah:\/\/)\S+/i.exec(raw);
+  const inside = found && raw.slice(0, found.index).trim() !== '';
+  return (inside ? found[0] : raw).replace(/\s+/g, '');
+}
+
 function parseCode(code) {
-  let text = String(code || '').replace(/\s+/g, '');
+  let text = pickLink(code);
   if (text.length === 0 || text.length > MAX_CODE_LENGTH) return null;
 
   if (text === 'demo' || text === 'demo#admin') {
@@ -124,5 +131,5 @@ async function fingerprint(memberUrl) {
   }
   return out;
 }
-Object.assign(window.Jjim = window.Jjim || {}, { DEMO_URL, DEMO_ADMIN_KEY, MAX_CODE_LENGTH, TEMPLATE_COPY_URL, pageUrl, memberUrlFromParams, parseCode, buildInvite, buildShareText, fingerprint });
+Object.assign(window.Jjim = window.Jjim || {}, { DEMO_URL, DEMO_ADMIN_KEY, MAX_CODE_LENGTH, TEMPLATE_COPY_URL, pageUrl, memberUrlFromParams, pickLink, parseCode, buildInvite, buildShareText, fingerprint });
 })();

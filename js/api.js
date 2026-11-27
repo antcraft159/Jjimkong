@@ -96,6 +96,10 @@ function normalize(state) {
   return state;
 }
 
+function localZone() {
+  try { return Intl.DateTimeFormat().resolvedOptions().timeZone || ''; } catch (e) { return ''; }
+}
+
 async function getState(connection, personId) {
   let knownKey = null;
 
@@ -105,7 +109,10 @@ async function getState(connection, personId) {
     else knownKey = layout.key;
   }
 
-  const state = await post(connection, personId, 'state', knownKey ? { layoutKey: knownKey } : {});
+  const extra = knownKey ? { layoutKey: knownKey } : {};
+  const zone = connection.adminKey ? localZone() : '';
+  if (zone) extra.tz = zone;
+  const state = await post(connection, personId, 'state', extra);
   if (!state.ok) return state;
 
   if (!state.layoutSame) {
@@ -128,7 +135,7 @@ async function getState(connection, personId) {
   }
 
   forgetLayout();
-  const full = await post(connection, personId, 'state', {});
+  const full = await post(connection, personId, 'state', zone ? { tz: zone } : {});
   if (!full.ok) return full;
   if (full.layoutSame) return fail('bad-response', t('답을 읽지 못했어요.'));
   if (full.layoutKey) layout = { url: connection.url, key: full.layoutKey, seats: full.seats || [], floors: full.floors || [], items: full.items, walls: full.walls };

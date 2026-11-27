@@ -317,8 +317,15 @@ function rename(state, device, rawName) {
   requireDevice(device);
   const name = uniqueName(state, device, cleanName(rawName));
   state.reservations.forEach(r => { if (r.device === device) r.name = name; });
+  const pinNames = state.pinNames || {};
+  const oldKey = Object.keys(pinNames).find(key => pinNames[key] === device);
+  const pinCleared = !!oldKey && oldKey !== nameKey(name);
+  if (pinCleared) {
+    delete pinNames[oldKey];
+    for (const other of Object.keys(state.pins || {})) if (state.pins[other] === device) delete state.pins[other];
+  }
   save(state);
-  return { ok: true, name };
+  return pinCleared ? { ok: true, name, pinCleared } : { ok: true, name };
 }
 
 function requirePin(pin) {
