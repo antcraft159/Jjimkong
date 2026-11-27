@@ -95,7 +95,7 @@ T_CALL = re.compile(r"""\bt\((['"])((?:\\.|(?!\1).)*)\1""")
 
 def js_keys():
     found = []
-    for name in ['app.js', 'api.js', 'links.js', 'geometry.js', 'demo.js']:
+    for name in ['app.js', 'stats.js', 'api.js', 'links.js', 'geometry.js', 'demo.js']:
         text = (ROOT / 'js' / name).read_text(encoding='utf-8')
         for number, line in enumerate(text.splitlines(), 1):
             for match in T_CALL.finditer(line):
