@@ -2,6 +2,7 @@
 'use strict';
 const { SeatGeometry, LayoutDraft, CELL_W, CELL_H, FAN_ANGLE, ROUND_ANGLE, MIN_ANGLE, MAX_ANGLE, MAX_ROWS, MAX_COLS, floorName, normalizeKind, normalizeShape, kindName, ITEMS, t, tm, LANGS, LANG, setLang, translatePage, formatDate, isItemKind, MAX_WALL_POINTS, parseCode, memberUrlFromParams, buildInvite, buildShareText, fingerprint, TEMPLATE_COPY_URL, DEMO_URL, post, getState, saveLayout: postLayout, forgetLayout } = window.Jjim;
 const REFRESH_MS = 20000;
+const ADMIN_REFRESH_MS = 4000;
 const STORE_KEY = 'jjimkong.v1';
 const HALF_DIAGONAL = 40;
 const STAGE_VISIBLE = 40;
@@ -294,7 +295,8 @@ let timer = 0;
 
 function startTimer() {
   stopTimer();
-  timer = setInterval(() => { if (!document.hidden) refresh(true); }, REFRESH_MS);
+  const every = store.conn && store.conn.adminKey ? ADMIN_REFRESH_MS : REFRESH_MS;
+  timer = setInterval(() => { if (!document.hidden && !refreshing) refresh(true); }, every);
 }
 
 function stopTimer() {
@@ -303,6 +305,7 @@ function stopTimer() {
 }
 
 const GONE_LIMIT = 3;
+const ADMIN_GONE_LIMIT = 10;
 let goneCount = 0;
 
 async function dropGoneConnection() {
@@ -318,19 +321,27 @@ async function dropGoneConnection() {
   await noticeBox(t('좌석 예약이 닫혔어요'), t('관리자가 좌석 예약 시트를 지웠거나 닫은 것 같아요. 연결을 끊었어요. 관리자에게 받은 초대 링크(연결 코드)가 맞는지 다시 확인하고 들어와 주세요.'));
 }
 
+let refreshing = false;
+
 async function refresh(quiet) {
   if (!store.conn || busy || editing()) return;
   if (!quiet) setBusy(true);
   const sequence = ++refreshSeq;
   const conn = store.conn;
-  const state = await getState(conn, store.personId);
+  refreshing = true;
+  let state;
+  try {
+    state = await getState(conn, store.personId);
+  } finally {
+    refreshing = false;
+  }
   if (!quiet) setBusy(false);
 
   if (sequence !== refreshSeq || conn !== store.conn || editing()) return;
 
   if (!state.ok) {
     goneCount = state.error === 'gone' ? goneCount + 1 : 0;
-    if (goneCount >= GONE_LIMIT) {
+    if (goneCount >= (conn.adminKey ? ADMIN_GONE_LIMIT : GONE_LIMIT)) {
       await dropGoneConnection();
       return;
     }
@@ -1989,6 +2000,7 @@ function wire() {
   window.addEventListener('hashchange', readHash);
   new ResizeObserver(() => { if (isConnected()) updateZoom(); }).observe($('boardScroll'));
   document.addEventListener('visibilitychange', () => { if (!document.hidden) refresh(true); });
+  window.addEventListener('focus', () => { if (!refreshing) refresh(true); });
   window.addEventListener('beforeunload', event => {
     if (editing()) {
       event.preventDefault();
