@@ -17,7 +17,6 @@ window.JJIM_DICT = {
 "처음이라면": "Lần đầu dùng?",
 "실제 시트 없이 좌석표를 눌러 볼 수 있어요.": "Bạn có thể bấm thử sơ đồ chỗ ngồi mà không cần trang tính thật.",
 "체험해 보기": "Dùng thử",
-"관리자(교회)": "Quản trị viên (Hội thánh)",
 "좌석 예약 시트를 내 구글 드라이브에 만들어 쓰세요. PC 에서 하시는 게 편해요.": "Hãy tạo trang tính đặt chỗ trong Google Drive của bạn. Làm trên máy tính sẽ tiện hơn.",
 "시트 만들기": "Tạo trang tính",
 "관리자 사용법": "Hướng dẫn cho quản trị viên",
