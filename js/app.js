@@ -392,6 +392,19 @@ function formatTime(iso) {
 
 // ───────────── 이름 ─────────────
 
+function adoptServerName(response) {
+  const name = response && typeof response.name === 'string' ? response.name.trim() : '';
+  if (!name || name === store.name) return '';
+  store.name = name;
+  saveStore();
+  $('myNameInput').value = name;
+  return name;
+}
+
+function sameNameNote(name) {
+  return name ? ' ' + t("같은 이름이 있어서 '{name}'(으)로 적었어요.", { name }) : '';
+}
+
 async function commitName() {
   const conn = store.conn;
   if (!conn) return true;
@@ -407,7 +420,7 @@ async function commitName() {
     }
     store.name = name;
     saveStore();
-    say(t('이름을 바꿨어요.'));
+    say(t('이름을 바꿨어요.') + sameNameNote(adoptServerName(response)));
     await refresh(true);
     return true;
   }
@@ -470,7 +483,9 @@ async function reserveOrMove(seat) {
   setBusy(false);
   if (conn !== store.conn) return;
 
-  say(response.ok ? (isMove ? t('{seat} 로 옮겼어요.', { seat: seat.label }) : t('{seat} 찜콩! 자리를 잡았어요.', { seat: seat.label })) : tm(response.message) || '');
+  say(response.ok
+    ? (isMove ? t('{seat} 로 옮겼어요.', { seat: seat.label }) : t('{seat} 찜콩! 자리를 잡았어요.', { seat: seat.label })) + sameNameNote(adoptServerName(response))
+    : tm(response.message) || '');
   await refresh(true);
 }
 
@@ -679,9 +694,13 @@ async function submitPin(event) {
 
   if (pinMode === 'set') {
     store.pins[conn.url] = true;
+    store.name = typeof response.name === 'string' && response.name.trim() ? response.name.trim() : name;
     saveStore();
+    $('myNameInput').value = store.name;
     render();
-    say(t('비밀번호를 정했어요. 이름과 함께 꼭 기억해 두세요. 이제 자리를 찜하세요!'));
+    say(store.name !== name
+      ? t("같은 이름이 있어서 '{name}'(으)로 정했어요. 되찾을 때도 이 이름과 비밀번호로 적어 주세요.", { name: store.name })
+      : t('비밀번호를 정했어요. 이름과 함께 꼭 기억해 두세요. 이제 자리를 찜하세요!'));
     return;
   }
 
