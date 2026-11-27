@@ -246,14 +246,14 @@ function buildState(state, device, isAdmin) {
 
 function reserve(state, device, rawName, seatId, isAdmin) {
   requireDevice(device);
-  const name = cleanName(rawName);
+  const name = uniqueName(state, device, cleanName(rawName));
   requireOpen(state.settings, isAdmin);
 
   const seat = findSeat(state, seatId);
   const existing = findReservation(state, seatId);
 
   if (existing) {
-    if (existing.device === device) return { ok: true, seat: seat.id };
+    if (existing.device === device) return { ok: true, seat: seat.id, name };
     throw userError('taken', '그 사이 다른 분이 먼저 잡았어요. 다른 자리를 골라 주세요.');
   }
 
@@ -268,19 +268,19 @@ function reserve(state, device, rawName, seatId, isAdmin) {
 
   state.reservations.push({ seat: seat.id, device, name, at: new Date().toISOString() });
   save(state);
-  return { ok: true, seat: seat.id };
+  return { ok: true, seat: seat.id, name };
 }
 
 function move(state, device, rawName, fromSeatId, toSeatId, isAdmin) {
   requireDevice(device);
-  const name = cleanName(rawName);
+  const name = uniqueName(state, device, cleanName(rawName));
   requireOpen(state.settings, isAdmin);
 
   const seat = findSeat(state, toSeatId);
   const mine = findReservation(state, fromSeatId);
 
   if (!mine || mine.device !== device) throw userError('not-mine', '내 자리만 바꿀 수 있어요. 좌석표를 새로 불러올게요.');
-  if (fromSeatId === toSeatId) return { ok: true, seat: seat.id };
+  if (fromSeatId === toSeatId) return { ok: true, seat: seat.id, name };
 
   const target = findReservation(state, toSeatId);
   if (target) {
@@ -293,7 +293,7 @@ function move(state, device, rawName, fromSeatId, toSeatId, isAdmin) {
   mine.name = name;
   mine.at = new Date().toISOString();
   save(state);
-  return { ok: true, seat: seat.id };
+  return { ok: true, seat: seat.id, name };
 }
 
 function cancel(state, device, seatId) {
@@ -309,14 +309,33 @@ function cancel(state, device, seatId) {
 
 function rename(state, device, rawName) {
   requireDevice(device);
-  const name = cleanName(rawName);
+  const name = uniqueName(state, device, cleanName(rawName));
   state.reservations.forEach(r => { if (r.device === device) r.name = name; });
   save(state);
-  return { ok: true };
+  return { ok: true, name };
 }
 
 function requirePin(pin) {
   if (typeof pin !== 'string' || !/^\d{4}$/.test(pin)) throw userError('bad-pin', '비밀번호는 숫자 4자리로 적어 주세요.');
+}
+
+const NAME_LETTERS = 'BCDEFGHIJKLMNOPQRSTUVWXYZ';
+
+function nameKey(name) {
+  return plainName(name).replace(/\s+/g, '').toLowerCase();
+}
+
+function uniqueName(state, device, name) {
+  const taken = {};
+  state.reservations.forEach(r => { if (r.device !== device) taken[nameKey(r.name)] = true; });
+  const owners = state.pinNames || {};
+  const used = candidate => taken[nameKey(candidate)] || (!!owners[nameKey(candidate)] && owners[nameKey(candidate)] !== device);
+  if (!used(name)) return name;
+  for (const letter of NAME_LETTERS) {
+    const candidate = sliceChars(name, MAX_NAME_LENGTH - 1).trim() + letter;
+    if (!used(candidate)) return candidate;
+  }
+  throw userError('name-full', '같은 이름이 너무 많아요. 이름을 조금 다르게 적어 주세요.');
 }
 
 function pinKey(name, pin) {
@@ -325,15 +344,18 @@ function pinKey(name, pin) {
 
 function setPin(state, device, rawName, pin) {
   requireDevice(device);
-  const name = cleanName(rawName);
+  const name = uniqueName(state, device, cleanName(rawName));
   requirePin(pin);
   state.pins = state.pins || {};
   const key = pinKey(name, pin);
   if (state.pins[key] && state.pins[key] !== device) throw userError('pin-used', '같은 이름에 같은 비밀번호를 쓰는 분이 있어요. 다른 번호를 골라 주세요.');
   for (const other of Object.keys(state.pins)) if (state.pins[other] === device) delete state.pins[other];
   state.pins[key] = device;
+  state.pinNames = state.pinNames || {};
+  for (const other of Object.keys(state.pinNames)) if (state.pinNames[other] === device) delete state.pinNames[other];
+  state.pinNames[nameKey(name)] = device;
   save(state);
-  return { ok: true };
+  return { ok: true, name };
 }
 
 function reclaim(state, rawName, pin) {
