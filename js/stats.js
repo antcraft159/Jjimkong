@@ -1,7 +1,7 @@
 (() => {
 'use strict';
 const { t, LANG, DEMO_URL } = window.Jjim;
-const STATS_URL = '';
+const STATS_URL = 'https://script.google.com/macros/s/AKfycbxPjLY9YLtlFlJBE5Tbe_QlxKvpCsEYCnTjKVSRwzUb6cf4jGa9q4c4h7EcGiiY5XNe/exec';
 const COUNTED_KEY = 'jjimkong.counted';
 
 function readCounted() {
