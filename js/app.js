@@ -1,6 +1,6 @@
 (() => {
 'use strict';
-const { SeatGeometry, LayoutDraft, CELL_W, CELL_H, FAN_ANGLE, ROUND_ANGLE, MIN_ANGLE, MAX_ANGLE, MAX_ROWS, MAX_COLS, floorName, normalizeKind, normalizeShape, kindName, ITEMS, t, tm, LANGS, LANG, setLang, translatePage, formatDate, isItemKind, MAX_WALL_POINTS, parseCode, memberUrlFromParams, buildInvite, buildShareText, fingerprint, TEMPLATE_COPY_URL, DEMO_URL, post, getState, saveLayout: postLayout, forgetLayout } = window.Jjim;
+const { SeatGeometry, LayoutDraft, CELL_W, CELL_H, FAN_ANGLE, ROUND_ANGLE, MIN_ANGLE, MAX_ANGLE, MAX_ROWS, MAX_COLS, floorName, normalizeKind, normalizeShape, kindName, ITEMS, t, tm, LANGS, LANG, setLang, translatePage, formatDate, isItemKind, MAX_WALL_POINTS, parseCode, memberUrlFromParams, pickLink, buildInvite, buildShareText, fingerprint, TEMPLATE_COPY_URL, DEMO_URL, post, getState, saveLayout: postLayout, forgetLayout } = window.Jjim;
 const REFRESH_MS = 20000;
 const ADMIN_REFRESH_MS = 4000;
 const STORE_KEY = 'jjimkong.v1';
@@ -24,7 +24,8 @@ function randomId() {
 
 function loadStore() {
   let data = {};
-  try { data = JSON.parse(localStorage.getItem(STORE_KEY) || '{}') || {}; } catch (e) { data = {}; }
+  try { data = JSON.parse(localStorage.getItem(STORE_KEY) || '{}'); } catch (e) { data = {}; }
+  if (!data || typeof data !== 'object' || Array.isArray(data)) data = {};
   if (typeof data.personId !== 'string' || !PERSON_PATTERN.test(data.personId)) data.personId = randomId();
   if (typeof data.name !== 'string') data.name = '';
   if (!data.pins || typeof data.pins !== 'object') data.pins = {};
@@ -74,7 +75,7 @@ function needsName() {
   if ($('nameInput').value.trim()) return false;
   const raw = $('codeInput').value;
   const link = parseCode(raw);
-  return !!link && !link.adminKey && link.url !== DEMO_URL && !readOwnKey(raw.replace(/\s+/g, '')).key;
+  return !!link && !link.adminKey && link.url !== DEMO_URL && !readOwnKey(pickLink(raw)).key;
 }
 
 function updateConnectButton() {
@@ -129,6 +130,7 @@ function confirmBox(title, text) {
 // ───────────── 연결 ─────────────
 
 async function connect() {
+  if (busy) return;
   const link = parseCode($('codeInput').value);
 
   if (!link) {
@@ -142,7 +144,7 @@ async function connect() {
     return;
   }
 
-  const own = readOwnKey($('codeInput').value.replace(/\s+/g, ''));
+  const own = readOwnKey(pickLink($('codeInput').value));
   if (own.key) store.personId = own.key;
   if (own.name && !$('nameInput').value.trim()) $('nameInput').value = own.name;
   store.name = $('nameInput').value.trim();
@@ -165,6 +167,7 @@ async function connect() {
   }
 
   candidate.room = state.room || '';
+  say('');
   store.conn = candidate;
   saveStore();
   window.Jjim.countUse(candidate.url, !!link.adminKey);
@@ -198,6 +201,7 @@ async function dropConnection() {
   setBusy(false);
   stopTimer();
   $('toast').hidden = true;
+  $('connectMessage').hidden = true;
   await onConnectionChanged();
 }
 
@@ -223,6 +227,7 @@ function acceptInvite(memberUrl) {
 
   say(t('다른 좌석 예약에 연결돼 있어요. 초대받은 곳으로 바꾸려면 [연결 끊기] 를 누른 뒤 연결해 주세요(코드는 넣어 둘게요).'));
   $('codeInput').value = memberUrl;
+  updateCodeCheck();
 }
 
 function readHash() {
@@ -466,8 +471,13 @@ async function commitName() {
       return false;
     }
     store.name = name;
+    if (response.pinCleared && store.pins[conn.url]) {
+      delete store.pins[conn.url];
+      store.kept[conn.url] = true;
+    }
     saveStore();
-    say(t('이름을 바꿨어요.') + sameNameNote(adoptServerName(response)));
+    say(t('이름을 바꿨어요.') + sameNameNote(adoptServerName(response)) +
+      (response.pinCleared ? ' ' + t('비밀번호는 옛 이름에 묶여 있어 지웠어요. 새 이름으로 비밀번호를 다시 정해 주세요.') : ''));
     await refresh(true);
     return true;
   }
@@ -565,8 +575,17 @@ async function forceCancel(seat) {
 
 // ───────────── 관리자: 설정 ─────────────
 
-async function saveSettings(settings) {
-  if (!store.conn || !isAdmin()) return;
+let settingsQueue = Promise.resolve();
+
+function saveSettings(settings) {
+  const run = settingsQueue.then(() => sendSettings(settings));
+  settingsQueue = run.catch(() => {});
+  return run;
+}
+
+async function sendSettings(settings) {
+  const conn = store.conn;
+  if (!conn || !isAdmin()) return;
 
   if (settings.published === true && seats.length === 0) {
     $('publishedToggle').checked = false;
@@ -574,7 +593,10 @@ async function saveSettings(settings) {
     return;
   }
 
-  const response = await post(store.conn, store.personId, 'saveSettings', { settings });
+  refreshSeq++;
+  const response = await post(conn, store.personId, 'saveSettings', { settings });
+  refreshSeq++;
+  if (conn !== store.conn) return;
 
   if (!response.ok) {
     say(tm(response.message) || '');
@@ -681,7 +703,7 @@ function markKept(url) {
 }
 
 function needsKeepGate() {
-  return !!store.conn && !isAdmin() && !store.kept[store.conn.url] && !store.pins[store.conn.url];
+  return !!store.conn && !store.conn.adminKey && !store.kept[store.conn.url] && !store.pins[store.conn.url];
 }
 
 let pinMode = 'set';
@@ -830,6 +852,7 @@ async function changeShape(shape, angle) {
     return;
   }
   draft.setShape(shape, angle);
+  if (tool === 'stage' && draft.shape === 'arc') tool = 'chair';
   render();
 }
 
@@ -855,6 +878,7 @@ async function changeAngle(delta) {
 function addFloor() {
   if (!draft || busy) return;
   const error = draft.addFloor();
+  afterFloorChange();
   say(error || t('{floor}을 더했어요. 모양을 고르고 의자를 그리세요.', { floor: floorLabel(draft.current) }));
   render();
 }
@@ -864,6 +888,7 @@ async function removeFloor() {
   const name = floorLabel(draft.current);
   if (draft.currentFloorSeatCount > 0 && !await confirmBox(t('층 지우기'), t('{floor}의 의자 {n}개가 함께 지워져요. 지울까요?', { floor: name, n: draft.currentFloorSeatCount }))) return;
   draft.removeCurrentFloor();
+  afterFloorChange();
   say(t('{floor}을 지웠어요. [저장] 해야 반영돼요.', { floor: name }));
   render();
 }
@@ -877,7 +902,12 @@ async function saveLayoutNow() {
     return;
   }
 
-  const taken = lastState ? lastState.taken : [];
+  const conn = store.conn;
+  setBusy(true);
+  const fresh = await getState(conn, store.personId);
+  setBusy(false);
+  if (conn !== store.conn || !draft) return;
+  const taken = fresh.ok && Array.isArray(fresh.taken) ? fresh.taken : lastState ? lastState.taken : [];
   if (taken.length > 0) {
     const kept = new Set(newSeats.filter(seat => !seat.blocked).map(seat => seat.id));
     const lost = taken.filter(item => !kept.has(item.seat)).length;
@@ -892,8 +922,9 @@ async function saveLayoutNow() {
   setBusy(true);
   say(t('배치도 저장하는 중…'));
   const newFloors = draft.toFloors();
-  const response = await postLayout(store.conn, store.personId, newSeats, newFloors, newItems, newWalls);
+  const response = await postLayout(conn, store.personId, newSeats, newFloors, newItems, newWalls);
   setBusy(false);
+  if (conn !== store.conn || !draft) return;
 
   if (!response.ok) {
     say(tm(response.message) || '');
@@ -1012,6 +1043,14 @@ function syncEditorControls() {
   $('outlinePanel').hidden = tool !== 'outline';
   $('itemHint').hidden = !isItemKind(tool);
   $('deleteVertexButton').disabled = selectedVertex < 0 || !draft.cur.outline || draft.cur.outline.length <= 3;
+}
+
+function afterFloorChange() {
+  selectedItem = -1;
+  selectedVertex = -1;
+  lastVertexTap = null;
+  if (tool === 'stage' && draft.shape === 'arc') tool = 'chair';
+  if (tool === 'outline' && !draft.cur.outline) draft.setOutline(defaultOutline());
 }
 
 function chooseTool(next) {
@@ -1206,6 +1245,7 @@ function buildFloorPanel() {
       addPill(floorLabel(position), position === draft.current, () => {
         if (busy || position === draft.current) return;
         draft.selectFloor(position);
+        afterFloorChange();
         render();
       });
     }
@@ -1720,6 +1760,7 @@ function onFreeDown(event) {
         say(t('꼭짓점은 {n}개까지예요.', { n: MAX_WALL_POINTS }));
         return true;
       }
+      lastVertexTap = null;
       selectedVertex = Number(target.dataset.mid) + 1;
       outline.splice(selectedVertex, 0, [Math.round(point.x), Math.round(point.y)]);
     } else {
@@ -1769,6 +1810,7 @@ function onFreeMove(event) {
   if (freeDrag.type === 'vertex') {
     const outline = draft.cur.outline;
     if (!outline || !outline[selectedVertex]) return;
+    lastVertexTap = null;
     outline[selectedVertex] = [Math.round(point.x / 5) * 5, Math.round(point.y / 5) * 5];
   } else {
     const item = draft.cur.items[selectedItem];
@@ -1843,14 +1885,21 @@ function hidePreview() {
   previewCells = new Set();
 }
 
+let activePointer = null;
+
 function onPointerDown(event) {
   if (!editing() || busy || $('panToggle').checked || event.button !== 0) return;
+  if (activePointer !== null) {
+    if (event.pointerId !== activePointer) onPointerCancel();
+    return;
+  }
   if (tool === 'stage') {
     const handle = event.target.closest('.stage-handle');
     const rect = handle && editorFrontRect();
     if (rect) {
       setCustomStage(rect.left, rect.right);
       freeDrag = { type: 'stage', side: handle.dataset.side };
+      activePointer = event.pointerId;
       $('board').setPointerCapture(event.pointerId);
       event.preventDefault();
     }
@@ -1858,7 +1907,10 @@ function onPointerDown(event) {
   }
   if (tool === 'outline' || isItemKind(tool)) {
     if (onFreeDown(event)) {
-      if (freeDrag) $('board').setPointerCapture(event.pointerId);
+      if (freeDrag) {
+        activePointer = event.pointerId;
+        $('board').setPointerCapture(event.pointerId);
+      }
       event.preventDefault();
     }
     return;
@@ -1867,12 +1919,14 @@ function onPointerDown(event) {
   if (!cell) return;
   dragStart = cell;
   dragEnd = cell;
+  activePointer = event.pointerId;
   $('board').setPointerCapture(event.pointerId);
   event.preventDefault();
   showPreview();
 }
 
 function onPointerMove(event) {
+  if (event.pointerId !== activePointer) return;
   if (freeDrag) {
     onFreeMove(event);
     return;
@@ -1885,7 +1939,9 @@ function onPointerMove(event) {
   }
 }
 
-function onPointerUp() {
+function onPointerUp(event) {
+  if (event && event.pointerId !== activePointer) return;
+  activePointer = null;
   if (freeDrag) {
     onFreeUp();
     return;
@@ -1897,7 +1953,9 @@ function onPointerUp() {
   applyTool(start.row, start.col, dragEnd.row, dragEnd.col);
 }
 
-function onPointerCancel() {
+function onPointerCancel(event) {
+  if (event && event.pointerId !== activePointer) return;
+  activePointer = null;
   if (freeDrag) onFreeUp();
   dragStart = null;
   hidePreview();
@@ -1943,7 +2001,7 @@ function wire() {
   $('board').addEventListener('pointermove', onPointerMove);
   $('board').addEventListener('pointerup', onPointerUp);
   $('board').addEventListener('pointercancel', onPointerCancel);
-  $('board').addEventListener('lostpointercapture', () => { if (dragStart || freeDrag) onPointerUp(); });
+  $('board').addEventListener('lostpointercapture', event => { if (dragStart || freeDrag) onPointerUp(event); });
   $('resetOutlineButton').addEventListener('click', resetOutline);
   $('deleteVertexButton').addEventListener('click', deleteSelected);
   $('clearOutlineButton').addEventListener('click', clearOutline);
@@ -1968,6 +2026,11 @@ function wire() {
   $('gateLinkButton').addEventListener('click', copyMyLink);
   $('gateReclaimButton').addEventListener('click', () => openPinDialog('reclaim'));
   $('pinForm').addEventListener('submit', submitPin);
+  $('pinForm').addEventListener('keydown', event => {
+    if (event.key !== 'Enter' || event.isComposing || !(event.target instanceof HTMLInputElement)) return;
+    event.preventDefault();
+    $('pinOkButton').click();
+  });
 
   $('editorPanel').addEventListener('click', event => {
     const pill = event.target.closest('.pill[data-tool]');
