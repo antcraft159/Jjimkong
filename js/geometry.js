@@ -223,7 +223,7 @@ class LayoutDraft {
         shape === 'arc' ? clamp(meta.angle | 0, MIN_ANGLE, MAX_ANGLE) : 0,
         clamp(meta.rows > 0 ? meta.rows : DEFAULT_ROWS, 1, MAX_ROWS),
         clamp(meta.cols > 0 ? meta.cols : DEFAULT_COLS, 1, MAX_COLS),
-        meta.stage === 'rows' ? 'rows' : 'full'));
+        ['rows', 'none'].includes(meta.stage) ? meta.stage : 'full'));
     }
 
     const seatFloors = [...new Set(seats.map(seat => seat.f | 0))].sort((a, b) => a - b);
@@ -297,7 +297,7 @@ class LayoutDraft {
     if (id > MAX_FLOOR_ID) return t('층을 너무 여러 번 지웠다 더했어요. 한 번 저장한 뒤 다시 더해 주세요.');
     this.usedFloorIds.add(id);
     const model = this.cur;
-    this.floors.push(makeFloor(id, model.shape, model.angle, model.rows, model.cols, model.stage));
+    this.floors.push(makeFloor(id, model.shape, model.angle, model.rows, model.cols, model.stage === 'rows' ? 'rows' : 'full'));
     this.current = this.floors.length - 1;
     return null;
   }
@@ -418,7 +418,7 @@ class LayoutDraft {
   toFloors() {
     return this.floors.map(floor => {
       const meta = { f: floor.id, shape: floor.shape, angle: floor.angle, rows: floor.rows, cols: floor.cols };
-      if (floor.stage === 'rows' && floor.shape !== 'arc') meta.stage = 'rows';
+      if (floor.stage !== 'full' && floor.shape !== 'arc') meta.stage = floor.stage;
       return meta;
     });
   }

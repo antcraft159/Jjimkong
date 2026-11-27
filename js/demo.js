@@ -202,7 +202,7 @@ function cleanFloors(rawFloors) {
       rows: Math.min(Math.max(toInt(raw.rows, 12), 1), 99),
       cols: Math.min(Math.max(toInt(raw.cols, 16), 1), 99)
     };
-    if (shape === 'grid' && raw.stage === 'rows') floor.stage = 'rows';
+    if (shape === 'grid' && (raw.stage === 'rows' || raw.stage === 'none')) floor.stage = raw.stage;
     return floor;
   });
 }
