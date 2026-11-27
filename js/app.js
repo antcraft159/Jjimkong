@@ -307,7 +307,13 @@ let goneCount = 0;
 
 async function dropGoneConnection() {
   goneCount = 0;
+  const admin = !!(store.conn && store.conn.adminKey);
   await dropConnection();
+  if (admin) {
+    say(t('좌석 예약 시트에 닿지 않아 연결을 끊었어요. 시트가 살아 있다면 관리자용 글로 다시 연결해 주세요.'));
+    await noticeBox(t('좌석 예약이 닫혔어요'), t('좌석 예약 시트가 지워졌거나 웹 앱 배포가 닫힌 것 같아요. 연결을 끊었어요. 시트가 살아 있다면 시트의 [2. 연결 QR 보기] 에 있는 관리자용 글로 다시 연결해 주세요.'));
+    return;
+  }
   say(t('좌석 예약이 닫혀 연결을 끊었어요. 관리자에게 받은 초대 링크를 다시 확인하고 들어와 주세요.'));
   await noticeBox(t('좌석 예약이 닫혔어요'), t('관리자가 좌석 예약 시트를 지웠거나 닫은 것 같아요. 연결을 끊었어요. 관리자에게 받은 초대 링크(연결 코드)가 맞는지 다시 확인하고 들어와 주세요.'));
 }
@@ -324,7 +330,7 @@ async function refresh(quiet) {
 
   if (!state.ok) {
     goneCount = state.error === 'gone' ? goneCount + 1 : 0;
-    if (goneCount >= GONE_LIMIT && !isAdmin()) {
+    if (goneCount >= GONE_LIMIT) {
       await dropGoneConnection();
       return;
     }
