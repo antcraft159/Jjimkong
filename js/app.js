@@ -101,6 +101,18 @@ function say(text, fromRefresh = false) {
   if (text && !/…$/.test(text)) toastTimer = setTimeout(() => { toast.hidden = true; }, 5000);
 }
 
+function noticeBox(title, text) {
+  const dialog = $('noticeDialog');
+  if (typeof dialog.showModal !== 'function') {
+    window.alert(title + '\n\n' + text);
+    return Promise.resolve();
+  }
+  $('noticeTitle').textContent = title;
+  $('noticeText').textContent = text;
+  if (!dialog.open) dialog.showModal();
+  return new Promise(resolve => dialog.addEventListener('close', resolve, { once: true }));
+}
+
 function confirmBox(title, text) {
   const dialog = $('confirmDialog');
   if (typeof dialog.showModal !== 'function') return Promise.resolve(window.confirm(title + '\n\n' + text));
@@ -188,6 +200,7 @@ async function dropConnection() {
 }
 
 async function onConnectionChanged() {
+  goneCount = 0;
   connFingerprint = store.conn && store.conn.url !== DEMO_URL ? await fingerprint(store.conn.url) : '';
   render();
 }
@@ -289,6 +302,16 @@ function stopTimer() {
   timer = 0;
 }
 
+const GONE_LIMIT = 3;
+let goneCount = 0;
+
+async function dropGoneConnection() {
+  goneCount = 0;
+  await dropConnection();
+  say(t('좌석 예약이 닫혀 연결을 끊었어요. 관리자에게 받은 초대 링크를 다시 확인하고 들어와 주세요.'));
+  await noticeBox(t('좌석 예약이 닫혔어요'), t('관리자가 좌석 예약 시트를 지웠거나 닫은 것 같아요. 연결을 끊었어요. 관리자에게 받은 초대 링크(연결 코드)가 맞는지 다시 확인하고 들어와 주세요.'));
+}
+
 async function refresh(quiet) {
   if (!store.conn || busy || editing()) return;
   if (!quiet) setBusy(true);
@@ -300,10 +323,16 @@ async function refresh(quiet) {
   if (sequence !== refreshSeq || conn !== store.conn || editing()) return;
 
   if (!state.ok) {
+    goneCount = state.error === 'gone' ? goneCount + 1 : 0;
+    if (goneCount >= GONE_LIMIT && !isAdmin()) {
+      await dropGoneConnection();
+      return;
+    }
     say(tm(state.message) || '', true);
     return;
   }
 
+  goneCount = 0;
   if (messageFromRefresh) say('');
   applyState(state);
 }
