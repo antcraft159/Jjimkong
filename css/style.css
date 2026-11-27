@@ -501,11 +501,14 @@ dialog p { color: var(--text2); }
   position: absolute; top: 14px; right: 14px; font-size: .72rem; font-weight: 700;
   padding: 2px 8px; border-radius: 999px; background: var(--accent-soft); color: var(--accent-strong);
 }
-.gate-reclaim { margin: 18px auto 0; text-align: center; font-size: .9rem; }
+.gate-grid { grid-template-areas: "pin link" "reclaim link"; }
+.gate-option:first-child { grid-area: pin; }
+.gate-reclaim-card { grid-area: reclaim; }
+.gate-link-card { grid-area: link; }
 @media (max-width: 640px) {
   .gate { margin-top: 4px; }
   .gate h1 { font-size: 1.35rem; }
-  .gate-grid { grid-template-columns: minmax(0, 1fr); }
+  .gate-grid { grid-template-columns: minmax(0, 1fr); grid-template-areas: "pin" "reclaim" "link"; }
 }
 
 .outline { position: absolute; left: 0; top: 0; overflow: visible; pointer-events: none; }
