@@ -504,7 +504,7 @@ dialog p { color: var(--text2); }
 .gate-grid { grid-template-areas: "pin link" "reclaim link"; }
 .gate-option:first-child { grid-area: pin; }
 .gate-reclaim-card { grid-area: reclaim; }
-.gate-link-card { grid-area: link; }
+.gate-link-card { grid-area: link; align-self: start; }
 @media (max-width: 640px) {
   .gate { margin-top: 4px; }
   .gate h1 { font-size: 1.35rem; }
