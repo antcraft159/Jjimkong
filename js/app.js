@@ -167,6 +167,7 @@ async function connect() {
   candidate.room = state.room || '';
   store.conn = candidate;
   saveStore();
+  window.Jjim.countUse(candidate.url, !!link.adminKey);
   $('codeInput').value = '';
   $('codeCheck').hidden = true;
   say('');
