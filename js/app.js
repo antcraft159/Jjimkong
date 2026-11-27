@@ -377,7 +377,7 @@ function applyState(state) {
   const known = new Map();
   for (const floor of state.floors) {
     const id = floor.f | 0;
-    if (id >= 0 && !known.has(id)) known.set(id, { f: id, shape: normalizeShape(floor.shape), angle: floor.angle | 0, rows: floor.rows | 0, cols: floor.cols | 0 });
+    if (id >= 0 && !known.has(id)) known.set(id, { f: id, shape: normalizeShape(floor.shape), angle: floor.angle | 0, rows: floor.rows | 0, cols: floor.cols | 0, stage: floor.stage === 'rows' ? 'rows' : 'full' });
   }
   for (const id of [...new Set(seats.map(seat => seat.f))].sort((a, b) => a - b)) {
     if (!known.has(id)) known.set(id, { f: id, shape: 'grid', angle: 0, rows: 0, cols: 0 });
@@ -828,6 +828,12 @@ async function setShapePreset(preset) {
   await changeShape(shape, angle);
 }
 
+function setStageWidth(stage) {
+  if (!draft || busy || draft.cur.stage === stage) return;
+  draft.cur.stage = stage;
+  render();
+}
+
 async function changeAngle(delta) {
   if (!draft || busy || draft.shape !== 'arc') return;
   const angle = clamp(draft.angle + delta, MIN_ANGLE, MAX_ANGLE);
@@ -980,6 +986,9 @@ function syncEditorControls() {
   $('shapePanel').querySelectorAll('.pill').forEach(pill => pill.setAttribute('aria-checked', String(pill.dataset.shape === preset)));
   const isArc = draft.shape === 'arc';
   $('anglePanel').hidden = !isArc;
+  $('stageTitle').hidden = isArc;
+  $('stagePanel').hidden = isArc;
+  $('stagePanel').querySelectorAll('.pill').forEach(pill => pill.setAttribute('aria-checked', String(pill.dataset.stage === draft.cur.stage)));
   $('angleValue').textContent = draft.angle + '°';
   $('colsLabel').textContent = isArc ? t('첫 줄 자리') : t('칸');
   const floor = draft.floorCount > 1 ? floorLabel(draft.current) + ' · ' : '';
@@ -1058,7 +1067,7 @@ function placedSlots() {
 }
 
 function contentPoints(geo) {
-  const points = frontCorners(frontRect(geo, placedSlots()));
+  const points = frontCorners(frontRect(geo, placedSlots(), draft.cur.stage));
   const halfW = CELL_W / 2 - 3;
   const halfH = CELL_H / 2 - 3;
 
@@ -1272,7 +1281,7 @@ function boundsOf(geo, cells, extra, margin) {
 const FRONT_GAP = 10;
 const FRONT_HEIGHT = 28;
 
-function frontRect(geo, cells) {
+function frontRect(geo, cells, stage) {
   if (geo.isArc || cells.length === 0) return null;
   let left = Infinity, right = -Infinity;
   for (const { row, col } of cells) {
@@ -1281,7 +1290,11 @@ function frontRect(geo, cells) {
     right = Math.max(right, x + CELL_W / 2);
   }
   const bottom = -FRONT_GAP;
-  return { left: Math.min(left, 0), right: Math.max(right, geo.cols * CELL_W), top: bottom - FRONT_HEIGHT, bottom };
+  if (stage !== 'rows') {
+    left = Math.min(left, 0);
+    right = Math.max(right, geo.cols * CELL_W);
+  }
+  return { left, right, top: bottom - FRONT_HEIGHT, bottom };
 }
 
 function frontCorners(rect) {
@@ -1366,7 +1379,7 @@ function buildSeats() {
 
   const floor = floors.find(item => item.f === viewFloorId) || { shape: 'grid', angle: 0, rows: 0, cols: 0 };
   const geo = new SeatGeometry(floor.shape, floor.angle, Math.max(floor.rows, cells.length ? Math.max(...cells.map(seat => seat.r)) + 1 : 1), Math.max(floor.cols, 1));
-  const shapeKey = 'view:' + floor.f + ':' + geo.isArc + ':' + geo.angle + ':' + geo.cols + ':' +
+  const shapeKey = 'view:' + floor.f + ':' + geo.isArc + ':' + geo.angle + ':' + geo.cols + ':' + floor.stage + ':' +
     cells.map(seat => seat.id + '/' + seat.r + '/' + seat.c + '/' + seat.label + '/' + seat.kind + '/' + seat.bench).join('|') + '#' +
     JSON.stringify([things, outline]);
 
@@ -1375,7 +1388,7 @@ function buildSeats() {
     geometry = geo;
     builtKey = shapeKey;
     const seatSlots = cells.map(seat => ({ row: seat.r, col: seat.c }));
-    const front = frontRect(geo, seatSlots);
+    const front = frontRect(geo, seatSlots, floor.stage);
     layOut(geo, seatSlots, [...(outline || []), ...things.map(item => [item.x, item.y]), ...frontCorners(front)]);
     drawOutline(outline, false);
     drawFront(front);
@@ -1448,7 +1461,7 @@ function buildEditor() {
   geometry = geo;
   const all = allSlots(geo);
   const outline = draft.cur.outline;
-  const front = frontRect(geo, placedSlots().length ? placedSlots() : all);
+  const front = frontRect(geo, placedSlots().length ? placedSlots() : all, draft.cur.stage);
   layOut(geo, all, [...(outline || []), ...draft.cur.items.map(item => [item.x, item.y]), ...frontCorners(front)], EDIT_MARGIN);
   drawFront(front);
 
@@ -1890,6 +1903,10 @@ function wire() {
   $('shapePanel').addEventListener('click', event => {
     const pill = event.target.closest('[data-shape]');
     if (pill) setShapePreset(pill.dataset.shape);
+  });
+  $('stagePanel').addEventListener('click', event => {
+    const pill = event.target.closest('[data-stage]');
+    if (pill) setStageWidth(pill.dataset.stage);
   });
   $('editorPanel').addEventListener('click', event => {
     const angle = event.target.closest('[data-angle]');

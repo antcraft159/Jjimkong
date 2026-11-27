@@ -195,13 +195,15 @@ function cleanFloors(rawFloors) {
     if (id < 0 || id > 99 || seen[id]) throw userError('bad-request', '층 모양을 읽지 못했습니다.');
     seen[id] = true;
     const shape = SEAT_SHAPES.indexOf(String(raw.shape || '')) >= 0 ? String(raw.shape) : 'grid';
-    return {
+    const floor = {
       f: id,
       shape,
       angle: shape === 'arc' ? Math.min(Math.max(toInt(raw.angle, 120), 30), 360) : 0,
       rows: Math.min(Math.max(toInt(raw.rows, 12), 1), 99),
       cols: Math.min(Math.max(toInt(raw.cols, 16), 1), 99)
     };
+    if (shape === 'grid' && raw.stage === 'rows') floor.stage = 'rows';
+    return floor;
   });
 }
 
