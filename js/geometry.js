@@ -182,8 +182,8 @@ function seatId(floor, row, col) {
 const key = (row, col) => row + ',' + col;
 const clampCoord = value => clamp(Math.round(value), -COORD_LIMIT, COORD_LIMIT);
 
-function makeFloor(id, shape, angle, rows, cols, stage = 'full') {
-  return { id, shape, angle, rows, cols, stage, cells: new Map(), items: [], outline: null };
+function makeFloor(id, shape, angle, rows, cols, stage = 'full', sl = 0, sr = 0) {
+  return { id, shape, angle, rows, cols, stage, sl, sr, cells: new Map(), items: [], outline: null };
 }
 
 function floorGeometry(floor) {
@@ -223,7 +223,9 @@ class LayoutDraft {
         shape === 'arc' ? clamp(meta.angle | 0, MIN_ANGLE, MAX_ANGLE) : 0,
         clamp(meta.rows > 0 ? meta.rows : DEFAULT_ROWS, 1, MAX_ROWS),
         clamp(meta.cols > 0 ? meta.cols : DEFAULT_COLS, 1, MAX_COLS),
-        ['rows', 'none'].includes(meta.stage) ? meta.stage : 'full'));
+        ['rows', 'none', 'custom'].includes(meta.stage) ? meta.stage : 'full',
+        clampCoord(meta.sl || 0),
+        clampCoord(meta.sr || 0)));
     }
 
     const seatFloors = [...new Set(seats.map(seat => seat.f | 0))].sort((a, b) => a - b);
@@ -272,7 +274,7 @@ class LayoutDraft {
 
       floor.items = validItems
         .filter(item => (item.f | 0) === floor.id)
-        .filter((item, index, list) => item.kind !== 'pulpit' || list.findIndex(other => other.kind === 'pulpit') === index)
+        .filter(item => item.kind !== 'pulpit')
         .slice(0, MAX_ITEMS)
         .map(item => ({ kind: item.kind, x: Math.round(item.x), y: Math.round(item.y), a: Math.round(item.a || 0) }));
     }
@@ -297,7 +299,7 @@ class LayoutDraft {
     if (id > MAX_FLOOR_ID) return t('층을 너무 여러 번 지웠다 더했어요. 한 번 저장한 뒤 다시 더해 주세요.');
     this.usedFloorIds.add(id);
     const model = this.cur;
-    this.floors.push(makeFloor(id, model.shape, model.angle, model.rows, model.cols, model.stage === 'rows' ? 'rows' : 'full'));
+    this.floors.push(makeFloor(id, model.shape, model.angle, model.rows, model.cols, model.stage === 'none' ? 'full' : model.stage, model.sl, model.sr));
     this.current = this.floors.length - 1;
     return null;
   }
@@ -344,10 +346,6 @@ class LayoutDraft {
 
   addItem(kind, x, y, a) {
     if (!isItemKind(kind)) return null;
-    if (kind === 'pulpit') {
-      const index = this.cur.items.findIndex(item => item.kind === 'pulpit');
-      if (index >= 0) this.cur.items.splice(index, 1);
-    }
     if (this.itemCount >= MAX_ITEMS) return t('물건은 {n}개까지 놓을 수 있어요.', { n: MAX_ITEMS });
     this.cur.items.push({ kind, x: clampCoord(x), y: clampCoord(y), a: Math.round(a || 0) });
     return null;
@@ -419,6 +417,7 @@ class LayoutDraft {
     return this.floors.map(floor => {
       const meta = { f: floor.id, shape: floor.shape, angle: floor.angle, rows: floor.rows, cols: floor.cols };
       if (floor.stage !== 'full' && floor.shape !== 'arc') meta.stage = floor.stage;
+      if (meta.stage === 'custom') Object.assign(meta, { sl: floor.sl, sr: floor.sr });
       return meta;
     });
   }

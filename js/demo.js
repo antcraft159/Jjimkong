@@ -72,7 +72,6 @@ function seed() {
     seats,
     items: [
       { f: 0, kind: 'tv', x: 403, y: -100, a: 0 },
-      { f: 0, kind: 'pulpit', x: 403, y: -58, a: 0 },
       { f: 0, kind: 'speaker', x: 110, y: -64, a: 0 },
       { f: 0, kind: 'speaker', x: 696, y: -64, a: 0 },
       { f: 0, kind: 'pillar', x: 403, y: 175, a: 0 },
@@ -203,6 +202,11 @@ function cleanFloors(rawFloors) {
       cols: Math.min(Math.max(toInt(raw.cols, 16), 1), 99)
     };
     if (shape === 'grid' && (raw.stage === 'rows' || raw.stage === 'none')) floor.stage = raw.stage;
+    if (shape === 'grid' && raw.stage === 'custom') {
+      const sl = Math.min(Math.max(toInt(raw.sl, 0), -20000), 20000);
+      const sr = Math.min(Math.max(toInt(raw.sr, 0), -20000), 20000);
+      if (sr - sl >= 20) Object.assign(floor, { stage: 'custom', sl, sr });
+    }
     return floor;
   });
 }

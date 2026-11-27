@@ -368,7 +368,7 @@ function applyState(state) {
   });
 
   items = (state.items || [])
-    .filter(item => item && isItemKind(item.kind) && Number.isFinite(item.x) && Number.isFinite(item.y))
+    .filter(item => item && isItemKind(item.kind) && item.kind !== 'pulpit' && Number.isFinite(item.x) && Number.isFinite(item.y))
     .map(item => ({ f: item.f | 0, kind: item.kind, x: item.x, y: item.y, a: item.a || 0 }));
   walls = new Map((state.walls || [])
     .filter(wall => wall && Array.isArray(wall.points) && wall.points.length >= 3)
@@ -377,7 +377,7 @@ function applyState(state) {
   const known = new Map();
   for (const floor of state.floors) {
     const id = floor.f | 0;
-    if (id >= 0 && !known.has(id)) known.set(id, { f: id, shape: normalizeShape(floor.shape), angle: floor.angle | 0, rows: floor.rows | 0, cols: floor.cols | 0, stage: ['rows', 'none'].includes(floor.stage) ? floor.stage : 'full' });
+    if (id >= 0 && !known.has(id)) known.set(id, { f: id, shape: normalizeShape(floor.shape), angle: floor.angle | 0, rows: floor.rows | 0, cols: floor.cols | 0, stage: ['rows', 'none', 'custom'].includes(floor.stage) ? floor.stage : 'full', sl: floor.sl | 0, sr: floor.sr | 0 });
   }
   for (const id of [...new Set(seats.map(seat => seat.f))].sort((a, b) => a - b)) {
     if (!known.has(id)) known.set(id, { f: id, shape: 'grid', angle: 0, rows: 0, cols: 0 });
@@ -986,8 +986,9 @@ function syncEditorControls() {
   $('shapePanel').querySelectorAll('.pill').forEach(pill => pill.setAttribute('aria-checked', String(pill.dataset.shape === preset)));
   const isArc = draft.shape === 'arc';
   $('anglePanel').hidden = !isArc;
-  $('stageTitle').hidden = isArc;
-  $('stagePanel').hidden = isArc;
+  $('stageToolButton').hidden = isArc;
+  $('stageToolPanel').hidden = tool !== 'stage' || isArc;
+  $('stageToolPanel').querySelectorAll('[data-stage-step]').forEach(button => { button.disabled = draft.cur.stage === 'none'; });
   $('stageNoneButton').hidden = draft.current === 0 && draft.cur.stage !== 'none';
   $('stagePanel').querySelectorAll('.pill').forEach(pill => pill.setAttribute('aria-checked', String(pill.dataset.stage === draft.cur.stage)));
   $('angleValue').textContent = draft.angle + '°';
@@ -1068,7 +1069,7 @@ function placedSlots() {
 }
 
 function contentPoints(geo) {
-  const points = frontCorners(frontRect(geo, placedSlots(), draft.cur.stage));
+  const points = frontCorners(frontRect(geo, placedSlots(), draft.cur));
   const halfW = CELL_W / 2 - 3;
   const halfH = CELL_H / 2 - 3;
 
@@ -1282,15 +1283,20 @@ function boundsOf(geo, cells, extra, margin) {
 const FRONT_GAP = 10;
 const FRONT_HEIGHT = 28;
 
-function frontRect(geo, cells, stage) {
-  if (geo.isArc || cells.length === 0 || stage === 'none') return null;
+const STAGE_MIN = 60;
+
+function frontRect(geo, cells, floor) {
+  const stage = floor ? floor.stage : 'full';
+  if (geo.isArc || stage === 'none') return null;
+  const bottom = -FRONT_GAP;
+  if (stage === 'custom' && floor.sr - floor.sl >= STAGE_MIN) return { left: floor.sl, right: floor.sr, top: bottom - FRONT_HEIGHT, bottom };
+  if (cells.length === 0) return null;
   let left = Infinity, right = -Infinity;
   for (const { row, col } of cells) {
     const { x } = geo.place(row, col);
     left = Math.min(left, x - CELL_W / 2);
     right = Math.max(right, x + CELL_W / 2);
   }
-  const bottom = -FRONT_GAP;
   if (stage !== 'rows') {
     left = Math.min(left, 0);
     right = Math.max(right, geo.cols * CELL_W);
@@ -1312,6 +1318,43 @@ function drawFront(rect) {
     width: rect.right - rect.left + 'px', height: rect.bottom - rect.top + 'px'
   });
   $('board').appendChild(band);
+  if (!editing() || tool !== 'stage') return;
+  band.classList.add('editable');
+  for (const side of ['l', 'r']) {
+    const handle = document.createElement('div');
+    handle.className = 'stage-handle';
+    handle.dataset.side = side;
+    handle.style.left = (side === 'l' ? rect.left : rect.right) + offsetX + 'px';
+    handle.style.top = (rect.top + rect.bottom) / 2 + offsetY + 'px';
+    $('board').appendChild(handle);
+  }
+}
+
+function editorFrontRect() {
+  const geo = draft.geometry;
+  const placed = placedSlots();
+  return frontRect(geo, placed.length ? placed : allSlots(geo), draft.cur);
+}
+
+function redrawFront() {
+  $('board').querySelectorAll('.front-stage, .stage-handle').forEach(node => node.remove());
+  drawFront(editorFrontRect());
+}
+
+function setCustomStage(left, right) {
+  draft.cur.stage = 'custom';
+  draft.cur.sl = Math.round(left);
+  draft.cur.sr = Math.round(right);
+}
+
+function stepStage(delta) {
+  if (!draft || busy) return;
+  const rect = editorFrontRect();
+  if (!rect) return;
+  const half = CELL_W / 2 * delta;
+  if (rect.right - rect.left + half * 2 < STAGE_MIN) return;
+  setCustomStage(rect.left - half, rect.right + half);
+  render();
 }
 
 function layOut(geo, cells, extra = [], margin = 0) {
@@ -1356,7 +1399,7 @@ function buildBoard() {
   const board = $('board');
   board.classList.toggle('editing', editing());
   board.classList.toggle('pan', editing() && $('panToggle').checked);
-  board.dataset.tool = editing() ? (tool === 'outline' ? 'outline' : isItemKind(tool) ? 'item' : 'paint') : '';
+  board.dataset.tool = editing() ? (tool === 'outline' ? 'outline' : tool === 'stage' ? 'stage' : isItemKind(tool) ? 'item' : 'paint') : '';
 
   if (editing()) buildEditor();
   else buildSeats();
@@ -1380,7 +1423,7 @@ function buildSeats() {
 
   const floor = floors.find(item => item.f === viewFloorId) || { shape: 'grid', angle: 0, rows: 0, cols: 0 };
   const geo = new SeatGeometry(floor.shape, floor.angle, Math.max(floor.rows, cells.length ? Math.max(...cells.map(seat => seat.r)) + 1 : 1), Math.max(floor.cols, 1));
-  const shapeKey = 'view:' + floor.f + ':' + geo.isArc + ':' + geo.angle + ':' + geo.cols + ':' + floor.stage + ':' +
+  const shapeKey = 'view:' + floor.f + ':' + geo.isArc + ':' + geo.angle + ':' + geo.cols + ':' + floor.stage + ':' + floor.sl + ':' + floor.sr + ':' +
     cells.map(seat => seat.id + '/' + seat.r + '/' + seat.c + '/' + seat.label + '/' + seat.kind + '/' + seat.bench).join('|') + '#' +
     JSON.stringify([things, outline]);
 
@@ -1389,7 +1432,7 @@ function buildSeats() {
     geometry = geo;
     builtKey = shapeKey;
     const seatSlots = cells.map(seat => ({ row: seat.r, col: seat.c }));
-    const front = frontRect(geo, seatSlots, floor.stage);
+    const front = frontRect(geo, seatSlots, floor);
     layOut(geo, seatSlots, [...(outline || []), ...things.map(item => [item.x, item.y]), ...frontCorners(front)]);
     drawOutline(outline, false);
     drawFront(front);
@@ -1462,7 +1505,7 @@ function buildEditor() {
   geometry = geo;
   const all = allSlots(geo);
   const outline = draft.cur.outline;
-  const front = frontRect(geo, placedSlots().length ? placedSlots() : all, draft.cur.stage);
+  const front = frontRect(geo, placedSlots().length ? placedSlots() : all, draft.cur);
   layOut(geo, all, [...(outline || []), ...draft.cur.items.map(item => [item.x, item.y]), ...frontCorners(front)], EDIT_MARGIN);
   drawFront(front);
 
@@ -1704,6 +1747,13 @@ function onFreeDown(event) {
 
 function onFreeMove(event) {
   const point = boardPoint(event);
+  if (freeDrag.type === 'stage') {
+    const x = Math.round(point.x / 5) * 5;
+    if (freeDrag.side === 'l') draft.cur.sl = Math.min(x, draft.cur.sr - STAGE_MIN);
+    else draft.cur.sr = Math.max(x, draft.cur.sl + STAGE_MIN);
+    redrawFront();
+    return;
+  }
   if (freeDrag.type === 'vertex') {
     const outline = draft.cur.outline;
     if (!outline || !outline[selectedVertex]) return;
@@ -1783,6 +1833,17 @@ function hidePreview() {
 
 function onPointerDown(event) {
   if (!editing() || busy || $('panToggle').checked || event.button !== 0) return;
+  if (tool === 'stage') {
+    const handle = event.target.closest('.stage-handle');
+    const rect = handle && editorFrontRect();
+    if (rect) {
+      setCustomStage(rect.left, rect.right);
+      freeDrag = { type: 'stage', side: handle.dataset.side };
+      $('board').setPointerCapture(event.pointerId);
+      event.preventDefault();
+    }
+    return;
+  }
   if (tool === 'outline' || isItemKind(tool)) {
     if (onFreeDown(event)) {
       if (freeDrag) $('board').setPointerCapture(event.pointerId);
@@ -1908,6 +1969,10 @@ function wire() {
   $('stagePanel').addEventListener('click', event => {
     const pill = event.target.closest('[data-stage]');
     if (pill) setStageWidth(pill.dataset.stage);
+  });
+  $('stageToolPanel').addEventListener('click', event => {
+    const step = event.target.closest('[data-stage-step]');
+    if (step) stepStage(Number(step.dataset.stageStep));
   });
   $('editorPanel').addEventListener('click', event => {
     const angle = event.target.closest('[data-angle]');
