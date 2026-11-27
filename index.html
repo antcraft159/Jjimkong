@@ -16,10 +16,10 @@
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="찜콩 · 좌석 찜하기">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="icon" href="icon.svg?v=20261127r" type="image/svg+xml">
+<link rel="icon" href="icon.svg?v=20261127s" type="image/svg+xml">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flag-icons@7.2.3/css/flag-icons.min.css">
-<link rel="stylesheet" href="css/style.css?v=20261127r">
+<link rel="stylesheet" href="css/style.css?v=20261127s">
 <script>
   (function () {
     var codes = ['ko', 'en', 'es', 'ru', 'mn', 'fr', 'de', 'ja', 'zh-CN', 'zh-TW', 'tl', 'ceb', 'it', 'th', 'ne', 'id', 'pt', 'ky', 'km', 'vi'];
@@ -45,7 +45,29 @@
     window.JJIM_LANG = lang;
     document.documentElement.lang = lang;
     document.documentElement.setAttribute('data-theme', theme);
-    if (lang !== 'ko') document.write('<script src="js/lang/' + lang + '.js?v=20261127r"><\/script>');
+    if (lang !== 'ko') document.write('<script src="js/lang/' + lang + '.js?v=20261127s"><\/script>');
+  })();
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<script>
+  (function () {
+    var lang = window.JJIM_LANG;
+    var pop = (window.JJIM_DICT && window.JJIM_DICT['찜!']) || '찜!';
+    var fonts = {
+      ja: ['M PLUS Rounded 1c', 800], ru: ['M PLUS Rounded 1c', 800], mn: ['M PLUS Rounded 1c', 800], ky: ['M PLUS Rounded 1c', 800],
+      'zh-CN': ['ZCOOL KuaiLe', 400], 'zh-TW': ['Chiron GoRound TC', 800],
+      th: ['Mali', 700], km: ['Kdam Thmor Pro', 400]
+    };
+    var family = lang === 'ko' ? null : (fonts[lang] || ['Baloo 2', 800]);
+    var query = 'family=Jua';
+    if (family) {
+      query += '&family=' + family[0].replace(/ /g, '+') + (family[1] === 400 ? '' : ':wght@' + family[1]);
+      document.documentElement.style.setProperty('--pop-font', '"' + family[0] + '"');
+      document.documentElement.style.setProperty('--pop-weight', family[1]);
+    }
+    query += '&text=' + encodeURIComponent('찜콩!' + pop) + '&display=block';
+    document.write('<link rel="stylesheet" href="https://fonts.googleapis.com/css2?' + query + '">');
   })();
 </script>
 </head>
@@ -55,7 +77,7 @@
     <div class="splash-seats">
       <i></i><i></i><i class="target"></i><i></i><i></i>
     </div>
-    <img class="splash-bean" src="icon.svg?v=20261127r" alt="" width="72" height="72">
+    <img class="splash-bean" src="icon.svg?v=20261127s" alt="" width="72" height="72">
     <div class="splash-pop">찜!</div>
   </div>
   <div class="splash-name" data-i18n-skip>찜콩</div>
@@ -73,7 +95,7 @@
 <header class="topbar">
   <div class="topbar-inner">
     <a class="brand-link" href="./" aria-label="찜콩 처음으로">
-      <img src="icon.svg?v=20261127r" alt="" width="28" height="28">
+      <img src="icon.svg?v=20261127s" alt="" width="28" height="28">
       <span class="brand-name" data-i18n-skip>찜콩</span>
     </a>
     <span class="topbar-sep" id="topbarSep" hidden></span>
@@ -439,12 +461,12 @@
 <footer class="foot">찜콩</footer>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" defer></script>
-<script src="js/i18n.js?v=20261127r" defer></script>
-<script src="js/geometry.js?v=20261127r" defer></script>
-<script src="js/links.js?v=20261127r" defer></script>
-<script src="js/demo.js?v=20261127r" defer></script>
-<script src="js/api.js?v=20261127r" defer></script>
-<script src="js/stats.js?v=20261127r" defer></script>
-<script src="js/app.js?v=20261127r" defer></script>
+<script src="js/i18n.js?v=20261127s" defer></script>
+<script src="js/geometry.js?v=20261127s" defer></script>
+<script src="js/links.js?v=20261127s" defer></script>
+<script src="js/demo.js?v=20261127s" defer></script>
+<script src="js/api.js?v=20261127s" defer></script>
+<script src="js/stats.js?v=20261127s" defer></script>
+<script src="js/app.js?v=20261127s" defer></script>
 </body>
 </html>
