@@ -36,6 +36,7 @@ async function send(url, body) {
   } catch (error) {
     if (error && error.name === 'AbortError') return fail('timeout', t('응답이 늦어요. 잠시 뒤 다시 해 주세요.'));
     if (navigator.onLine === false) return fail('network', t('인터넷에 연결되어 있는지 확인해 주세요.'));
+    if (await reachable(url)) return fail('gone', t('좌석 예약 서버와 연결하지 못했어요. 관리자에게 웹 앱 배포가 살아 있고 액세스 권한이 \'모든 사용자\' 인지 확인해 달라고 해 주세요.'));
     return fail('network', t('좌석 예약 서버와 연결하지 못했어요. 관리자에게 웹 앱 배포가 살아 있고 액세스 권한이 \'모든 사용자\' 인지 확인해 달라고 해 주세요.'));
   } finally {
     clearTimeout(timer);
@@ -61,6 +62,19 @@ async function send(url, body) {
     return parsed;
   } catch (e) {
     return fail('bad-response', t('답을 읽지 못했어요.'));
+  }
+}
+
+async function reachable(url) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 10000);
+  try {
+    await fetch(url, { mode: 'no-cors', cache: 'no-store', signal: controller.signal });
+    return true;
+  } catch (e) {
+    return false;
+  } finally {
+    clearTimeout(timer);
   }
 }
 
