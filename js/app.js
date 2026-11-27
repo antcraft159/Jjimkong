@@ -377,7 +377,7 @@ function applyState(state) {
   const known = new Map();
   for (const floor of state.floors) {
     const id = floor.f | 0;
-    if (id >= 0 && !known.has(id)) known.set(id, { f: id, shape: normalizeShape(floor.shape), angle: floor.angle | 0, rows: floor.rows | 0, cols: floor.cols | 0, stage: floor.stage === 'rows' ? 'rows' : 'full' });
+    if (id >= 0 && !known.has(id)) known.set(id, { f: id, shape: normalizeShape(floor.shape), angle: floor.angle | 0, rows: floor.rows | 0, cols: floor.cols | 0, stage: ['rows', 'none'].includes(floor.stage) ? floor.stage : 'full' });
   }
   for (const id of [...new Set(seats.map(seat => seat.f))].sort((a, b) => a - b)) {
     if (!known.has(id)) known.set(id, { f: id, shape: 'grid', angle: 0, rows: 0, cols: 0 });
@@ -988,6 +988,7 @@ function syncEditorControls() {
   $('anglePanel').hidden = !isArc;
   $('stageTitle').hidden = isArc;
   $('stagePanel').hidden = isArc;
+  $('stageNoneButton').hidden = draft.current === 0 && draft.cur.stage !== 'none';
   $('stagePanel').querySelectorAll('.pill').forEach(pill => pill.setAttribute('aria-checked', String(pill.dataset.stage === draft.cur.stage)));
   $('angleValue').textContent = draft.angle + '°';
   $('colsLabel').textContent = isArc ? t('첫 줄 자리') : t('칸');
@@ -1282,7 +1283,7 @@ const FRONT_GAP = 10;
 const FRONT_HEIGHT = 28;
 
 function frontRect(geo, cells, stage) {
-  if (geo.isArc || cells.length === 0) return null;
+  if (geo.isArc || cells.length === 0 || stage === 'none') return null;
   let left = Infinity, right = -Infinity;
   for (const { row, col } of cells) {
     const { x } = geo.place(row, col);
