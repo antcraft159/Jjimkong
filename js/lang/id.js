@@ -17,7 +17,6 @@ window.JJIM_DICT = {
 "처음이라면": "Baru pertama kali?",
 "실제 시트 없이 좌석표를 눌러 볼 수 있어요.": "Coba tekan-tekan denah kursi tanpa sheet sungguhan.",
 "체험해 보기": "Coba demo",
-"관리자(교회)": "Admin (gereja)",
 "좌석 예약 시트를 내 구글 드라이브에 만들어 쓰세요. PC 에서 하시는 게 편해요.": "Buat sheet pemesanan kursi di Google Drive Anda sendiri. Lebih mudah dilakukan di PC.",
 "시트 만들기": "Buat sheet",
 "관리자 사용법": "Panduan admin",

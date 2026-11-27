@@ -17,7 +17,6 @@ window.JJIM_DICT = {
 "처음이라면": "Bago ka lang ba?",
 "실제 시트 없이 좌석표를 눌러 볼 수 있어요.": "Subukang pindutin ang seat map kahit walang totoong sheet.",
 "체험해 보기": "Subukan ang demo",
-"관리자(교회)": "Admin (simbahan)",
 "좌석 예약 시트를 내 구글 드라이브에 만들어 쓰세요. PC 에서 하시는 게 편해요.": "Gumawa ng sheet ng reserbasyon sa sarili mong Google Drive. Mas madali kung sa PC.",
 "시트 만들기": "Gumawa ng sheet",
 "관리자 사용법": "Gabay para sa admin",

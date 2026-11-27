@@ -17,7 +17,6 @@ window.JJIM_DICT = {
 "처음이라면": "Primeira vez?",
 "실제 시트 없이 좌석표를 눌러 볼 수 있어요.": "Experimente um mapa de lugares sem uma planilha real.",
 "체험해 보기": "Experimentar a demo",
-"관리자(교회)": "Organizadores (igreja)",
 "좌석 예약 시트를 내 구글 드라이브에 만들어 쓰세요. PC 에서 하시는 게 편해요.": "Crie a planilha de reservas no seu próprio Google Drive. É mais fácil no computador.",
 "시트 만들기": "Criar planilha",
 "관리자 사용법": "Guia do organizador",
