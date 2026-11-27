@@ -8,9 +8,10 @@ function readCounted() {
   try {
     const data = JSON.parse(localStorage.getItem(COUNTED_KEY) || '{}') || {};
     if (!Array.isArray(data.sheets)) data.sheets = [];
+    if (!Array.isArray(data.users)) data.users = [];
     return data;
   } catch (e) {
-    return { sheets: [] };
+    return { sheets: [], users: [] };
   }
 }
 
@@ -37,16 +38,11 @@ async function countUse(url, admin) {
   if (!STATS_URL || !url || url === DEMO_URL) return;
   try {
     const counted = readCounted();
-    if (admin) {
-      const id = await hashHex(url);
-      if (counted.sheets.includes(id)) return;
-      await send('sheet', id);
-      counted.sheets.push(id);
-    } else {
-      if (counted.user) return;
-      await send('user', randomHex());
-      counted.user = true;
-    }
+    const id = await hashHex(url);
+    const list = admin ? counted.sheets : counted.users;
+    if (list.includes(id)) return;
+    await send(admin ? 'sheet' : 'user', admin ? id : randomHex());
+    list.push(id);
     writeCounted(counted);
   } catch (e) { /* 통계는 실패해도 그만 */ }
 }
