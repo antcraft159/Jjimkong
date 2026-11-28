@@ -97,7 +97,8 @@ function normalize(state) {
   state.seats = Array.isArray(state.seats) ? state.seats : [];
   state.floors = Array.isArray(state.floors) ? state.floors : [];
   state.taken = Array.isArray(state.taken) ? state.taken : [];
-  state.maxPerPerson = Math.min(Math.max(state.maxPerPerson | 0 || 1, 1), 20);
+  state.canUnlimit = state.canUnlimit === true;
+  state.maxPerPerson = state.canUnlimit && state.maxPerPerson === 0 ? 0 : Math.min(Math.max(state.maxPerPerson | 0 || 1, 1), 20);
   state.showNames = state.showNames !== false;
   return state;
 }

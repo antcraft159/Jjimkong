@@ -161,7 +161,12 @@ function cleanName(value) {
 }
 
 function readMaxPerPerson(settings) {
-  return Math.min(Math.max(toInt(settings.maxPerPerson, 1), 1), 20);
+  return clampMaxPerPerson(settings.maxPerPerson);
+}
+
+function clampMaxPerPerson(value) {
+  const number = toInt(value, 1);
+  return number === 0 ? 0 : Math.min(Math.max(number, 1), 20);
 }
 
 function requireDevice(device) {
@@ -220,6 +225,7 @@ function buildState(state, device, isAdmin) {
     room: String(settings.room || ''),
     published,
     maxPerPerson: readMaxPerPerson(settings),
+    canUnlimit: true,
     showNames: settings.showNames !== false,
     opensAt: '',
     closesAt: '',
@@ -266,7 +272,7 @@ function reserve(state, device, rawName, seatId, isAdmin) {
   const mineCount = state.reservations.filter(r => r.device === device).length;
   const max = readMaxPerPerson(state.settings);
 
-  if (mineCount >= max) {
+  if (max > 0 && mineCount >= max) {
     throw userError('limit', max === 1
       ? '이미 자리를 잡으셨어요. 자리를 바꾸려면 내 자리를 먼저 누르세요.'
       : '한 사람이 ' + max + '자리까지 잡을 수 있어요.');
@@ -457,7 +463,7 @@ function saveLayout(state, rawSeats, rawFloors, rawItems, rawWalls) {
 function saveSettings(state, settings) {
   const target = state.settings;
   if (settings.published !== undefined) target.published = settings.published === true;
-  if (settings.maxPerPerson !== undefined) target.maxPerPerson = Math.min(Math.max(toInt(settings.maxPerPerson, 1), 1), 20);
+  if (settings.maxPerPerson !== undefined) target.maxPerPerson = clampMaxPerPerson(settings.maxPerPerson);
   if (settings.showNames !== undefined) target.showNames = settings.showNames === true;
   if (settings.room !== undefined) target.room = String(settings.room).trim().slice(0, 40);
   save(state);
