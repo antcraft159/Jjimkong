@@ -104,9 +104,11 @@ body {
   font-size: 15px;
   line-height: 1.55;
   word-break: keep-all;
+  overflow-wrap: break-word;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
 }
+html:lang(ja) body, html:lang(zh) body { word-break: normal; line-break: strict; }
 [hidden] { display: none !important; }
 a { color: var(--accent); }
 h1, h2, h3 { font-weight: 700; margin: 0; line-height: 1.3; letter-spacing: -.01em; }
@@ -135,7 +137,8 @@ small { color: var(--muted); font-weight: 400; }
 .brand-name { font-family: 'Jua', sans-serif; font-size: 1.3rem; font-weight: 400; letter-spacing: .02em; line-height: 1; }
 .topbar-sep { width: 1px; height: 22px; background: var(--border-strong); flex-shrink: 0; }
 .room-line { display: flex; align-items: center; gap: 8px; min-width: 0; }
-.room-line h1 { font-size: 1rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.room-line h1 { font-size: 1rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 4em; }
+.room-line .chip { flex-shrink: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
 .topbar-actions { display: flex; gap: 2px; flex-shrink: 0; }
 
 .chip {
@@ -264,8 +267,8 @@ textarea { resize: vertical; font-size: .88rem; word-break: break-all; }
 
 .admin-block { display: flex; flex-direction: column; gap: 12px; }
 .admin-block .kv { margin-top: 0; }
-.admin-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border); }
-.admin-actions .btn { width: 100%; }
+.admin-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border); }
+.admin-actions .btn { width: 100%; min-width: 0; white-space: normal; text-align: center; line-height: 1.25; }
 #adminControls[hidden] + .admin-actions { margin-top: 0; padding-top: 0; border-top: 0; }
 .editor .sub-title:first-child { margin-top: 0; }
 .editor .stepper { margin-top: 10px; }

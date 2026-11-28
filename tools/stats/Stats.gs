@@ -32,9 +32,10 @@ function summary() {
   if (cached) return JSON.parse(cached);
 
   const months = [];
-  const now = new Date();
+  const [year, month] = Utilities.formatDate(new Date(), TZ, 'yyyy-MM').split('-').map(Number);
   for (let i = 11; i >= 0; i--) {
-    months.push(Utilities.formatDate(new Date(now.getFullYear(), now.getMonth() - i, 15), TZ, 'yyyy-MM'));
+    const at = new Date(Date.UTC(year, month - 1 - i, 15));
+    months.push(at.getUTCFullYear() + '-' + String(at.getUTCMonth() + 1).padStart(2, '0'));
   }
   const result = { ok: true, months: months };
   Object.keys(KINDS).forEach(kind => {
