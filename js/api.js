@@ -24,6 +24,8 @@ async function send(url, body) {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), TIMEOUT_MS);
   let response;
+  let text = '';
+  let reading = false;
 
   try {
     response = await fetch(url, {
@@ -33,9 +35,14 @@ async function send(url, body) {
       redirect: 'follow',
       signal: controller.signal
     });
+    if (response.ok) {
+      reading = true;
+      text = (await response.text()).trimStart();
+    }
   } catch (error) {
+    clearTimeout(timer);
     if (error && error.name === 'AbortError') return fail('timeout', t('응답이 늦어요. 잠시 뒤 다시 해 주세요.'));
-    if (navigator.onLine === false) return fail('network', t('인터넷에 연결되어 있는지 확인해 주세요.'));
+    if (navigator.onLine === false || reading) return fail('network', t('인터넷에 연결되어 있는지 확인해 주세요.'));
     if (await reachable(url)) return fail('gone', t('좌석 예약 서버와 연결하지 못했어요. 관리자에게 웹 앱 배포가 살아 있고 액세스 권한이 \'모든 사용자\' 인지 확인해 달라고 해 주세요.'));
     return fail('network', t('좌석 예약 서버와 연결하지 못했어요. 관리자에게 웹 앱 배포가 살아 있고 액세스 권한이 \'모든 사용자\' 인지 확인해 달라고 해 주세요.'));
   } finally {
@@ -49,8 +56,6 @@ async function send(url, body) {
     if (code === 429) return fail('server', t('지금 예약하는 분이 많아요. 잠시 뒤 다시 해 주세요.'));
     return fail('server', code >= 500 ? t('좌석 예약 서버에 문제가 생겼어요({code}). 잠시 뒤 다시 해 주세요.', { code }) : t('좌석 예약 서버가 요청을 받지 않았어요({code}).', { code }));
   }
-
-  const text = (await response.text()).trimStart();
 
   if (!text.startsWith('{')) {
     return fail('bad-response', t('좌석 예약 서버가 올바른 답을 주지 않았어요. 웹 앱 액세스 권한이 \'모든 사용자\' 인지 확인해 주세요.'));
@@ -79,6 +84,7 @@ async function reachable(url) {
 }
 
 function post(connection, personId, action, extra = {}) {
+  if (!connection) return Promise.resolve(fail('network', t('연결하지 못했어요.')));
   const body = { ...extra, action, device: personId };
   if (connection.adminKey) body.admin = connection.adminKey;
   return send(connection.url, body);

@@ -1,6 +1,6 @@
 (() => {
 'use strict';
-const { SeatGeometry, LayoutDraft, CELL_W, CELL_H, FAN_ANGLE, ROUND_ANGLE, MIN_ANGLE, MAX_ANGLE, MAX_ROWS, MAX_COLS, floorName, normalizeKind, normalizeShape, kindName, ITEMS, t, tm, LANGS, LANG, setLang, translatePage, formatDate, isItemKind, MAX_WALL_POINTS, parseCode, memberUrlFromParams, pickLink, buildInvite, buildShareText, fingerprint, TEMPLATE_COPY_URL, DEMO_URL, post, getState, saveLayout: postLayout, forgetLayout } = window.Jjim;
+const { SeatGeometry, LayoutDraft, CELL_W, CELL_H, FAN_ANGLE, ROUND_ANGLE, MIN_ANGLE, MAX_ANGLE, MAX_ROWS, MAX_COLS, floorName, normalizeKind, normalizeShape, kindName, ITEMS, t, tm, LANGS, LANG, setLang, translatePage, withLang, formatDate, isItemKind, MAX_WALL_POINTS, parseCode, memberUrlFromParams, pickLink, buildInvite, buildShareText, fingerprint, TEMPLATE_COPY_URL, DEMO_URL, post, getState, saveLayout: postLayout, forgetLayout } = window.Jjim;
 const REFRESH_MS = 20000;
 const ADMIN_REFRESH_MS = 4000;
 const STORE_KEY = 'jjimkong.v1';
@@ -30,6 +30,8 @@ function loadStore() {
   if (typeof data.name !== 'string') data.name = '';
   if (!data.pins || typeof data.pins !== 'object') data.pins = {};
   if (!data.kept || typeof data.kept !== 'object') data.kept = {};
+  if (!data.persons || typeof data.persons !== 'object' || Array.isArray(data.persons)) data.persons = {};
+  for (const url of Object.keys(data.persons)) if (!PERSON_PATTERN.test(String(data.persons[url]))) delete data.persons[url];
   if (!data.conn || typeof data.conn.url !== 'string') data.conn = null;
   return data;
 }
@@ -58,6 +60,8 @@ let tool = 'chair';
 let connFingerprint = '';
 
 const isConnected = () => !!store.conn;
+const idFor = url => (url && store.persons[url]) || store.personId;
+const myId = () => idFor(store.conn && store.conn.url);
 const isAdmin = () => !!(store.conn && store.conn.adminKey && lastState && lastState.admin);
 const editing = () => draft !== null;
 
@@ -145,7 +149,7 @@ async function connect() {
   }
 
   const own = readOwnKey(pickLink($('codeInput').value));
-  if (own.key) store.personId = own.key;
+  if (own.key) store.persons[link.url] = own.key;
   if (own.name && !$('nameInput').value.trim()) $('nameInput').value = own.name;
   store.name = $('nameInput').value.trim();
   saveStore();
@@ -153,7 +157,7 @@ async function connect() {
   const candidate = { url: link.url, adminKey: link.adminKey, room: '' };
   setBusy(true);
   say(t('연결하는 중…'));
-  const state = await getState(candidate, store.personId);
+  const state = await getState(candidate, idFor(candidate.url));
   setBusy(false);
 
   if (!state.ok) {
@@ -197,6 +201,7 @@ async function dropConnection() {
   seats = [];
   floors = [];
   draft = null;
+  pendingMax = null;
   viewFloorChosen = false;
   setBusy(false);
   stopTimer();
@@ -230,7 +235,7 @@ function acceptInvite(memberUrl) {
   updateCodeCheck();
 }
 
-function readHash() {
+async function readHash() {
   const hash = location.hash.replace(/^#/, '');
   if (!hash) return;
 
@@ -239,7 +244,7 @@ function readHash() {
     const own = readOwnKey('#' + hash);
     history.replaceState(null, '', location.pathname + location.search);
     if (!url) say(t('초대 링크를 읽지 못했어요. 링크가 잘렸을 수 있어요. 관리자에게 다시 받아 주세요.'));
-    else if (own.key) acceptMyLink(url, own.key, own.name);
+    else if (own.key) await acceptMyLink(url, own.key, own.name);
     else acceptInvite(url);
   }
 }
@@ -260,31 +265,38 @@ async function acceptMyLink(url, key, name) {
     await dropConnection();
   }
 
-  if (store.conn) {
-    await adoptPerson(key, name, OWN_LINK_DONE);
-    return;
+  if (!store.conn) {
+    if (name) store.name = name;
+    saveStore();
+    $('nameInput').value = store.name;
+    $('codeInput').value = url;
+    await connect();
+    if (!store.conn || store.conn.url !== url) return;
   }
 
-  store.personId = key;
-  if (name) store.name = name;
-  saveStore();
-  $('nameInput').value = store.name;
-  $('codeInput').value = url;
-  await connect();
-  if (isConnected()) say(OWN_LINK_DONE);
+  if (await adoptPerson(key, name, OWN_LINK_DONE)) markKept(url);
 }
 
 async function adoptPerson(personId, name, doneText) {
-  if (personId !== store.personId) {
+  const conn = store.conn;
+  if (!conn) return false;
+  if (personId !== idFor(conn.url)) {
+    if (!lastState) await refresh(true);
+    if (conn !== store.conn) return false;
     const hasMine = seats.some(seat => seat.state === 'mine');
     if (hasMine && !await confirmBox(t('내 자리 되찾기'),
-      t('이 브라우저에서 새로 찜한 자리는 더 이상 내 자리로 보이지 않아요(남아 있으면 관리자가 취소할 수 있어요). 바꿀까요?'))) return;
-    store.personId = personId;
+      t('이 브라우저에서 새로 찜한 자리는 더 이상 내 자리로 보이지 않아요(남아 있으면 관리자가 취소할 수 있어요). 바꿀까요?'))) return false;
+    if (conn !== store.conn) return false;
+    store.persons[conn.url] = personId;
   }
-  if (name) store.name = name;
+  if (name) {
+    store.name = name;
+    $('myNameInput').value = name;
+  }
   saveStore();
   await refresh(false);
   say(doneText);
+  return true;
 }
 
 async function updateCodeCheck() {
@@ -312,7 +324,9 @@ function stopTimer() {
 
 const GONE_LIMIT = 3;
 const ADMIN_GONE_LIMIT = 10;
+const GONE_MIN_MS = 120000;
 let goneCount = 0;
+let goneSince = 0;
 
 async function dropGoneConnection() {
   goneCount = 0;
@@ -337,7 +351,7 @@ async function refresh(quiet) {
   refreshing = true;
   let state;
   try {
-    state = await getState(conn, store.personId);
+    state = await getState(conn, idFor(conn.url));
   } finally {
     refreshing = false;
   }
@@ -346,8 +360,13 @@ async function refresh(quiet) {
   if (sequence !== refreshSeq || conn !== store.conn || editing()) return;
 
   if (!state.ok) {
-    goneCount = state.error === 'gone' ? goneCount + 1 : 0;
-    if (goneCount >= (conn.adminKey ? ADMIN_GONE_LIMIT : GONE_LIMIT)) {
+    if (state.error === 'gone') {
+      if (!goneCount) goneSince = Date.now();
+      goneCount++;
+    } else {
+      goneCount = 0;
+    }
+    if (goneCount >= (conn.adminKey ? ADMIN_GONE_LIMIT : GONE_LIMIT) && Date.now() - goneSince >= GONE_MIN_MS) {
       await dropGoneConnection();
       return;
     }
@@ -361,6 +380,7 @@ async function refresh(quiet) {
 }
 
 function applyState(state) {
+  if (pendingMax !== null) state.maxPerPerson = pendingMax;
   lastState = state;
 
   if (store.conn && store.conn.room !== state.room) {
@@ -373,7 +393,7 @@ function applyState(state) {
     const reservation = takenById.get(seat.id);
     let stateName = 'free';
     let name = '';
-    if (seat.blocked) stateName = 'blocked';
+    if (seat.blocked && !(reservation && (reservation.mine || state.admin))) stateName = 'blocked';
     else if (reservation) {
       stateName = reservation.mine ? 'mine' : 'taken';
       name = reservation.name || '';
@@ -405,7 +425,8 @@ function applyState(state) {
   if (!viewFloorChosen && seats.length > 0) {
     viewFloorChosen = true;
     const mine = seats.find(seat => seat.state === 'mine');
-    viewFloorId = mine ? mine.f : floors[0].f;
+    const filled = floors.find(floor => seats.some(seat => seat.f === floor.f));
+    viewFloorId = mine ? mine.f : (filled || floors[0]).f;
   }
   if (!floors.some(floor => floor.f === viewFloorId)) viewFloorId = floors[0].f;
 
@@ -463,8 +484,8 @@ async function commitName() {
   const name = $('myNameInput').value.trim();
   if (name === store.name) return true;
 
-  if (name && seats.some(seat => seat.state === 'mine')) {
-    const response = await post(conn, store.personId, 'rename', { name });
+  if (name && (seats.some(seat => seat.state === 'mine') || store.pins[conn.url])) {
+    const response = await post(conn, idFor(conn.url), 'rename', { name });
     if (conn !== store.conn) return false;
     if (!response.ok) {
       say(t('이름을 바꾸지 못했어요.') + ' ' + (tm(response.message) || ''));
@@ -534,8 +555,8 @@ async function reserveOrMove(seat) {
   say(isMove ? t('{from} → {seat} 로 옮기는 중…', { from: mine[0].label, seat: seat.label }) : t('{seat} 찜하는 중…', { seat: seat.label }));
 
   const response = isMove
-    ? await post(conn, store.personId, 'move', { name: store.name, from: mine[0].id, seat: seat.id })
-    : await post(conn, store.personId, 'reserve', { name: store.name, seat: seat.id });
+    ? await post(conn, idFor(conn.url), 'move', { name: store.name, from: mine[0].id, seat: seat.id })
+    : await post(conn, idFor(conn.url), 'reserve', { name: store.name, seat: seat.id });
 
   setBusy(false);
   if (conn !== store.conn) return;
@@ -549,8 +570,9 @@ async function reserveOrMove(seat) {
 async function cancelMine(seat) {
   if (!await confirmBox(t('찜 취소'), t('{seat} 예약을 취소할까요?', { seat: seat.label }))) return;
   const conn = store.conn;
+  if (!conn || busy) return;
   setBusy(true);
-  const response = await post(conn, store.personId, 'cancel', { seat: seat.id });
+  const response = await post(conn, idFor(conn.url), 'cancel', { seat: seat.id });
   setBusy(false);
   if (conn !== store.conn) return;
   say(response.ok ? t('{seat} 예약을 취소했어요.', { seat: seat.label }) : tm(response.message) || '');
@@ -563,10 +585,11 @@ async function forceCancel(seat) {
     : t('{seat} 예약을 관리자 권한으로 취소할까요?', { seat: seat.label });
   if (!await confirmBox(t('관리자 취소'), question)) return;
   const conn = store.conn;
+  if (!conn || busy) return;
   setBusy(true);
   const extra = { seat: seat.id };
   if (seat.name) extra.name = seat.name;
-  const response = await post(conn, store.personId, 'forceCancel', extra);
+  const response = await post(conn, idFor(conn.url), 'forceCancel', extra);
   setBusy(false);
   if (conn !== store.conn) return;
   say(response.ok ? t('{seat} 예약을 취소했어요.', { seat: seat.label }) : tm(response.message) || '');
@@ -594,7 +617,7 @@ async function sendSettings(settings) {
   }
 
   refreshSeq++;
-  const response = await post(conn, store.personId, 'saveSettings', { settings });
+  const response = await post(conn, idFor(conn.url), 'saveSettings', { settings });
   refreshSeq++;
   if (conn !== store.conn) return;
 
@@ -611,13 +634,21 @@ async function sendSettings(settings) {
   await refresh(true);
 }
 
+let pendingMax = null;
+
 async function changeMax(delta) {
   if (!lastState) return;
-  const next = clamp(lastState.maxPerPerson + delta, 1, 20);
-  if (next === lastState.maxPerPerson) return;
+  const current = pendingMax !== null ? pendingMax : lastState.maxPerPerson;
+  const next = clamp(current + delta, 1, 20);
+  if (next === current) return;
+  pendingMax = next;
   lastState.maxPerPerson = next;
   $('maxValue').textContent = next;
-  await saveSettings({ maxPerPerson: next });
+  try {
+    await saveSettings({ maxPerPerson: next });
+  } finally {
+    if (pendingMax === next) pendingMax = null;
+  }
 }
 
 async function nextSession() {
@@ -625,7 +656,7 @@ async function nextSession() {
   const count = seats.filter(seat => seat.state === 'taken' || seat.state === 'mine').length;
   if (!await confirmBox(t('다음 회차로'), t('지금 예약 {n}자리를 \'지난 예약\' 탭으로 옮기고 좌석표를 비워요. 배치도와 공개 상태는 그대로예요. 할까요?', { n: count }))) return;
   setBusy(true);
-  const response = await post(store.conn, store.personId, 'nextSession');
+  const response = await post(store.conn, myId(), 'nextSession');
   setBusy(false);
   say(response.ok ? t('다음 회차로 넘겼어요.') : tm(response.message) || '');
   await refresh(true);
@@ -667,7 +698,7 @@ async function copyText(text, doneText) {
 function myLink() {
   const invite = inviteLink();
   if (!invite) return null;
-  return invite + '&k=' + store.personId + (store.name ? '&n=' + encodeURIComponent(store.name) : '');
+  return invite + '&k=' + myId() + (store.name ? '&n=' + encodeURIComponent(store.name) : '');
 }
 
 async function copyMyLink() {
@@ -745,7 +776,7 @@ async function submitPin(event) {
   const conn = store.conn;
   $('pinOkButton').disabled = true;
   showPinMessage(t('보내는 중…'));
-  const response = await post(conn, store.personId, pinMode === 'set' ? 'setPin' : 'reclaim', { name, pin });
+  const response = await post(conn, idFor(conn.url), pinMode === 'set' ? 'setPin' : 'reclaim', { name, pin });
   $('pinOkButton').disabled = false;
 
   if (!response.ok) {
@@ -762,9 +793,14 @@ async function submitPin(event) {
   $('pinDialog').close();
 
   if (pinMode === 'set') {
+    const before = store.name;
     store.pins[conn.url] = true;
     store.name = typeof response.name === 'string' && response.name.trim() ? response.name.trim() : name;
     saveStore();
+    if (store.name !== before && seats.some(seat => seat.state === 'mine')) {
+      await post(conn, idFor(conn.url), 'rename', { name: store.name });
+      if (conn === store.conn) refresh(true);
+    }
     $('myNameInput').value = store.name;
     render();
     say(store.name !== name
@@ -774,7 +810,7 @@ async function submitPin(event) {
   }
 
   await adoptPerson(response.device, name, t('내 자리를 되찾았어요.'));
-  if (store.personId === response.device && store.conn === conn) {
+  if (idFor(conn.url) === response.device && store.conn === conn) {
     store.pins[conn.url] = true;
     saveStore();
     render();
@@ -878,7 +914,7 @@ async function changeAngle(delta) {
 function addFloor() {
   if (!draft || busy) return;
   const error = draft.addFloor();
-  afterFloorChange();
+  if (!error) afterFloorChange();
   say(error || t('{floor}을 더했어요. 모양을 고르고 의자를 그리세요.', { floor: floorLabel(draft.current) }));
   render();
 }
@@ -886,7 +922,13 @@ function addFloor() {
 async function removeFloor() {
   if (!draft || busy || draft.floorCount <= 1) return;
   const name = floorLabel(draft.current);
-  if (draft.currentFloorSeatCount > 0 && !await confirmBox(t('층 지우기'), t('{floor}의 의자 {n}개가 함께 지워져요. 지울까요?', { floor: name, n: draft.currentFloorSeatCount }))) return;
+  const floor = draft.cur;
+  if (draft.currentFloorSeatCount > 0) {
+    if (!await confirmBox(t('층 지우기'), t('{floor}의 의자 {n}개가 함께 지워져요. 지울까요?', { floor: name, n: draft.currentFloorSeatCount }))) return;
+  } else if (floor.items.length > 0 || floor.outline) {
+    if (!await confirmBox(t('층 지우기'), t('{floor}에 그린 외벽 · 물건도 함께 지워져요. 지울까요?', { floor: name }))) return;
+  }
+  if (!draft || draft.cur !== floor) return;
   draft.removeCurrentFloor();
   afterFloorChange();
   say(t('{floor}을 지웠어요. [저장] 해야 반영돼요.', { floor: name }));
@@ -904,7 +946,7 @@ async function saveLayoutNow() {
 
   const conn = store.conn;
   setBusy(true);
-  const fresh = await getState(conn, store.personId);
+  const fresh = await getState(conn, idFor(conn.url));
   setBusy(false);
   if (conn !== store.conn || !draft) return;
   const taken = fresh.ok && Array.isArray(fresh.taken) ? fresh.taken : lastState ? lastState.taken : [];
@@ -922,7 +964,7 @@ async function saveLayoutNow() {
   setBusy(true);
   say(t('배치도 저장하는 중…'));
   const newFloors = draft.toFloors();
-  const response = await postLayout(conn, store.personId, newSeats, newFloors, newItems, newWalls);
+  const response = await postLayout(conn, idFor(conn.url), newSeats, newFloors, newItems, newWalls);
   setBusy(false);
   if (conn !== store.conn || !draft) return;
 
@@ -1009,7 +1051,7 @@ function render() {
   $('adminControls').hidden = editing();
   $('adminActions').hidden = editing();
   $('editorPanel').hidden = !editing();
-  $('guideLink').href = admin ? 'guide.html#admin' : 'guide.html#member';
+  $('guideLink').setAttribute('href', withLang(admin ? 'guide.html#admin' : 'guide.html#member'));
   const gate = needsKeepGate();
   $('keepGate').hidden = !gate;
   $('statsRow').hidden = gate;
@@ -1050,7 +1092,7 @@ function afterFloorChange() {
   selectedVertex = -1;
   lastVertexTap = null;
   if (tool === 'stage' && draft.shape === 'arc') tool = 'chair';
-  if (tool === 'outline' && !draft.cur.outline) draft.setOutline(defaultOutline());
+  if (tool === 'outline' && !draft.cur.outline) tool = 'chair';
 }
 
 function chooseTool(next) {
@@ -2154,6 +2196,26 @@ function closeLanguages(focusButton) {
   if (focusButton) $('langButton').focus();
 }
 
+const PENDING_KEY = 'jjimkong.pending';
+
+window.Jjim.beforeLangChange = () => {
+  const code = $('codeInput').value.trim();
+  if (store.conn || !code) return;
+  sessionStorage.setItem(PENDING_KEY, JSON.stringify({ code, name: $('nameInput').value }));
+};
+
+function restorePending() {
+  let pending = null;
+  try {
+    pending = JSON.parse(sessionStorage.getItem(PENDING_KEY) || 'null');
+    sessionStorage.removeItem(PENDING_KEY);
+  } catch (e) { pending = null; }
+  if (store.conn || !pending || typeof pending.code !== 'string') return;
+  $('codeInput').value = pending.code;
+  if (typeof pending.name === 'string' && pending.name) $('nameInput').value = pending.name;
+  updateCodeCheck();
+}
+
 async function start() {
   translatePage();
   fillLanguages();
@@ -2161,13 +2223,14 @@ async function start() {
   $('themeButton').addEventListener('click', toggleTheme);
   wire();
   $('nameInput').value = store.name;
+  restorePending();
   await onConnectionChanged();
-  readHash();
 
   if (store.conn) {
     startTimer();
     await refresh(false);
   }
+  await readHash();
 }
 
 start();

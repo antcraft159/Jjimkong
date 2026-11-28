@@ -16,7 +16,12 @@ function readCounted() {
 }
 
 function writeCounted(data) {
-  try { localStorage.setItem(COUNTED_KEY, JSON.stringify(data)); } catch (e) { /* 개인 창 등 */ }
+  try {
+    localStorage.setItem(COUNTED_KEY, JSON.stringify(data));
+    return localStorage.getItem(COUNTED_KEY) !== null;
+  } catch (e) {
+    return false;
+  }
 }
 
 function randomHex() {
@@ -30,8 +35,10 @@ async function hashHex(text) {
   return [...new Uint8Array(digest)].slice(0, 16).map(b => b.toString(16).padStart(2, '0')).join('');
 }
 
-function send(kind, id) {
-  return fetch(STATS_URL + '?k=' + kind + '&id=' + id, { mode: 'no-cors', cache: 'no-store' });
+async function send(kind, id) {
+  const response = await fetch(STATS_URL + '?k=' + kind + '&id=' + id, { cache: 'no-store' });
+  const data = await response.json();
+  return !!(data && data.ok);
 }
 
 async function countUse(url, admin) {
@@ -41,7 +48,8 @@ async function countUse(url, admin) {
     const id = await hashHex(url);
     const list = admin ? counted.sheets : counted.users;
     if (list.includes(id)) return;
-    await send(admin ? 'sheet' : 'user', admin ? id : randomHex());
+    if (!writeCounted(counted)) return;
+    if (!await send(admin ? 'sheet' : 'user', admin ? id : randomHex())) return;
     list.push(id);
     writeCounted(counted);
   } catch (e) { /* 통계는 실패해도 그만 */ }

@@ -72,9 +72,22 @@ function tm(message) {
 
 const SKIP = 'script, style, [data-i18n], [data-i18n-skip]';
 
+const LANG_IN_URL = /[?&]lang=/.test(location.search);
+
+function withLang(href) {
+  if (!LANG_IN_URL || /[?&]lang=/.test(href)) return href;
+  const at = href.indexOf('#');
+  const path = at < 0 ? href : href.slice(0, at);
+  const hash = at < 0 ? '' : href.slice(at);
+  return path + (path.includes('?') ? '&' : '?') + 'lang=' + LANG + hash;
+}
+
 function translatePage(root) {
-  if (LANG === 'ko') return;
   const base = root || document.body;
+  base.querySelectorAll('a[href^="guide.html"], a[href^="./"]').forEach(link => {
+    link.setAttribute('href', withLang(link.getAttribute('href')));
+  });
+  if (LANG === 'ko') return;
 
   base.querySelectorAll('[data-i18n]').forEach(element => {
     const found = DICT[norm(element.innerHTML)];
@@ -104,8 +117,12 @@ function translatePage(root) {
 
 function setLang(code) {
   try { localStorage.setItem('jjimkong.lang', code); } catch (e) { /* 개인 창 등 */ }
+  try { if (window.Jjim.beforeLangChange) window.Jjim.beforeLangChange(); } catch (e) { /* 저장 못 해도 언어는 바꿈 */ }
   const url = new URL(location.href);
-  url.searchParams.delete('lang');
+  url.searchParams.set('lang', code);
+  const hash = url.hash.replace(/(^#|&)lang=[^&]*/, '$1').replace(/^#&/, '#').replace(/&$/, '');
+  url.hash = hash === '#' ? '' : hash;
+  if (!url.hash) url.href = url.href.replace(/#$/, '');
   location.replace(url.toString());
 }
 
@@ -117,5 +134,5 @@ function formatDate(date) {
   }
 }
 
-Object.assign(window.Jjim = window.Jjim || {}, { LANGS, LANG, LOCALE, t, tm, translatePage, setLang, formatDate });
+Object.assign(window.Jjim = window.Jjim || {}, { LANGS, LANG, LOCALE, t, tm, translatePage, setLang, formatDate, withLang });
 })();
