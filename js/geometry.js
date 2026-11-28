@@ -137,13 +137,17 @@ class SeatGeometry {
     const phi2 = this.angleOf(r2, clamp(col2, 0, this.capacity(r2) - 1));
     const from = Math.min(phi1, phi2);
     const to = Math.max(phi1, phi2);
+    const wrap = to - from > Math.PI;
 
     for (let r = top; r <= bottom; r++) {
       const half = CELL_W / 2 / this.rowRadius(r);
       const count = this.capacity(r);
       for (let c = 0; c < count; c++) {
         const phi = this.angleOf(r, c);
-        if (phi >= from - half && phi <= to + half) cells.push({ row: r, col: c });
+        const inside = wrap
+          ? phi <= from + half || phi >= to - half
+          : phi >= from - half && phi <= to + half;
+        if (inside) cells.push({ row: r, col: c });
       }
     }
     return cells;

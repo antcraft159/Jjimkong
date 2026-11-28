@@ -133,6 +133,8 @@ function confirmBox(title, text) {
 
 // ───────────── 연결 ─────────────
 
+let pendingOwn = null;
+
 async function connect() {
   if (busy) return;
   const link = parseCode($('codeInput').value);
@@ -181,6 +183,10 @@ async function connect() {
   await onConnectionChanged();
   applyState(state);
   startTimer();
+
+  const linked = pendingOwn && pendingOwn.url === candidate.url ? pendingOwn : null;
+  pendingOwn = null;
+  if (linked && store.conn === candidate && await adoptPerson(linked.key, linked.name, OWN_LINK_DONE)) markKept(linked.url);
 }
 
 async function disconnect() {
@@ -189,7 +195,8 @@ async function disconnect() {
   const text = hasMine
     ? t('연결을 끊어도 찜해 둔 자리는 그대로 남아요. 이 브라우저에서 같은 코드로 다시 연결하면 내 자리로 보여요. 끊을까요?')
     : t('좌석 예약 연결을 끊을까요? 같은 코드로 언제든 다시 연결할 수 있어요.');
-  if (!await confirmBox(t('연결 끊기'), text)) return;
+  const lose = draftChanged() ? ' ' + t('저장하지 않은 배치도 고친 내용도 사라져요.') : '';
+  if (!await confirmBox(t('연결 끊기'), text + lose)) return;
   await dropConnection();
 }
 
@@ -210,6 +217,48 @@ async function dropConnection() {
   await onConnectionChanged();
 }
 
+async function onStoreChanged(event) {
+  if (event.key !== STORE_KEY && event.key !== null) return;
+  const oldConn = store.conn;
+  const oldId = myId();
+  const oldName = store.name;
+  const fresh = loadStore();
+  for (const key of Object.keys(store)) delete store[key];
+  Object.assign(store, fresh);
+
+  if (store.name !== oldName) {
+    if (document.activeElement !== $('myNameInput')) $('myNameInput').value = store.name;
+    if (document.activeElement !== $('nameInput')) $('nameInput').value = store.name;
+  }
+
+  const sameConn = oldConn && store.conn && oldConn.url === store.conn.url && oldConn.adminKey === store.conn.adminKey;
+  if (sameConn) {
+    store.conn = oldConn;
+    if (myId() !== oldId) await refresh(true);
+    else render();
+    return;
+  }
+  if (!oldConn && !store.conn) {
+    render();
+    return;
+  }
+
+  forgetLayout();
+  lastState = null;
+  seats = [];
+  floors = [];
+  draft = null;
+  pendingMax = null;
+  viewFloorChosen = false;
+  setBusy(false);
+  stopTimer();
+  await onConnectionChanged();
+  if (store.conn) {
+    startTimer();
+    await refresh(false);
+  }
+}
+
 async function onConnectionChanged() {
   goneCount = 0;
   connFingerprint = store.conn && store.conn.url !== DEMO_URL ? await fingerprint(store.conn.url) : '';
@@ -217,6 +266,7 @@ async function onConnectionChanged() {
 }
 
 function acceptInvite(memberUrl) {
+  pendingOwn = null;
   if (!store.conn) {
     $('codeInput').value = memberUrl;
     updateCodeCheck();
@@ -268,10 +318,12 @@ async function acceptMyLink(url, key, name) {
   if (!store.conn) {
     if (name) store.name = name;
     saveStore();
+    pendingOwn = { url, key, name };
     $('nameInput').value = store.name;
     $('codeInput').value = url;
+    updateCodeCheck();
     await connect();
-    if (!store.conn || store.conn.url !== url) return;
+    return;
   }
 
   if (await adoptPerson(key, name, OWN_LINK_DONE)) markKept(url);
@@ -622,6 +674,7 @@ async function sendSettings(settings) {
   if (conn !== store.conn) return;
 
   if (!response.ok) {
+    if (settings.maxPerPerson !== undefined && pendingMax === settings.maxPerPerson) pendingMax = null;
     say(tm(response.message) || '');
   } else if (settings.published !== undefined) {
     say(settings.published ? t('공개했어요. 이제 유저가 찜할 수 있어요.') : t('공개를 멈췄어요.'));
@@ -845,6 +898,7 @@ function beginEdit() {
   const position = draft.toFloors().findIndex(floor => floor.f === viewFloorId);
   draft.selectFloor(Math.max(position, 0));
   tool = 'chair';
+  draftStart = draftSignature();
   $('panToggle').checked = false;
   say(draft.seatCount === 0
     ? t('도구를 고르고 칸을 누르거나 끌어서 의자를 그리세요. 장의자는 한 줄로 끌면 한 덩어리가 돼요.')
@@ -852,7 +906,19 @@ function beginEdit() {
   render();
 }
 
+let draftStart = '';
+
+function draftSignature() {
+  return draft ? JSON.stringify([draft.toSeats(), draft.toFloors(), draft.toItems(), draft.toWalls()]) : '';
+}
+
+function draftChanged() {
+  return !!draft && draftSignature() !== draftStart;
+}
+
 async function cancelEdit() {
+  if (busy || !draft) return;
+  if (draftChanged() && !await confirmBox(t('배치도 고치기 그만'), t('저장하지 않은 고친 내용이 사라져요. 그만할까요?'))) return;
   if (busy) return;
   draft = null;
   say('');
@@ -2104,6 +2170,7 @@ function wire() {
   $('cancelEditButton').addEventListener('click', cancelEdit);
 
   window.addEventListener('hashchange', readHash);
+  window.addEventListener('storage', onStoreChanged);
   new ResizeObserver(() => { if (isConnected()) updateZoom(); }).observe($('boardScroll'));
   document.addEventListener('visibilitychange', () => { if (!document.hidden) refresh(true); });
   window.addEventListener('focus', () => { if (!refreshing) refresh(true); });
