@@ -316,28 +316,34 @@ class LayoutDraft {
     return lost;
   }
 
+  remap(next) {
+    const before = this.geometry;
+    const center = before.isArc || next.isArc;
+    const cells = new Map();
+    let lost = 0;
+    for (const [k, value] of this.cur.cells) {
+      const [row, col] = k.split(',').map(Number);
+      const moved = center ? col + Math.floor(next.capacity(row) / 2) - Math.floor(before.capacity(row) / 2) : col;
+      if (next.contains(row, moved) && !cells.has(key(row, moved))) cells.set(key(row, moved), value);
+      else lost++;
+    }
+    return { cells, lost };
+  }
+
   countLostByShape(shape, angle) {
-    const geometry = new SeatGeometry(shape, angle, this.cur.rows, this.cur.cols);
-    return [...this.cur.cells.keys()].filter(k => !geometry.contains(...k.split(',').map(Number))).length;
+    const nextShape = normalizeShape(shape);
+    const nextAngle = nextShape === 'arc' ? clamp(angle, MIN_ANGLE, MAX_ANGLE) : 0;
+    return this.remap(new SeatGeometry(nextShape, nextAngle, this.cur.rows, this.cur.cols)).lost;
   }
 
   setShape(shape, angle) {
-    this.cur.shape = normalizeShape(shape);
-    this.cur.angle = this.cur.shape === 'arc' ? clamp(angle, MIN_ANGLE, MAX_ANGLE) : 0;
-    return this.removeOutside();
-  }
-
-  removeOutside() {
-    const geometry = this.geometry;
-    let removed = 0;
-    for (const k of [...this.cur.cells.keys()]) {
-      const [row, col] = k.split(',').map(Number);
-      if (!geometry.contains(row, col)) {
-        this.cur.cells.delete(k);
-        removed++;
-      }
-    }
-    return removed;
+    const nextShape = normalizeShape(shape);
+    const nextAngle = nextShape === 'arc' ? clamp(angle, MIN_ANGLE, MAX_ANGLE) : 0;
+    const { cells, lost } = this.remap(new SeatGeometry(nextShape, nextAngle, this.cur.rows, this.cur.cols));
+    this.cur.shape = nextShape;
+    this.cur.angle = nextAngle;
+    this.cur.cells = cells;
+    return lost;
   }
 
   // ── 칠하기 ──
@@ -405,14 +411,17 @@ class LayoutDraft {
   }
 
   resize(rows, cols) {
-    this.cur.rows = clamp(rows, 1, MAX_ROWS);
-    this.cur.cols = clamp(cols, 1, MAX_COLS);
-    return this.removeOutside();
+    const nextRows = clamp(rows, 1, MAX_ROWS);
+    const nextCols = clamp(cols, 1, MAX_COLS);
+    const { cells, lost } = this.remap(new SeatGeometry(this.cur.shape, this.cur.angle, nextRows, nextCols));
+    this.cur.rows = nextRows;
+    this.cur.cols = nextCols;
+    this.cur.cells = cells;
+    return lost;
   }
 
   countOutside(rows, cols) {
-    const geometry = new SeatGeometry(this.cur.shape, this.cur.angle, rows, cols);
-    return [...this.cur.cells.keys()].filter(k => !geometry.contains(...k.split(',').map(Number))).length;
+    return this.remap(new SeatGeometry(this.cur.shape, this.cur.angle, clamp(rows, 1, MAX_ROWS), clamp(cols, 1, MAX_COLS))).lost;
   }
 
   // ── 저장 ──
