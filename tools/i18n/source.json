@@ -146,7 +146,7 @@
   },
   {
    "key": "내 자리 되찾기",
-   "context": "화면 글자 div.gate-grid > div.panel.gate-option.gate-reclaim-card > button#gateReclaimButton.btn.big / app.js:339: if (hasMine && !await confirmBox(t('내 자리 되찾기'), / app.js:798: $('pinTitle').textContent = setting ? (hasPin() ? t('비밀번호 바꾸기') : t('비밀번호 정하기')) : t('내 자리 되찾기');"
+   "context": "화면 글자 div.gate-grid > div.panel.gate-option.gate-reclaim-card > button#gateReclaimButton.btn.big / app.js:344: if (hasMine && !await confirmBox(t('내 자리 되찾기'), / app.js:839: $('pinTitle').textContent = setting ? (hasPin() ? t('비밀번호 바꾸기') : t('비밀번호 정하기')) : t('내 자리 되찾기');"
   },
   {
    "key": "내 자리 링크 저장",
@@ -166,15 +166,15 @@
   },
   {
    "key": "찜함",
-   "context": "화면 글자 div#statsRow.stats > div.stat > span.stat-label / app.js:1646: : seat.state === 'taken' ? (seat.name || t('찜함')) / app.js:1655: const stateText = { mine: t('내 자리'), taken: seat.name || t('찜함'), blocked: t('앉을 수 없는 자리'), free: t('빈자리') }[seat.state];"
+   "context": "화면 글자 div#statsRow.stats > div.stat > span.stat-label / app.js:1692: : seat.state === 'taken' ? (seat.name || t('찜함')) / app.js:1701: const stateText = { mine: t('내 자리'), taken: seat.name || t('찜함'), blocked: t('앉을 수 없는 자리'), free: t('빈자리') }[seat.state];"
   },
   {
    "key": "빈자리",
-   "context": "화면 글자 div#statsRow.stats > div.stat > span.stat-label / 화면 글자 div.board-toolbar > div.legend > span / app.js:1655: const stateText = { mine: t('내 자리'), taken: seat.name || t('찜함'), blocked: t('앉을 수 없는 자리'), free: t('빈자리') }[seat.state];"
+   "context": "화면 글자 div#statsRow.stats > div.stat > span.stat-label / 화면 글자 div.board-toolbar > div.legend > span / app.js:1701: const stateText = { mine: t('내 자리'), taken: seat.name || t('찜함'), blocked: t('앉을 수 없는 자리'), free: t('빈자리') }[seat.state];"
   },
   {
    "key": "내 자리",
-   "context": "화면 글자 div#statsRow.stats > div.stat.accent > span.stat-label / 화면 글자 div.board-toolbar > div.legend > span / app.js:1374: addPill(floorLabel(position) + (mine ? ' · ' + t('내 자리') : ''), floor.f === viewFloorId, () => {"
+   "context": "화면 글자 div#statsRow.stats > div.stat.accent > span.stat-label / 화면 글자 div.board-toolbar > div.legend > span / app.js:1420: addPill(floorLabel(position) + (mine ? ' · ' + t('내 자리') : ''), floor.f === viewFloorId, () => {"
   },
   {
    "key": "예약됨",
@@ -186,7 +186,7 @@
   },
   {
    "key": "책상",
-   "context": "화면 글자 div.board-toolbar > div.legend > span / app.js:1672: const shortKind = { desk: t('책상'), pew: t('장'), extra: t('보조'), chair: t('의자') };"
+   "context": "화면 글자 div.board-toolbar > div.legend > span / app.js:1718: const shortKind = { desk: t('책상'), pew: t('장'), extra: t('보조'), chair: t('의자') };"
   },
   {
    "key": "장의자",
@@ -194,7 +194,7 @@
   },
   {
    "key": "보조",
-   "context": "화면 글자 div.board-toolbar > div.legend > span / app.js:1647: : seat.kind === 'extra' ? t('보조') : ''; / app.js:1672: const shortKind = { desk: t('책상'), pew: t('장'), extra: t('보조'), chair: t('의자') };"
+   "context": "화면 글자 div.board-toolbar > div.legend > span / app.js:1693: : seat.kind === 'extra' ? t('보조') : ''; / app.js:1718: const shortKind = { desk: t('책상'), pew: t('장'), extra: t('보조'), chair: t('의자') };"
   },
   {
    "key": "출입문",
@@ -206,7 +206,7 @@
   },
   {
    "key": "앞 (강단)",
-   "context": "화면 글자 div#boardZoom.board-zoom > div#boardInner.board-inner > div#frontBand.front / app.js:1475: band.textContent = t('앞 (강단)');"
+   "context": "화면 글자 div#boardZoom.board-zoom > div#boardInner.board-inner > div#frontBand.front / app.js:1521: band.textContent = t('앞 (강단)');"
   },
   {
    "key": "아직 좌석표가 없어요.",
@@ -270,11 +270,11 @@
   },
   {
    "key": "다음 회차로",
-   "context": "화면 글자 div#adminPanel.panel.admin > div#adminActions.admin-actions > button#nextSessionButton.btn.ghost / app.js:710: if (!await confirmBox(t('다음 회차로'), t('지금 예약 {n}자리를 \\'지난 예약\\' 탭으로 옮기고 좌석표를 비워요. 배치도와 공개 상태는 그대로예요. 할까요?', { n: count }))) return;"
+   "context": "화면 글자 div#adminPanel.panel.admin > div#adminActions.admin-actions > button#nextSessionButton.btn.ghost / app.js:751: if (!await confirmBox(t('다음 회차로'), t('지금 예약 {n}자리를 \\'지난 예약\\' 탭으로 옮기고 좌석표를 비워요. 배치도와 공개 상태는 그대로예요. 할까요?', { n: count }))) return;"
   },
   {
    "key": "의자",
-   "context": "화면 글자 div#adminPanel.panel.admin > div#editorPanel.editor > div.sub-title / app.js:1672: const shortKind = { desk: t('책상'), pew: t('장'), extra: t('보조'), chair: t('의자') };"
+   "context": "화면 글자 div#adminPanel.panel.admin > div#editorPanel.editor > div.sub-title / app.js:1718: const shortKind = { desk: t('책상'), pew: t('장'), extra: t('보조'), chair: t('의자') };"
   },
   {
    "key": "1인 의자",
@@ -394,7 +394,7 @@
   },
   {
    "key": "칸",
-   "context": "화면 글자 div#editorPanel.editor > div.stepper > span#colsLabel / app.js:1146: $('colsLabel').textContent = isArc ? t('첫 줄 자리') : t('칸');"
+   "context": "화면 글자 div#editorPanel.editor > div.stepper > span#colsLabel / app.js:1192: $('colsLabel').textContent = isArc ? t('첫 줄 자리') : t('칸');"
   },
   {
    "key": "화면 움직이기",
@@ -438,7 +438,7 @@
   },
   {
    "key": "어두운 화면으로",
-   "context": "aria-label 속성 header.topbar > div.topbar-inner > button#themeButton.btn.ghost.small.theme-toggle / app.js:2189: $('themeButton').setAttribute('aria-label', dark ? t('밝은 화면으로') : t('어두운 화면으로')); / app.js:2190: $('themeButton').title = dark ? t('밝은 화면으로') : t('어두운 화면으로');"
+   "context": "title 속성 header.topbar > div.topbar-inner > button#themeButton.btn.ghost.small.theme-toggle / aria-label 속성 header.topbar > div.topbar-inner > button#themeButton.btn.ghost.small.theme-toggle / app.js:2235: $('themeButton').setAttribute('aria-label', dark ? t('밝은 화면으로') : t('어두운 화면으로'));"
   },
   {
    "key": "예: 김찜콩",
@@ -474,7 +474,7 @@
   },
   {
    "key": "이름을 적어 주세요.",
-   "context": "app.js:148: say(t('이름을 적어 주세요.')); / app.js:826: if (!name) return showPinMessage(t('이름을 적어 주세요.'));"
+   "context": "app.js:148: say(t('이름을 적어 주세요.')); / app.js:867: if (!name) return showPinMessage(t('이름을 적어 주세요.'));"
   },
   {
    "key": "연결하는 중…",
@@ -502,451 +502,459 @@
   },
   {
    "key": "초대 링크로 들어왔어요. 이름을 적고 [연결] 을 눌러 주세요.",
-   "context": "app.js:273: say(t('초대 링크로 들어왔어요. 이름을 적고 [연결] 을 눌러 주세요.'));"
+   "context": "app.js:278: say(t('초대 링크로 들어왔어요. 이름을 적고 [연결] 을 눌러 주세요.'));"
   },
   {
    "key": "이미 이 좌석 예약에 연결돼 있어요.",
-   "context": "app.js:279: say(t('이미 이 좌석 예약에 연결돼 있어요.'));"
+   "context": "app.js:284: say(t('이미 이 좌석 예약에 연결돼 있어요.'));"
   },
   {
    "key": "다른 좌석 예약에 연결돼 있어요. 초대받은 곳으로 바꾸려면 [연결 끊기] 를 누른 뒤 연결해 주세요(코드는 넣어 둘게요).",
-   "context": "app.js:283: say(t('다른 좌석 예약에 연결돼 있어요. 초대받은 곳으로 바꾸려면 [연결 끊기] 를 누른 뒤 연결해 주세요(코드는 넣어 둘게요).'));"
+   "context": "app.js:288: say(t('다른 좌석 예약에 연결돼 있어요. 초대받은 곳으로 바꾸려면 [연결 끊기] 를 누른 뒤 연결해 주세요(코드는 넣어 둘게요).'));"
   },
   {
    "key": "초대 링크를 읽지 못했어요. 링크가 잘렸을 수 있어요. 관리자에게 다시 받아 주세요.",
-   "context": "app.js:296: if (!url) say(t('초대 링크를 읽지 못했어요. 링크가 잘렸을 수 있어요. 관리자에게 다시 받아 주세요.'));"
+   "context": "app.js:301: if (!url) say(t('초대 링크를 읽지 못했어요. 링크가 잘렸을 수 있어요. 관리자에게 다시 받아 주세요.'));"
   },
   {
    "key": "내 자리 링크로 들어왔어요. 찜해 둔 자리가 내 자리로 보여요.",
-   "context": "app.js:310: const OWN_LINK_DONE = t('내 자리 링크로 들어왔어요. 찜해 둔 자리가 내 자리로 보여요.');"
+   "context": "app.js:315: const OWN_LINK_DONE = t('내 자리 링크로 들어왔어요. 찜해 둔 자리가 내 자리로 보여요.');"
   },
   {
    "key": "내 자리 링크",
-   "context": "app.js:314: if (!await confirmBox(t('내 자리 링크'), t('지금 다른 좌석 예약에 연결돼 있어요. 링크의 좌석 예약으로 바꿀까요?'))) return; / app.js:764: const text = `[${room ? room + ' ' : ''}${t('내 자리 링크')}]\\n${t('나만 갖고 계세요. 이 링크를 누르면 어느 기기에서든 내가 찜한 자리로 들어가요.')}\\n${link}`;"
+   "context": "app.js:319: if (!await confirmBox(t('내 자리 링크'), t('지금 다른 좌석 예약에 연결돼 있어요. 링크의 좌석 예약으로 바꿀까요?'))) return; / app.js:805: const text = `[${room ? room + ' ' : ''}${t('내 자리 링크')}]\\n${t('나만 갖고 계세요. 이 링크를 누르면 어느 기기에서든 내가 찜한 자리로 들어가요.')}\\n${link}`;"
   },
   {
    "key": "지금 다른 좌석 예약에 연결돼 있어요. 링크의 좌석 예약으로 바꿀까요?",
-   "context": "app.js:314: if (!await confirmBox(t('내 자리 링크'), t('지금 다른 좌석 예약에 연결돼 있어요. 링크의 좌석 예약으로 바꿀까요?'))) return;"
+   "context": "app.js:319: if (!await confirmBox(t('내 자리 링크'), t('지금 다른 좌석 예약에 연결돼 있어요. 링크의 좌석 예약으로 바꿀까요?'))) return;"
   },
   {
    "key": "이 브라우저에서 새로 찜한 자리는 더 이상 내 자리로 보이지 않아요(남아 있으면 관리자가 취소할 수 있어요). 바꿀까요?",
-   "context": "app.js:340: t('이 브라우저에서 새로 찜한 자리는 더 이상 내 자리로 보이지 않아요(남아 있으면 관리자가 취소할 수 있어요). 바꿀까요?'))) return false;"
+   "context": "app.js:345: t('이 브라우저에서 새로 찜한 자리는 더 이상 내 자리로 보이지 않아요(남아 있으면 관리자가 취소할 수 있어요). 바꿀까요?'))) return false;"
   },
   {
    "key": "좌석 예약 시트에 닿지 않아 연결을 끊었어요. 시트가 살아 있다면 관리자용 글로 다시 연결해 주세요.",
-   "context": "app.js:388: say(t('좌석 예약 시트에 닿지 않아 연결을 끊었어요. 시트가 살아 있다면 관리자용 글로 다시 연결해 주세요.'));"
+   "context": "app.js:393: say(t('좌석 예약 시트에 닿지 않아 연결을 끊었어요. 시트가 살아 있다면 관리자용 글로 다시 연결해 주세요.'));"
   },
   {
    "key": "좌석 예약이 닫혔어요",
-   "context": "app.js:389: await noticeBox(t('좌석 예약이 닫혔어요'), t('좌석 예약 시트가 지워졌거나 웹 앱 배포가 닫힌 것 같아요. 연결을 끊었어요. 시트가 살아 있다면 시트의 [2. 연결 QR 보기] 에 있는 관리자용 글로 다시 연결해 주세요.')); / app.js:393: await noticeBox(t('좌석 예약이 닫혔어요'), t('관리자가 좌석 예약 시트를 지웠거나 닫은 것 같아요. 연결을 끊었어요. 관리자에게 받은 초대 링크(연결 코드)가 맞는지 다시 확인하고 들어와 주세요.'));"
+   "context": "app.js:394: await noticeBox(t('좌석 예약이 닫혔어요'), t('좌석 예약 시트가 지워졌거나 웹 앱 배포가 닫힌 것 같아요. 연결을 끊었어요. 시트가 살아 있다면 시트의 [2. 연결 QR 보기] 에 있는 관리자용 글로 다시 연결해 주세요.')); / app.js:398: await noticeBox(t('좌석 예약이 닫혔어요'), t('관리자가 좌석 예약 시트를 지웠거나 닫은 것 같아요. 연결을 끊었어요. 관리자에게 받은 초대 링크(연결 코드)가 맞는지 다시 확인하고 들어와 주세요.'));"
   },
   {
    "key": "좌석 예약 시트가 지워졌거나 웹 앱 배포가 닫힌 것 같아요. 연결을 끊었어요. 시트가 살아 있다면 시트의 [2. 연결 QR 보기] 에 있는 관리자용 글로 다시 연결해 주세요.",
-   "context": "app.js:389: await noticeBox(t('좌석 예약이 닫혔어요'), t('좌석 예약 시트가 지워졌거나 웹 앱 배포가 닫힌 것 같아요. 연결을 끊었어요. 시트가 살아 있다면 시트의 [2. 연결 QR 보기] 에 있는 관리자용 글로 다시 연결해 주세요.'));"
+   "context": "app.js:394: await noticeBox(t('좌석 예약이 닫혔어요'), t('좌석 예약 시트가 지워졌거나 웹 앱 배포가 닫힌 것 같아요. 연결을 끊었어요. 시트가 살아 있다면 시트의 [2. 연결 QR 보기] 에 있는 관리자용 글로 다시 연결해 주세요.'));"
   },
   {
    "key": "좌석 예약이 닫혀 연결을 끊었어요. 관리자에게 받은 초대 링크를 다시 확인하고 들어와 주세요.",
-   "context": "app.js:392: say(t('좌석 예약이 닫혀 연결을 끊었어요. 관리자에게 받은 초대 링크를 다시 확인하고 들어와 주세요.'));"
+   "context": "app.js:397: say(t('좌석 예약이 닫혀 연결을 끊었어요. 관리자에게 받은 초대 링크를 다시 확인하고 들어와 주세요.'));"
   },
   {
    "key": "관리자가 좌석 예약 시트를 지웠거나 닫은 것 같아요. 연결을 끊었어요. 관리자에게 받은 초대 링크(연결 코드)가 맞는지 다시 확인하고 들어와 주세요.",
-   "context": "app.js:393: await noticeBox(t('좌석 예약이 닫혔어요'), t('관리자가 좌석 예약 시트를 지웠거나 닫은 것 같아요. 연결을 끊었어요. 관리자에게 받은 초대 링크(연결 코드)가 맞는지 다시 확인하고 들어와 주세요.'));"
+   "context": "app.js:398: await noticeBox(t('좌석 예약이 닫혔어요'), t('관리자가 좌석 예약 시트를 지웠거나 닫은 것 같아요. 연결을 끊었어요. 관리자에게 받은 초대 링크(연결 코드)가 맞는지 다시 확인하고 들어와 주세요.'));"
   },
   {
    "key": "공개 전이에요. 유저에게는 아직 좌석표가 보이지 않아요.",
-   "context": "app.js:491: ? t('공개 전이에요. 유저에게는 아직 좌석표가 보이지 않아요.')"
+   "context": "app.js:496: ? t('공개 전이에요. 유저에게는 아직 좌석표가 보이지 않아요.')"
   },
   {
    "key": "아직 예약을 받지 않아요. 관리자가 좌석표를 열면 여기에 보여요.",
-   "context": "app.js:492: : t('아직 예약을 받지 않아요. 관리자가 좌석표를 열면 여기에 보여요.');"
+   "context": "app.js:497: : t('아직 예약을 받지 않아요. 관리자가 좌석표를 열면 여기에 보여요.');"
   },
   {
    "key": "지금은 예약 시간이 아니에요({opens} ~ {closes}).",
-   "context": "app.js:498: if (opens && closes) return t('지금은 예약 시간이 아니에요({opens} ~ {closes}).', { opens, closes });"
+   "context": "app.js:503: if (opens && closes) return t('지금은 예약 시간이 아니에요({opens} ~ {closes}).', { opens, closes });"
   },
   {
    "key": "{opens}부터 예약할 수 있어요.",
-   "context": "app.js:499: return opens ? t('{opens}부터 예약할 수 있어요.', { opens }) : t('예약이 마감됐어요.');"
+   "context": "app.js:504: return opens ? t('{opens}부터 예약할 수 있어요.', { opens }) : t('예약이 마감됐어요.');"
   },
   {
    "key": "예약이 마감됐어요.",
-   "context": "app.js:499: return opens ? t('{opens}부터 예약할 수 있어요.', { opens }) : t('예약이 마감됐어요.');"
+   "context": "app.js:504: return opens ? t('{opens}부터 예약할 수 있어요.', { opens }) : t('예약이 마감됐어요.');"
   },
   {
    "key": "빈자리를 누르면 찜! 한 사람이 {n}자리까지 잡을 수 있어요.",
-   "context": "app.js:503: ? t('빈자리를 누르면 찜! 한 사람이 {n}자리까지 잡을 수 있어요.', { n: state.maxPerPerson })"
+   "context": "app.js:508: ? t('빈자리를 누르면 찜! 한 사람이 {n}자리까지 잡을 수 있어요.', { n: state.maxPerPerson })"
   },
   {
    "key": "빈자리를 누르면 찜! 다른 빈자리를 누르면 그리로 옮겨요.",
-   "context": "app.js:504: : t('빈자리를 누르면 찜! 다른 빈자리를 누르면 그리로 옮겨요.');"
+   "context": "app.js:509: : t('빈자리를 누르면 찜! 다른 빈자리를 누르면 그리로 옮겨요.');"
   },
   {
    "key": "{n}층",
-   "context": "app.js:508: return t('{n}층', { n: position + 1 });"
+   "context": "app.js:513: return t('{n}층', { n: position + 1 });"
   },
   {
    "key": "같은 이름이 있어서 '{name}'(으)로 적었어요.",
-   "context": "app.js:530: return name ? ' ' + t(\"같은 이름이 있어서 '{name}'(으)로 적었어요.\", { name }) : '';"
+   "context": "app.js:535: return name ? ' ' + t(\"같은 이름이 있어서 '{name}'(으)로 적었어요.\", { name }) : '';"
   },
   {
    "key": "이름을 바꾸지 못했어요.",
-   "context": "app.js:543: say(t('이름을 바꾸지 못했어요.') + ' ' + (tm(response.message) || ''));"
+   "context": "app.js:548: say(t('이름을 바꾸지 못했어요.') + ' ' + (tm(response.message) || ''));"
   },
   {
    "key": "이름을 바꿨어요.",
-   "context": "app.js:552: say(t('이름을 바꿨어요.') + sameNameNote(adoptServerName(response)) +"
+   "context": "app.js:557: say(t('이름을 바꿨어요.') + sameNameNote(adoptServerName(response)) +"
   },
   {
    "key": "비밀번호는 옛 이름에 묶여 있어 지웠어요. 새 이름으로 비밀번호를 다시 정해 주세요.",
-   "context": "app.js:553: (response.pinCleared ? ' ' + t('비밀번호는 옛 이름에 묶여 있어 지웠어요. 새 이름으로 비밀번호를 다시 정해 주세요.') : ''));"
+   "context": "app.js:558: (response.pinCleared ? ' ' + t('비밀번호는 옛 이름에 묶여 있어 지웠어요. 새 이름으로 비밀번호를 다시 정해 주세요.') : ''));"
   },
   {
    "key": "앉을 수 없는 자리예요.",
-   "context": "app.js:569: say(t('앉을 수 없는 자리예요.'));"
+   "context": "app.js:574: say(t('앉을 수 없는 자리예요.'));"
   },
   {
    "key": "{seat} 은(는) {name} 님 자리예요.",
-   "context": "app.js:580: else say(seat.name ? t('{seat} 은(는) {name} 님 자리예요.', { seat: seat.label, name: seat.name }) : t('{seat} 은(는) 이미 찜한 자리예요.', { seat: seat.label }));"
+   "context": "app.js:586: say(seat.name ? t('{seat} 은(는) {name} 님 자리예요.', { seat: seat.label, name: seat.name }) : t('{seat} 은(는) 이미 찜한 자리예요.', { seat: seat.label }));"
   },
   {
    "key": "{seat} 은(는) 이미 찜한 자리예요.",
-   "context": "app.js:580: else say(seat.name ? t('{seat} 은(는) {name} 님 자리예요.', { seat: seat.label, name: seat.name }) : t('{seat} 은(는) 이미 찜한 자리예요.', { seat: seat.label }));"
+   "context": "app.js:586: say(seat.name ? t('{seat} 은(는) {name} 님 자리예요.', { seat: seat.label, name: seat.name }) : t('{seat} 은(는) 이미 찜한 자리예요.', { seat: seat.label }));"
   },
   {
-   "key": "위의 이름 칸에 이름을 먼저 적어 주세요.",
-   "context": "app.js:591: say(t('위의 이름 칸에 이름을 먼저 적어 주세요.'));"
+   "key": "이름 칸에 이름을 먼저 적어 주세요.",
+   "context": "app.js:599: say(t('이름 칸에 이름을 먼저 적어 주세요.'));"
   },
   {
    "key": "{from} → {seat} 로 옮기는 중…",
-   "context": "app.js:607: say(isMove ? t('{from} → {seat} 로 옮기는 중…', { from: mine[0].label, seat: seat.label }) : t('{seat} 찜하는 중…', { seat: seat.label }));"
+   "context": "app.js:616: const waiting = isMove ? t('{from} → {seat} 로 옮기는 중…', { from: mine[0].label, seat: seat.label }) : t('{seat} 찜하는 중…', { seat: seat.label });"
   },
   {
    "key": "{seat} 찜하는 중…",
-   "context": "app.js:607: say(isMove ? t('{from} → {seat} 로 옮기는 중…', { from: mine[0].label, seat: seat.label }) : t('{seat} 찜하는 중…', { seat: seat.label }));"
+   "context": "app.js:616: const waiting = isMove ? t('{from} → {seat} 로 옮기는 중…', { from: mine[0].label, seat: seat.label }) : t('{seat} 찜하는 중…', { seat: seat.label });"
+  },
+  {
+   "key": "이미 자리를 잡으셨어요. 다른 빈자리를 누르면 그리로 옮겨요.",
+   "context": "app.js:633: say(lastState && lastState.maxPerPerson === 1 ? t('이미 자리를 잡으셨어요. 다른 빈자리를 누르면 그리로 옮겨요.') : tm(response.message) || '');"
   },
   {
    "key": "{seat} 로 옮겼어요.",
-   "context": "app.js:617: ? (isMove ? t('{seat} 로 옮겼어요.', { seat: seat.label }) : t('{seat} 찜콩! 자리를 잡았어요.', { seat: seat.label })) + sameNameNote(adoptServerName(response))"
+   "context": "app.js:638: ? (isMove ? t('{seat} 로 옮겼어요.', { seat: seat.label }) : t('{seat} 찜콩! 자리를 잡았어요.', { seat: seat.label })) + sameNameNote(adoptServerName(response)) / app.js:659: ? (isMove ? t('{seat} 로 옮겼어요.', { seat: seat.label }) : t('{seat} 찜콩! 자리를 잡았어요.', { seat: seat.label }))"
   },
   {
    "key": "{seat} 찜콩! 자리를 잡았어요.",
-   "context": "app.js:617: ? (isMove ? t('{seat} 로 옮겼어요.', { seat: seat.label }) : t('{seat} 찜콩! 자리를 잡았어요.', { seat: seat.label })) + sameNameNote(adoptServerName(response))"
+   "context": "app.js:638: ? (isMove ? t('{seat} 로 옮겼어요.', { seat: seat.label }) : t('{seat} 찜콩! 자리를 잡았어요.', { seat: seat.label })) + sameNameNote(adoptServerName(response)) / app.js:659: ? (isMove ? t('{seat} 로 옮겼어요.', { seat: seat.label }) : t('{seat} 찜콩! 자리를 잡았어요.', { seat: seat.label }))"
+  },
+  {
+   "key": "응답이 늦어요. 잠시 뒤 다시 해 주세요.",
+   "context": "app.js:660: : t('응답이 늦어요. 잠시 뒤 다시 해 주세요.')); / api.js:44: if (error && error.name === 'AbortError') return fail('timeout', t('응답이 늦어요. 잠시 뒤 다시 해 주세요.'));"
   },
   {
    "key": "찜 취소",
-   "context": "app.js:623: if (!await confirmBox(t('찜 취소'), t('{seat} 예약을 취소할까요?', { seat: seat.label }))) return;"
+   "context": "app.js:664: if (!await confirmBox(t('찜 취소'), t('{seat} 예약을 취소할까요?', { seat: seat.label }))) return;"
   },
   {
    "key": "{seat} 예약을 취소할까요?",
-   "context": "app.js:623: if (!await confirmBox(t('찜 취소'), t('{seat} 예약을 취소할까요?', { seat: seat.label }))) return;"
+   "context": "app.js:664: if (!await confirmBox(t('찜 취소'), t('{seat} 예약을 취소할까요?', { seat: seat.label }))) return;"
   },
   {
    "key": "{seat} 예약을 취소했어요.",
-   "context": "app.js:630: say(response.ok ? t('{seat} 예약을 취소했어요.', { seat: seat.label }) : tm(response.message) || ''); / app.js:647: say(response.ok ? t('{seat} 예약을 취소했어요.', { seat: seat.label }) : tm(response.message) || '');"
+   "context": "app.js:671: say(response.ok ? t('{seat} 예약을 취소했어요.', { seat: seat.label }) : tm(response.message) || ''); / app.js:688: say(response.ok ? t('{seat} 예약을 취소했어요.', { seat: seat.label }) : tm(response.message) || '');"
   },
   {
    "key": "{name} 님의 {seat} 예약을 관리자 권한으로 취소할까요?",
-   "context": "app.js:636: ? t('{name} 님의 {seat} 예약을 관리자 권한으로 취소할까요?', { name: seat.name, seat: seat.label })"
+   "context": "app.js:677: ? t('{name} 님의 {seat} 예약을 관리자 권한으로 취소할까요?', { name: seat.name, seat: seat.label })"
   },
   {
    "key": "{seat} 예약을 관리자 권한으로 취소할까요?",
-   "context": "app.js:637: : t('{seat} 예약을 관리자 권한으로 취소할까요?', { seat: seat.label });"
+   "context": "app.js:678: : t('{seat} 예약을 관리자 권한으로 취소할까요?', { seat: seat.label });"
   },
   {
    "key": "관리자 취소",
-   "context": "app.js:638: if (!await confirmBox(t('관리자 취소'), question)) return;"
+   "context": "app.js:679: if (!await confirmBox(t('관리자 취소'), question)) return;"
   },
   {
    "key": "배치도를 먼저 만들어 저장해 주세요.",
-   "context": "app.js:667: say(t('배치도를 먼저 만들어 저장해 주세요.'));"
+   "context": "app.js:708: say(t('배치도를 먼저 만들어 저장해 주세요.'));"
   },
   {
    "key": "공개했어요. 이제 유저가 찜할 수 있어요.",
-   "context": "app.js:680: say(settings.published ? t('공개했어요. 이제 유저가 찜할 수 있어요.') : t('공개를 멈췄어요.'));"
+   "context": "app.js:721: say(settings.published ? t('공개했어요. 이제 유저가 찜할 수 있어요.') : t('공개를 멈췄어요.'));"
   },
   {
    "key": "공개를 멈췄어요.",
-   "context": "app.js:680: say(settings.published ? t('공개했어요. 이제 유저가 찜할 수 있어요.') : t('공개를 멈췄어요.'));"
+   "context": "app.js:721: say(settings.published ? t('공개했어요. 이제 유저가 찜할 수 있어요.') : t('공개를 멈췄어요.'));"
   },
   {
    "key": "지금 예약 {n}자리를 '지난 예약' 탭으로 옮기고 좌석표를 비워요. 배치도와 공개 상태는 그대로예요. 할까요?",
-   "context": "app.js:710: if (!await confirmBox(t('다음 회차로'), t('지금 예약 {n}자리를 \\'지난 예약\\' 탭으로 옮기고 좌석표를 비워요. 배치도와 공개 상태는 그대로예요. 할까요?', { n: count }))) return;"
+   "context": "app.js:751: if (!await confirmBox(t('다음 회차로'), t('지금 예약 {n}자리를 \\'지난 예약\\' 탭으로 옮기고 좌석표를 비워요. 배치도와 공개 상태는 그대로예요. 할까요?', { n: count }))) return;"
   },
   {
    "key": "다음 회차로 넘겼어요.",
-   "context": "app.js:714: say(response.ok ? t('다음 회차로 넘겼어요.') : tm(response.message) || '');"
+   "context": "app.js:755: say(response.ok ? t('다음 회차로 넘겼어요.') : tm(response.message) || '');"
   },
   {
    "key": "체험 모드에서는 초대 링크를 만들 수 없어요.",
-   "context": "app.js:725: say(store.conn && store.conn.url === DEMO_URL ? t('체험 모드에서는 초대 링크를 만들 수 없어요.') : t('이 연결 주소로는 초대 링크를 만들 수 없어요.'));"
+   "context": "app.js:766: say(store.conn && store.conn.url === DEMO_URL ? t('체험 모드에서는 초대 링크를 만들 수 없어요.') : t('이 연결 주소로는 초대 링크를 만들 수 없어요.'));"
   },
   {
    "key": "이 연결 주소로는 초대 링크를 만들 수 없어요.",
-   "context": "app.js:725: say(store.conn && store.conn.url === DEMO_URL ? t('체험 모드에서는 초대 링크를 만들 수 없어요.') : t('이 연결 주소로는 초대 링크를 만들 수 없어요.'));"
+   "context": "app.js:766: say(store.conn && store.conn.url === DEMO_URL ? t('체험 모드에서는 초대 링크를 만들 수 없어요.') : t('이 연결 주소로는 초대 링크를 만들 수 없어요.'));"
   },
   {
    "key": "초대 글을 복사했어요. 카톡 단체방에 붙여 넣으세요.",
-   "context": "app.js:729: await copyText(buildShareText(link, lastState ? lastState.room : '', connFingerprint), t('초대 글을 복사했어요. 카톡 단체방에 붙여 넣으세요.'));"
+   "context": "app.js:770: await copyText(buildShareText(link, lastState ? lastState.room : '', connFingerprint), t('초대 글을 복사했어요. 카톡 단체방에 붙여 넣으세요.'));"
   },
   {
    "key": "복사하지 못했어요. 다시 눌러 주세요.",
-   "context": "app.js:744: say(ok ? doneText : t('복사하지 못했어요. 다시 눌러 주세요.'));"
+   "context": "app.js:785: say(ok ? doneText : t('복사하지 못했어요. 다시 눌러 주세요.'));"
   },
   {
    "key": "체험 모드에서는 내 자리 링크를 만들 수 없어요.",
-   "context": "app.js:760: say(store.conn && store.conn.url === DEMO_URL ? t('체험 모드에서는 내 자리 링크를 만들 수 없어요.') : t('이 연결 주소로는 내 자리 링크를 만들 수 없어요.'));"
+   "context": "app.js:801: say(store.conn && store.conn.url === DEMO_URL ? t('체험 모드에서는 내 자리 링크를 만들 수 없어요.') : t('이 연결 주소로는 내 자리 링크를 만들 수 없어요.'));"
   },
   {
    "key": "이 연결 주소로는 내 자리 링크를 만들 수 없어요.",
-   "context": "app.js:760: say(store.conn && store.conn.url === DEMO_URL ? t('체험 모드에서는 내 자리 링크를 만들 수 없어요.') : t('이 연결 주소로는 내 자리 링크를 만들 수 없어요.'));"
+   "context": "app.js:801: say(store.conn && store.conn.url === DEMO_URL ? t('체험 모드에서는 내 자리 링크를 만들 수 없어요.') : t('이 연결 주소로는 내 자리 링크를 만들 수 없어요.'));"
   },
   {
    "key": "나만 갖고 계세요. 이 링크를 누르면 어느 기기에서든 내가 찜한 자리로 들어가요.",
-   "context": "app.js:764: const text = `[${room ? room + ' ' : ''}${t('내 자리 링크')}]\\n${t('나만 갖고 계세요. 이 링크를 누르면 어느 기기에서든 내가 찜한 자리로 들어가요.')}\\n${link}`;"
+   "context": "app.js:805: const text = `[${room ? room + ' ' : ''}${t('내 자리 링크')}]\\n${t('나만 갖고 계세요. 이 링크를 누르면 어느 기기에서든 내가 찜한 자리로 들어가요.')}\\n${link}`;"
   },
   {
    "key": "내 자리 링크를 보냈어요. '나와의 채팅'에 잘 들어갔는지 한 번 봐 주세요.",
-   "context": "app.js:771: say(t(\"내 자리 링크를 보냈어요. '나와의 채팅'에 잘 들어갔는지 한 번 봐 주세요.\"));"
+   "context": "app.js:812: say(t(\"내 자리 링크를 보냈어요. '나와의 채팅'에 잘 들어갔는지 한 번 봐 주세요.\"));"
   },
   {
    "key": "내 자리 링크를 복사했어요. 카톡 '나와의 채팅'이나 메모에 붙여 두세요.",
-   "context": "app.js:778: if (!done) done = await copyText(text, t(\"내 자리 링크를 복사했어요. 카톡 '나와의 채팅'이나 메모에 붙여 두세요.\"));"
+   "context": "app.js:819: if (!done) done = await copyText(text, t(\"내 자리 링크를 복사했어요. 카톡 '나와의 채팅'이나 메모에 붙여 두세요.\"));"
   },
   {
    "key": "비밀번호 바꾸기",
-   "context": "app.js:798: $('pinTitle').textContent = setting ? (hasPin() ? t('비밀번호 바꾸기') : t('비밀번호 정하기')) : t('내 자리 되찾기'); / app.js:1125: $('pinButton').textContent = hasPin() ? t('비밀번호 바꾸기') : t('비밀번호 정하기');"
+   "context": "app.js:839: $('pinTitle').textContent = setting ? (hasPin() ? t('비밀번호 바꾸기') : t('비밀번호 정하기')) : t('내 자리 되찾기'); / app.js:1171: $('pinButton').textContent = hasPin() ? t('비밀번호 바꾸기') : t('비밀번호 정하기');"
   },
   {
    "key": "기록을 지우거나 기기를 바꿨을 때 이 이름과 비밀번호로 내 자리를 되찾아요. 생일처럼 남이 짐작하기 쉬운 번호는 피해 주세요.",
-   "context": "app.js:800: ? t('기록을 지우거나 기기를 바꿨을 때 이 이름과 비밀번호로 내 자리를 되찾아요. 생일처럼 남이 짐작하기 쉬운 번호는 피해 주세요.')"
+   "context": "app.js:841: ? t('기록을 지우거나 기기를 바꿨을 때 이 이름과 비밀번호로 내 자리를 되찾아요. 생일처럼 남이 짐작하기 쉬운 번호는 피해 주세요.')"
   },
   {
    "key": "비밀번호를 정할 때 쓴 이름과 비밀번호를 넣으세요. 그때 찜한 자리가 다시 내 자리로 보여요.",
-   "context": "app.js:801: : t('비밀번호를 정할 때 쓴 이름과 비밀번호를 넣으세요. 그때 찜한 자리가 다시 내 자리로 보여요.');"
+   "context": "app.js:842: : t('비밀번호를 정할 때 쓴 이름과 비밀번호를 넣으세요. 그때 찜한 자리가 다시 내 자리로 보여요.');"
   },
   {
    "key": "비밀번호는 숫자 4자리로 적어 주세요.",
-   "context": "app.js:827: if (!/^\\d{4}$/.test(pin)) return showPinMessage(t('비밀번호는 숫자 4자리로 적어 주세요.')); / 서버(구글 시트) 오류 문구: bad-pin"
+   "context": "app.js:868: if (!/^\\d{4}$/.test(pin)) return showPinMessage(t('비밀번호는 숫자 4자리로 적어 주세요.')); / 서버(구글 시트) 오류 문구: bad-pin"
   },
   {
    "key": "보내는 중…",
-   "context": "app.js:831: showPinMessage(t('보내는 중…'));"
+   "context": "app.js:872: showPinMessage(t('보내는 중…'));"
   },
   {
    "key": "이 좌석 예약 시트가 아직 옛 판이라 비밀번호를 쓸 수 없어요. 관리자에게 시트를 새 판으로 배포해 달라고 해 주세요.",
-   "context": "app.js:837: ? t('이 좌석 예약 시트가 아직 옛 판이라 비밀번호를 쓸 수 없어요. 관리자에게 시트를 새 판으로 배포해 달라고 해 주세요.')"
+   "context": "app.js:878: ? t('이 좌석 예약 시트가 아직 옛 판이라 비밀번호를 쓸 수 없어요. 관리자에게 시트를 새 판으로 배포해 달라고 해 주세요.')"
   },
   {
    "key": "되지 않았어요. 다시 해 주세요.",
-   "context": "app.js:838: : tm(response.message) || t('되지 않았어요. 다시 해 주세요.'));"
+   "context": "app.js:879: : tm(response.message) || t('되지 않았어요. 다시 해 주세요.'));"
   },
   {
    "key": "답을 읽지 못했어요. 다시 해 주세요.",
-   "context": "app.js:842: showPinMessage(t('답을 읽지 못했어요. 다시 해 주세요.'));"
+   "context": "app.js:883: showPinMessage(t('답을 읽지 못했어요. 다시 해 주세요.'));"
   },
   {
    "key": "같은 이름이 있어서 '{name}'(으)로 정했어요. 되찾을 때도 이 이름과 비밀번호로 적어 주세요.",
-   "context": "app.js:860: ? t(\"같은 이름이 있어서 '{name}'(으)로 정했어요. 되찾을 때도 이 이름과 비밀번호로 적어 주세요.\", { name: store.name })"
+   "context": "app.js:901: ? t(\"같은 이름이 있어서 '{name}'(으)로 정했어요. 되찾을 때도 이 이름과 비밀번호로 적어 주세요.\", { name: store.name })"
   },
   {
    "key": "비밀번호를 정했어요. 이름과 함께 꼭 기억해 두세요. 이제 자리를 찜하세요!",
-   "context": "app.js:861: : t('비밀번호를 정했어요. 이름과 함께 꼭 기억해 두세요. 이제 자리를 찜하세요!'));"
+   "context": "app.js:902: : t('비밀번호를 정했어요. 이름과 함께 꼭 기억해 두세요. 이제 자리를 찜하세요!'));"
   },
   {
    "key": "내 자리를 되찾았어요.",
-   "context": "app.js:865: await adoptPerson(response.device, name, t('내 자리를 되찾았어요.'));"
+   "context": "app.js:906: await adoptPerson(response.device, name, t('내 자리를 되찾았어요.'));"
   },
   {
    "key": "체험 모드에서는 초대 QR 을 만들 수 없어요.",
-   "context": "app.js:876: say(store.conn && store.conn.url === DEMO_URL ? t('체험 모드에서는 초대 QR 을 만들 수 없어요.') : t('이 연결 주소로는 초대 QR 을 만들 수 없어요.'));"
+   "context": "app.js:917: say(store.conn && store.conn.url === DEMO_URL ? t('체험 모드에서는 초대 QR 을 만들 수 없어요.') : t('이 연결 주소로는 초대 QR 을 만들 수 없어요.'));"
   },
   {
    "key": "이 연결 주소로는 초대 QR 을 만들 수 없어요.",
-   "context": "app.js:876: say(store.conn && store.conn.url === DEMO_URL ? t('체험 모드에서는 초대 QR 을 만들 수 없어요.') : t('이 연결 주소로는 초대 QR 을 만들 수 없어요.'));"
+   "context": "app.js:917: say(store.conn && store.conn.url === DEMO_URL ? t('체험 모드에서는 초대 QR 을 만들 수 없어요.') : t('이 연결 주소로는 초대 QR 을 만들 수 없어요.'));"
   },
   {
    "key": "QR 그리기를 불러오지 못했어요. 인터넷 연결을 확인하고 다시 눌러 주세요.",
-   "context": "app.js:880: say(t('QR 그리기를 불러오지 못했어요. 인터넷 연결을 확인하고 다시 눌러 주세요.'));"
+   "context": "app.js:921: say(t('QR 그리기를 불러오지 못했어요. 인터넷 연결을 확인하고 다시 눌러 주세요.'));"
   },
   {
    "key": "도구를 고르고 칸을 누르거나 끌어서 의자를 그리세요. 장의자는 한 줄로 끌면 한 덩어리가 돼요.",
-   "context": "app.js:904: ? t('도구를 고르고 칸을 누르거나 끌어서 의자를 그리세요. 장의자는 한 줄로 끌면 한 덩어리가 돼요.')"
+   "context": "app.js:945: ? t('도구를 고르고 칸을 누르거나 끌어서 의자를 그리세요. 장의자는 한 줄로 끌면 한 덩어리가 돼요.')"
   },
   {
    "key": "도구를 고르고 칸을 누르거나 끌어서 고치세요. 다 되면 [저장].",
-   "context": "app.js:905: : t('도구를 고르고 칸을 누르거나 끌어서 고치세요. 다 되면 [저장].'));"
+   "context": "app.js:946: : t('도구를 고르고 칸을 누르거나 끌어서 고치세요. 다 되면 [저장].'));"
   },
   {
    "key": "배치도 고치기 그만",
-   "context": "app.js:921: if (draftChanged() && !await confirmBox(t('배치도 고치기 그만'), t('저장하지 않은 고친 내용이 사라져요. 그만할까요?'))) return;"
+   "context": "app.js:962: if (draftChanged() && !await confirmBox(t('배치도 고치기 그만'), t('저장하지 않은 고친 내용이 사라져요. 그만할까요?'))) return;"
   },
   {
    "key": "저장하지 않은 고친 내용이 사라져요. 그만할까요?",
-   "context": "app.js:921: if (draftChanged() && !await confirmBox(t('배치도 고치기 그만'), t('저장하지 않은 고친 내용이 사라져요. 그만할까요?'))) return;"
+   "context": "app.js:962: if (draftChanged() && !await confirmBox(t('배치도 고치기 그만'), t('저장하지 않은 고친 내용이 사라져요. 그만할까요?'))) return;"
   },
   {
    "key": "판 줄이기",
-   "context": "app.js:941: if (lost > 0 && !await confirmBox(t('판 줄이기'), t('판 밖으로 나가는 의자 {n}개가 지워져요. 줄일까요?', { n: lost }))) return;"
+   "context": "app.js:982: if (lost > 0 && !await confirmBox(t('판 줄이기'), t('판 밖으로 나가는 의자 {n}개가 지워져요. 줄일까요?', { n: lost }))) return;"
   },
   {
    "key": "판 밖으로 나가는 의자 {n}개가 지워져요. 줄일까요?",
-   "context": "app.js:941: if (lost > 0 && !await confirmBox(t('판 줄이기'), t('판 밖으로 나가는 의자 {n}개가 지워져요. 줄일까요?', { n: lost }))) return;"
+   "context": "app.js:982: if (lost > 0 && !await confirmBox(t('판 줄이기'), t('판 밖으로 나가는 의자 {n}개가 지워져요. 줄일까요?', { n: lost }))) return;"
   },
   {
    "key": "모양 바꾸기",
-   "context": "app.js:952: if (lost > 0 && !await confirmBox(t('모양 바꾸기'), t('새 모양에 들어가지 않는 의자 {n}개가 지워져요. 바꿀까요?', { n: lost }))) {"
+   "context": "app.js:995: if (lost > 0 && !await confirmBox(t('모양 바꾸기'), t('새 모양에 들어가지 않는 의자 {n}개가 지워져요. 바꿀까요?', { n: lost }))) {"
   },
   {
    "key": "새 모양에 들어가지 않는 의자 {n}개가 지워져요. 바꿀까요?",
-   "context": "app.js:952: if (lost > 0 && !await confirmBox(t('모양 바꾸기'), t('새 모양에 들어가지 않는 의자 {n}개가 지워져요. 바꿀까요?', { n: lost }))) {"
+   "context": "app.js:995: if (lost > 0 && !await confirmBox(t('모양 바꾸기'), t('새 모양에 들어가지 않는 의자 {n}개가 지워져요. 바꿀까요?', { n: lost }))) {"
   },
   {
    "key": "{floor}을 더했어요. 모양을 고르고 의자를 그리세요.",
-   "context": "app.js:984: say(error || t('{floor}을 더했어요. 모양을 고르고 의자를 그리세요.', { floor: floorLabel(draft.current) }));"
+   "context": "app.js:1028: say(error || t('{floor}을 더했어요. 모양을 고르고 의자를 그리세요.', { floor: floorLabel(draft.current) }));"
   },
   {
    "key": "층 지우기",
-   "context": "app.js:993: if (!await confirmBox(t('층 지우기'), t('{floor}의 의자 {n}개가 함께 지워져요. 지울까요?', { floor: name, n: draft.currentFloorSeatCount }))) return; / app.js:995: if (!await confirmBox(t('층 지우기'), t('{floor}에 그린 외벽 · 물건도 함께 지워져요. 지울까요?', { floor: name }))) return;"
+   "context": "app.js:1037: if (!await confirmBox(t('층 지우기'), t('{floor}의 의자 {n}개가 함께 지워져요. 지울까요?', { floor: name, n: draft.currentFloorSeatCount }))) return; / app.js:1039: if (!await confirmBox(t('층 지우기'), t('{floor}에 그린 외벽 · 물건도 함께 지워져요. 지울까요?', { floor: name }))) return;"
   },
   {
    "key": "{floor}의 의자 {n}개가 함께 지워져요. 지울까요?",
-   "context": "app.js:993: if (!await confirmBox(t('층 지우기'), t('{floor}의 의자 {n}개가 함께 지워져요. 지울까요?', { floor: name, n: draft.currentFloorSeatCount }))) return;"
+   "context": "app.js:1037: if (!await confirmBox(t('층 지우기'), t('{floor}의 의자 {n}개가 함께 지워져요. 지울까요?', { floor: name, n: draft.currentFloorSeatCount }))) return;"
   },
   {
    "key": "{floor}에 그린 외벽 · 물건도 함께 지워져요. 지울까요?",
-   "context": "app.js:995: if (!await confirmBox(t('층 지우기'), t('{floor}에 그린 외벽 · 물건도 함께 지워져요. 지울까요?', { floor: name }))) return;"
+   "context": "app.js:1039: if (!await confirmBox(t('층 지우기'), t('{floor}에 그린 외벽 · 물건도 함께 지워져요. 지울까요?', { floor: name }))) return;"
   },
   {
    "key": "{floor}을 지웠어요. [저장] 해야 반영돼요.",
-   "context": "app.js:1000: say(t('{floor}을 지웠어요. [저장] 해야 반영돼요.', { floor: name }));"
+   "context": "app.js:1044: say(t('{floor}을 지웠어요. [저장] 해야 반영돼요.', { floor: name }));"
   },
   {
    "key": "의자를 하나 이상 그려 주세요.",
-   "context": "app.js:1009: say(t('의자를 하나 이상 그려 주세요.'));"
+   "context": "app.js:1053: say(t('의자를 하나 이상 그려 주세요.'));"
   },
   {
    "key": "배치도 저장",
-   "context": "app.js:1022: if (lost > 0 && !await confirmBox(t('배치도 저장'), t('지우거나 비워 두는 자리에 예약이 {n}개 있어요. 저장하면 그 예약은 취소돼요(기록 탭에 남아요). 저장할까요?', { n: lost }))) return; / app.js:1028: !await confirmBox(t('배치도 저장'), t('이 좌석 예약 시트가 옛 판이라 외벽 · 물건은 저장되지 않아요(관리자 사용법의 새 판 배포를 해 주세요). 의자만 저장할까요?'))) return;"
+   "context": "app.js:1066: if (lost > 0 && !await confirmBox(t('배치도 저장'), t('지우거나 비워 두는 자리에 예약이 {n}개 있어요. 저장하면 그 예약은 취소돼요(기록 탭에 남아요). 저장할까요?', { n: lost }))) return; / app.js:1073: !await confirmBox(t('배치도 저장'), t('이 좌석 예약 시트가 옛 판이라 외벽 · 물건은 저장되지 않아요(관리자 사용법의 새 판 배포를 해 주세요). 의자만 저장할까요?'))) return;"
   },
   {
    "key": "지우거나 비워 두는 자리에 예약이 {n}개 있어요. 저장하면 그 예약은 취소돼요(기록 탭에 남아요). 저장할까요?",
-   "context": "app.js:1022: if (lost > 0 && !await confirmBox(t('배치도 저장'), t('지우거나 비워 두는 자리에 예약이 {n}개 있어요. 저장하면 그 예약은 취소돼요(기록 탭에 남아요). 저장할까요?', { n: lost }))) return;"
+   "context": "app.js:1066: if (lost > 0 && !await confirmBox(t('배치도 저장'), t('지우거나 비워 두는 자리에 예약이 {n}개 있어요. 저장하면 그 예약은 취소돼요(기록 탭에 남아요). 저장할까요?', { n: lost }))) return;"
   },
   {
    "key": "이 좌석 예약 시트가 옛 판이라 외벽 · 물건은 저장되지 않아요(관리자 사용법의 새 판 배포를 해 주세요). 의자만 저장할까요?",
-   "context": "app.js:1028: !await confirmBox(t('배치도 저장'), t('이 좌석 예약 시트가 옛 판이라 외벽 · 물건은 저장되지 않아요(관리자 사용법의 새 판 배포를 해 주세요). 의자만 저장할까요?'))) return;"
+   "context": "app.js:1073: !await confirmBox(t('배치도 저장'), t('이 좌석 예약 시트가 옛 판이라 외벽 · 물건은 저장되지 않아요(관리자 사용법의 새 판 배포를 해 주세요). 의자만 저장할까요?'))) return;"
   },
   {
    "key": "배치도 저장하는 중…",
-   "context": "app.js:1031: say(t('배치도 저장하는 중…'));"
+   "context": "app.js:1077: say(t('배치도 저장하는 중…'));"
   },
   {
    "key": "배치도를 저장했어요.",
-   "context": "app.js:1045: say(lastState && lastState.published ? t('배치도를 저장했어요.') : t('배치도를 저장했어요. 다 됐으면 [공개] 를 켜 주세요.'));"
+   "context": "app.js:1091: say(lastState && lastState.published ? t('배치도를 저장했어요.') : t('배치도를 저장했어요. 다 됐으면 [공개] 를 켜 주세요.'));"
   },
   {
    "key": "배치도를 저장했어요. 다 됐으면 [공개] 를 켜 주세요.",
-   "context": "app.js:1045: say(lastState && lastState.published ? t('배치도를 저장했어요.') : t('배치도를 저장했어요. 다 됐으면 [공개] 를 켜 주세요.'));"
+   "context": "app.js:1091: say(lastState && lastState.published ? t('배치도를 저장했어요.') : t('배치도를 저장했어요. 다 됐으면 [공개] 를 켜 주세요.'));"
   },
   {
    "key": "좌석 예약",
-   "context": "app.js:1076: $('roomName').textContent = (state && state.room) || store.conn.room || t('좌석 예약'); / links.js:115: const name = title ? title + ' ' + t('좌석 예약') : t('좌석 예약');"
+   "context": "app.js:1122: $('roomName').textContent = (state && state.room) || store.conn.room || t('좌석 예약'); / links.js:131: const name = title ? title + ' ' + t('좌석 예약') : t('좌석 예약');"
   },
   {
    "key": "{n}% 찼어요",
-   "context": "app.js:1090: $('reservedCount').textContent = open ? t('{n}% 찼어요', { n: percent }) : '';"
+   "context": "app.js:1136: $('reservedCount').textContent = open ? t('{n}% 찼어요', { n: percent }) : '';"
   },
   {
    "key": "불러오는 중",
-   "context": "app.js:1093: $('statusChip').textContent = { loading: t('불러오는 중'), off: t('공개 전'), on: t('예약 중'), closed: t('예약 시간 아님') }[phase];"
+   "context": "app.js:1139: $('statusChip').textContent = { loading: t('불러오는 중'), off: t('공개 전'), on: t('예약 중'), closed: t('예약 시간 아님') }[phase];"
   },
   {
    "key": "공개 전",
-   "context": "app.js:1093: $('statusChip').textContent = { loading: t('불러오는 중'), off: t('공개 전'), on: t('예약 중'), closed: t('예약 시간 아님') }[phase];"
+   "context": "app.js:1139: $('statusChip').textContent = { loading: t('불러오는 중'), off: t('공개 전'), on: t('예약 중'), closed: t('예약 시간 아님') }[phase];"
   },
   {
    "key": "예약 중",
-   "context": "app.js:1093: $('statusChip').textContent = { loading: t('불러오는 중'), off: t('공개 전'), on: t('예약 중'), closed: t('예약 시간 아님') }[phase];"
+   "context": "app.js:1139: $('statusChip').textContent = { loading: t('불러오는 중'), off: t('공개 전'), on: t('예약 중'), closed: t('예약 시간 아님') }[phase];"
   },
   {
    "key": "예약 시간 아님",
-   "context": "app.js:1093: $('statusChip').textContent = { loading: t('불러오는 중'), off: t('공개 전'), on: t('예약 중'), closed: t('예약 시간 아님') }[phase];"
+   "context": "app.js:1139: $('statusChip').textContent = { loading: t('불러오는 중'), off: t('공개 전'), on: t('예약 중'), closed: t('예약 시간 아님') }[phase];"
   },
   {
    "key": "배치도에 없는 자리의 내 예약 {n}개 — 관리자가 배치도를 한 번 저장하면 정리돼요",
-   "context": "app.js:1101: const ghostText = t('배치도에 없는 자리의 내 예약 {n}개 — 관리자가 배치도를 한 번 저장하면 정리돼요', { n: ghosts });"
+   "context": "app.js:1147: const ghostText = t('배치도에 없는 자리의 내 예약 {n}개 — 관리자가 배치도를 한 번 저장하면 정리돼요', { n: ghosts });"
   },
   {
    "key": "불러오는 중…",
-   "context": "app.js:1107: $('statusText').textContent = state ? statusText(state) : t('불러오는 중…');"
+   "context": "app.js:1153: $('statusText').textContent = state ? statusText(state) : t('불러오는 중…');"
   },
   {
    "key": "{n}회차",
-   "context": "app.js:1115: $('sessionText').textContent = t('{n}회차', { n: state.session || 1 });"
+   "context": "app.js:1161: $('sessionText').textContent = t('{n}회차', { n: state.session || 1 });"
   },
   {
    "key": "이 기기에서 비밀번호를 정해 뒀어요.",
-   "context": "app.js:1126: $('pinState').textContent = hasPin() ? t('이 기기에서 비밀번호를 정해 뒀어요.') : '';"
+   "context": "app.js:1172: $('pinState').textContent = hasPin() ? t('이 기기에서 비밀번호를 정해 뒀어요.') : '';"
   },
   {
    "key": "첫 줄 자리",
-   "context": "app.js:1146: $('colsLabel').textContent = isArc ? t('첫 줄 자리') : t('칸');"
+   "context": "app.js:1192: $('colsLabel').textContent = isArc ? t('첫 줄 자리') : t('칸');"
   },
   {
    "key": "{rows}줄 · 첫 줄 {cols}자리 · {angle}° · 의자 {n}개",
-   "context": "app.js:1149: ? floor + t('{rows}줄 · 첫 줄 {cols}자리 · {angle}° · 의자 {n}개', { rows: draft.rows, cols: draft.cols, angle: draft.angle, n: draft.seatCount })"
+   "context": "app.js:1195: ? floor + t('{rows}줄 · 첫 줄 {cols}자리 · {angle}° · 의자 {n}개', { rows: draft.rows, cols: draft.cols, angle: draft.angle, n: draft.seatCount })"
   },
   {
    "key": "판 {rows}줄 × {cols}칸 · 의자 {n}개",
-   "context": "app.js:1150: : floor + t('판 {rows}줄 × {cols}칸 · 의자 {n}개', { rows: draft.rows, cols: draft.cols, n: draft.seatCount });"
+   "context": "app.js:1196: : floor + t('판 {rows}줄 × {cols}칸 · 의자 {n}개', { rows: draft.rows, cols: draft.cols, n: draft.seatCount });"
   },
   {
    "key": "그려 둔 의자 · 물건을 외벽으로 감쌌어요. 동그라미(꼭짓점)를 끌어 모양을 맞추세요. 변 가운데 작은 점을 끌면 꼭짓점이 늘어요.",
-   "context": "app.js:1170: say(t('그려 둔 의자 · 물건을 외벽으로 감쌌어요. 동그라미(꼭짓점)를 끌어 모양을 맞추세요. 변 가운데 작은 점을 끌면 꼭짓점이 늘어요.'));"
+   "context": "app.js:1216: say(t('그려 둔 의자 · 물건을 외벽으로 감쌌어요. 동그라미(꼭짓점)를 끌어 모양을 맞추세요. 변 가운데 작은 점을 끌면 꼭짓점이 늘어요.'));"
   },
   {
    "key": "지금 그려 둔 의자 · 물건을 다시 감쌌어요.",
-   "context": "app.js:1310: say(t('지금 그려 둔 의자 · 물건을 다시 감쌌어요.'));"
+   "context": "app.js:1356: say(t('지금 그려 둔 의자 · 물건을 다시 감쌌어요.'));"
   },
   {
    "key": "외벽을 없앴어요. [저장] 해야 반영돼요.",
-   "context": "app.js:1319: say(t('외벽을 없앴어요. [저장] 해야 반영돼요.'));"
+   "context": "app.js:1365: say(t('외벽을 없앴어요. [저장] 해야 반영돼요.'));"
   },
   {
    "key": "+ 층",
-   "context": "app.js:1360: const add = addPill(t('+ 층'), false, addFloor);"
+   "context": "app.js:1406: const add = addPill(t('+ 층'), false, addFloor);"
   },
   {
    "key": "{floor} 지우기",
-   "context": "app.js:1362: if (draft.floorCount > 1) addPill(t('{floor} 지우기', { floor: floorLabel(draft.current) }), false, removeFloor);"
+   "context": "app.js:1408: if (draft.floorCount > 1) addPill(t('{floor} 지우기', { floor: floorLabel(draft.current) }), false, removeFloor);"
   },
   {
    "key": "무대",
-   "context": "app.js:1532: stage.textContent = t('무대');"
+   "context": "app.js:1578: stage.textContent = t('무대');"
   },
   {
    "key": "앉을 수 없는 자리",
-   "context": "app.js:1655: const stateText = { mine: t('내 자리'), taken: seat.name || t('찜함'), blocked: t('앉을 수 없는 자리'), free: t('빈자리') }[seat.state];"
+   "context": "app.js:1701: const stateText = { mine: t('내 자리'), taken: seat.name || t('찜함'), blocked: t('앉을 수 없는 자리'), free: t('빈자리') }[seat.state];"
   },
   {
    "key": "장",
-   "context": "app.js:1672: const shortKind = { desk: t('책상'), pew: t('장'), extra: t('보조'), chair: t('의자') };"
+   "context": "app.js:1718: const shortKind = { desk: t('책상'), pew: t('장'), extra: t('보조'), chair: t('의자') };"
   },
   {
    "key": "이 물건 지우기",
-   "context": "app.js:1817: remove.title = t('이 물건 지우기');"
+   "context": "app.js:1863: remove.title = t('이 물건 지우기');"
   },
   {
    "key": "꼭짓점은 {n}개까지예요.",
-   "context": "app.js:1868: say(t('꼭짓점은 {n}개까지예요.', { n: MAX_WALL_POINTS }));"
+   "context": "app.js:1914: say(t('꼭짓점은 {n}개까지예요.', { n: MAX_WALL_POINTS }));"
   },
   {
    "key": "체험자",
-   "context": "app.js:2088: if (!$('nameInput').value.trim()) $('nameInput').value = t('체험자');"
+   "context": "app.js:2134: if (!$('nameInput').value.trim()) $('nameInput').value = t('체험자');"
   },
   {
    "key": "밝은 화면으로",
-   "context": "app.js:2189: $('themeButton').setAttribute('aria-label', dark ? t('밝은 화면으로') : t('어두운 화면으로')); / app.js:2190: $('themeButton').title = dark ? t('밝은 화면으로') : t('어두운 화면으로');"
+   "context": "app.js:2235: $('themeButton').setAttribute('aria-label', dark ? t('밝은 화면으로') : t('어두운 화면으로')); / app.js:2236: $('themeButton').title = dark ? t('밝은 화면으로') : t('어두운 화면으로');"
   },
   {
    "key": "{n}명",
@@ -955,10 +963,6 @@
   {
    "key": "{n}개",
    "context": "stats.js:130: const sheets = n => t('{n}개', { n: n.toLocaleString(LANG) });"
-  },
-  {
-   "key": "응답이 늦어요. 잠시 뒤 다시 해 주세요.",
-   "context": "api.js:44: if (error && error.name === 'AbortError') return fail('timeout', t('응답이 늦어요. 잠시 뒤 다시 해 주세요.'));"
   },
   {
    "key": "인터넷에 연결되어 있는지 확인해 주세요.",
@@ -1002,27 +1006,27 @@
   },
   {
    "key": "확인 번호: {code} — 화면에 보이는 번호가 이것과 다르면 연결하지 마세요.",
-   "context": "links.js:116: const check = fingerprint ? t('확인 번호: {code} — 화면에 보이는 번호가 이것과 다르면 연결하지 마세요.', { code: fingerprint }) + '\\n' : '';"
+   "context": "links.js:132: const check = fingerprint ? t('확인 번호: {code} — 화면에 보이는 번호가 이것과 다르면 연결하지 마세요.', { code: fingerprint }) + '\\n' : '';"
   },
   {
    "key": "아래 링크를 눌러 이름을 적고 [연결] 을 누른 뒤, 빈자리를 찜하세요!",
-   "context": "links.js:117: return `[${name}]\\n${t('아래 링크를 눌러 이름을 적고 [연결] 을 누른 뒤, 빈자리를 찜하세요!')}\\n${check}${link}`;"
+   "context": "links.js:133: return `[${name}]\\n${t('아래 링크를 눌러 이름을 적고 [연결] 을 누른 뒤, 빈자리를 찜하세요!')}\\n${check}${link}`;"
   },
   {
    "key": "층은 {n}개까지 만들 수 있어요.",
-   "context": "geometry.js:300: if (this.floors.length >= MAX_FLOORS) return t('층은 {n}개까지 만들 수 있어요.', { n: MAX_FLOORS });"
+   "context": "geometry.js:296: if (this.floors.length >= MAX_FLOORS) return t('층은 {n}개까지 만들 수 있어요.', { n: MAX_FLOORS });"
   },
   {
    "key": "층을 너무 여러 번 지웠다 더했어요. 한 번 저장한 뒤 다시 더해 주세요.",
-   "context": "geometry.js:303: if (id > MAX_FLOOR_ID) return t('층을 너무 여러 번 지웠다 더했어요. 한 번 저장한 뒤 다시 더해 주세요.');"
+   "context": "geometry.js:299: if (id > MAX_FLOOR_ID) return t('층을 너무 여러 번 지웠다 더했어요. 한 번 저장한 뒤 다시 더해 주세요.');"
   },
   {
    "key": "물건은 {n}개까지 놓을 수 있어요.",
-   "context": "geometry.js:353: if (this.itemCount >= MAX_ITEMS) return t('물건은 {n}개까지 놓을 수 있어요.', { n: MAX_ITEMS });"
+   "context": "geometry.js:349: if (this.itemCount >= MAX_ITEMS) return t('물건은 {n}개까지 놓을 수 있어요.', { n: MAX_ITEMS });"
   },
   {
    "key": "좌석은 {n}개까지 만들 수 있어요.",
-   "context": "geometry.js:391: if (this.seatCount + added > MAX_SEATS) return t('좌석은 {n}개까지 만들 수 있어요.', { n: MAX_SEATS });"
+   "context": "geometry.js:387: if (this.seatCount + added > MAX_SEATS) return t('좌석은 {n}개까지 만들 수 있어요.', { n: MAX_SEATS });"
   },
   {
    "key": "찜콩 체험관 (demo)",

@@ -64,15 +64,31 @@ function readInvite(text) {
   return undefined;
 }
 
+const LINK_IN_TEXT = /(?:https:\/\/|hagah:\/\/)\S+/i;
+const TRAILING_MARKS = /[.,;:!?)\]}>»」』"'”’]+$/;
+
+function withScheme(code) {
+  return String(code || '').replace(/(^|[^\w/.])(?:https?:\/\/)?((?:antcraft159\.github\.io|script\.google\.com)\/)/gi, '$1https://$2');
+}
+
 function pickLink(code) {
-  const raw = String(code || '');
-  const found = /(?:https:\/\/|hagah:\/\/)\S+/i.exec(raw);
+  const raw = withScheme(code);
+  const found = LINK_IN_TEXT.exec(raw);
   const inside = found && raw.slice(0, found.index).trim() !== '';
-  return (inside ? found[0] : raw).replace(/\s+/g, '');
+  return inside ? found[0].replace(TRAILING_MARKS, '') : raw.replace(/\s+/g, '');
+}
+
+function firstLink(code) {
+  const found = LINK_IN_TEXT.exec(withScheme(code));
+  return found ? found[0].replace(TRAILING_MARKS, '') : '';
 }
 
 function parseCode(code) {
-  let text = pickLink(code);
+  return parseText(pickLink(code)) || parseText(firstLink(code));
+}
+
+function parseText(value) {
+  let text = value;
   if (text.length === 0 || text.length > MAX_CODE_LENGTH) return null;
 
   if (text === 'demo' || text === 'demo#admin') {

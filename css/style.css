@@ -292,7 +292,11 @@ textarea { resize: vertical; font-size: .88rem; word-break: break-all; }
 .switch input:focus-visible + .track { outline: 2px solid var(--accent); outline-offset: 2px; }
 .switch input:disabled + .track { opacity: .5; }
 .touch-only { display: none; }
-@media (pointer: coarse) { .touch-only { display: flex; } }
+@media (pointer: coarse) {
+  .touch-only { display: flex; }
+  input[type="text"], input[type="password"], input[type="tel"], textarea, select { font-size: 16px; }
+}
+.btn, .seat, .pill { touch-action: manipulation; }
 
 .seg { display: flex; flex-wrap: wrap; gap: 6px; }
 .pill {
@@ -416,7 +420,7 @@ dialog p { color: var(--text2); }
   display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px;
   background: radial-gradient(600px 420px at 50% 40%, var(--accent-soft), var(--bg) 70%);
   transition: opacity .55s ease, transform .55s ease;
-  cursor: pointer;
+  pointer-events: none;
 }
 .splash.out { opacity: 0; transform: scale(1.06); pointer-events: none; }
 .splash-stage { position: relative; width: 260px; height: 150px; }
