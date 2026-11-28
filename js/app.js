@@ -232,6 +232,11 @@ async function onStoreChanged(event) {
   }
 
   const sameConn = oldConn && store.conn && oldConn.url === store.conn.url && oldConn.adminKey === store.conn.adminKey;
+  if (!sameConn && draft) {
+    store.conn = oldConn;
+    render();
+    return;
+  }
   if (sameConn) {
     store.conn = oldConn;
     if (myId() !== oldId) await refresh(true);
@@ -577,7 +582,10 @@ async function tapSeat(seat) {
 
   if (seat.state === 'taken') {
     if (isAdmin()) await forceCancel(seat);
-    else say(seat.name ? t('{seat} 은(는) {name} 님 자리예요.', { seat: seat.label, name: seat.name }) : t('{seat} 은(는) 이미 찜한 자리예요.', { seat: seat.label }));
+    else {
+      say(seat.name ? t('{seat} 은(는) {name} 님 자리예요.', { seat: seat.label, name: seat.name }) : t('{seat} 은(는) 이미 찜한 자리예요.', { seat: seat.label }));
+      refresh(true);
+    }
     return;
   }
 
@@ -588,8 +596,9 @@ async function reserveOrMove(seat) {
   const conn = store.conn;
 
   if (!$('myNameInput').value.trim()) {
-    say(t('위의 이름 칸에 이름을 먼저 적어 주세요.'));
-    $('myNameInput').focus();
+    say(t('이름 칸에 이름을 먼저 적어 주세요.'));
+    $('myNameInput').scrollIntoView({ block: 'center', behavior: 'smooth' });
+    $('myNameInput').focus({ preventScroll: true });
     return;
   }
 
@@ -604,7 +613,8 @@ async function reserveOrMove(seat) {
   const mine = seats.filter(item => item.state === 'mine');
   const isMove = mine.length > 0 && mine.length >= max && max === 1;
 
-  say(isMove ? t('{from} → {seat} 로 옮기는 중…', { from: mine[0].label, seat: seat.label }) : t('{seat} 찜하는 중…', { seat: seat.label }));
+  const waiting = isMove ? t('{from} → {seat} 로 옮기는 중…', { from: mine[0].label, seat: seat.label }) : t('{seat} 찜하는 중…', { seat: seat.label });
+  say(waiting);
 
   const response = isMove
     ? await post(conn, idFor(conn.url), 'move', { name: store.name, from: mine[0].id, seat: seat.id })
@@ -613,10 +623,41 @@ async function reserveOrMove(seat) {
   setBusy(false);
   if (conn !== store.conn) return;
 
+  if (!response.ok && response.error === 'timeout') {
+    await settleSlowRequest(conn, seat, isMove, waiting);
+    return;
+  }
+  if (!response.ok && response.error === 'limit') {
+    await refresh(true);
+    if (conn !== store.conn) return;
+    say(lastState && lastState.maxPerPerson === 1 ? t('이미 자리를 잡으셨어요. 다른 빈자리를 누르면 그리로 옮겨요.') : tm(response.message) || '');
+    return;
+  }
+
   say(response.ok
     ? (isMove ? t('{seat} 로 옮겼어요.', { seat: seat.label }) : t('{seat} 찜콩! 자리를 잡았어요.', { seat: seat.label })) + sameNameNote(adoptServerName(response))
     : tm(response.message) || '');
   await refresh(true);
+}
+
+async function settleSlowRequest(conn, seat, isMove, waiting) {
+  setBusy(true);
+  say(waiting);
+  let done = false;
+  for (let i = 0; i < 5 && !done && conn === store.conn; i++) {
+    await new Promise(resolve => setTimeout(resolve, 5000));
+    if (conn !== store.conn) break;
+    const state = await getState(conn, idFor(conn.url));
+    if (conn !== store.conn || !state.ok) continue;
+    refreshSeq++;
+    applyState(state);
+    done = seats.some(item => item.id === seat.id && item.state === 'mine');
+  }
+  setBusy(false);
+  if (conn !== store.conn) return;
+  say(done
+    ? (isMove ? t('{seat} 로 옮겼어요.', { seat: seat.label }) : t('{seat} 찜콩! 자리를 잡았어요.', { seat: seat.label }))
+    : t('응답이 늦어요. 잠시 뒤 다시 해 주세요.'));
 }
 
 async function cancelMine(seat) {
@@ -939,6 +980,7 @@ async function resizeDraft(deltaRows, deltaCols) {
   const cols = clamp(draft.cols + deltaCols, 1, MAX_COLS);
   const lost = draft.countOutside(rows, cols);
   if (lost > 0 && !await confirmBox(t('판 줄이기'), t('판 밖으로 나가는 의자 {n}개가 지워져요. 줄일까요?', { n: lost }))) return;
+  if (!draft || busy) return;
   draft.resize(rows, cols);
   render();
 }
@@ -948,11 +990,13 @@ function shapePreset(shape, angle) {
 }
 
 async function changeShape(shape, angle) {
+  if (!draft) return;
   const lost = draft.countLostByShape(shape, angle);
   if (lost > 0 && !await confirmBox(t('모양 바꾸기'), t('새 모양에 들어가지 않는 의자 {n}개가 지워져요. 바꿀까요?', { n: lost }))) {
     render();
     return;
   }
+  if (!draft) return;
   draft.setShape(shape, angle);
   if (tool === 'stage' && draft.shape === 'arc') tool = 'chair';
   render();
@@ -1021,11 +1065,13 @@ async function saveLayoutNow() {
     const lost = taken.filter(item => !kept.has(item.seat)).length;
     if (lost > 0 && !await confirmBox(t('배치도 저장'), t('지우거나 비워 두는 자리에 예약이 {n}개 있어요. 저장하면 그 예약은 취소돼요(기록 탭에 남아요). 저장할까요?', { n: lost }))) return;
   }
+  if (conn !== store.conn || !draft || busy) return;
 
   const newItems = draft.toItems();
   const newWalls = draft.toWalls();
   if ((newItems.length > 0 || newWalls.length > 0) && lastState && !lastState.itemsSupported &&
     !await confirmBox(t('배치도 저장'), t('이 좌석 예약 시트가 옛 판이라 외벽 · 물건은 저장되지 않아요(관리자 사용법의 새 판 배포를 해 주세요). 의자만 저장할까요?'))) return;
+  if (conn !== store.conn || !draft || busy) return;
 
   setBusy(true);
   say(t('배치도 저장하는 중…'));
