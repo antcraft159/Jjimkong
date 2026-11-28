@@ -1365,7 +1365,9 @@ function simplifyLoop(points, limit) {
     }
     const crowded = loop.findIndex((point, i) => Math.hypot(point[0] - loop[(i + 1) % loop.length][0], point[1] - loop[(i + 1) % loop.length][1]) < 36);
     if (crowded >= 0) {
-      loop.splice(crowded, 1);
+      const other = (crowded + 1) % loop.length;
+      const cost = i => area(loop[(i + loop.length - 1) % loop.length], loop[i], loop[(i + 1) % loop.length]);
+      loop.splice(cost(other) < cost(crowded) ? other : crowded, 1);
       continue;
     }
     if (loop.length <= limit && smallest > 400) break;
