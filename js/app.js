@@ -70,7 +70,7 @@ function setBusy(value) {
   if (value) refreshSeq++;
   document.body.classList.toggle('busy', value);
   ['connectButton', 'refreshButton', 'editLayoutButton', 'nextSessionButton', 'saveLayoutButton', 'cancelEditButton',
-    'publishedToggle', 'showNamesToggle', 'maxMinus', 'maxPlus'].forEach(id => { $(id).disabled = value; });
+    'publishedToggle', 'showNamesToggle', 'maxLimitToggle', 'maxMinus', 'maxPlus'].forEach(id => { $(id).disabled = value; });
   $('editorPanel').querySelectorAll('button').forEach(b => { b.disabled = value; });
   updateConnectButton();
 }
@@ -504,6 +504,7 @@ function statusText(state) {
     return opens ? t('{opens}부터 예약할 수 있어요.', { opens }) : t('예약이 마감됐어요.');
   }
 
+  if (state.maxPerPerson === 0) return t('빈자리를 누르면 찜! 원하는 만큼 자리를 잡을 수 있어요.');
   return state.maxPerPerson > 1
     ? t('빈자리를 누르면 찜! 한 사람이 {n}자리까지 잡을 수 있어요.', { n: state.maxPerPerson })
     : t('빈자리를 누르면 찜! 다른 빈자리를 누르면 그리로 옮겨요.');
@@ -730,14 +731,38 @@ async function sendSettings(settings) {
 
 let pendingMax = null;
 
+let lastLimit = 1;
+
+function showMax(value) {
+  const limited = value > 0;
+  if (limited) lastLimit = value;
+  $('maxLimitToggle').checked = limited;
+  $('maxStepper').hidden = !limited;
+  $('maxValue').textContent = limited ? value : '';
+}
+
 async function changeMax(delta) {
   if (!lastState) return;
   const current = pendingMax !== null ? pendingMax : lastState.maxPerPerson;
   const next = clamp(current + delta, 1, 20);
   if (next === current) return;
+  await setMax(next);
+}
+
+async function toggleMaxLimit(limited) {
+  if (!lastState) return;
+  if (!limited && !lastState.canUnlimit) {
+    showMax(lastState.maxPerPerson);
+    say(t('이 좌석 예약 시트가 아직 옛 판이라 1인 최대를 없앨 수 없어요. 관리자 사용법의 새 판 배포를 해 주세요.'));
+    return;
+  }
+  await setMax(limited ? lastLimit : 0);
+}
+
+async function setMax(next) {
   pendingMax = next;
   lastState.maxPerPerson = next;
-  $('maxValue').textContent = next;
+  showMax(next);
   try {
     await saveSettings({ maxPerPerson: next });
   } finally {
@@ -1157,7 +1182,7 @@ function render() {
   if (admin && state) {
     $('publishedToggle').checked = !!state.published;
     $('showNamesToggle').checked = state.showNames !== false;
-    $('maxValue').textContent = state.maxPerPerson;
+    showMax(state.maxPerPerson);
     $('sessionText').textContent = t('{n}회차', { n: state.session || 1 });
   }
   $('adminControls').hidden = editing();
@@ -2169,6 +2194,7 @@ function wire() {
   $('showNamesToggle').addEventListener('change', event => saveSettings({ showNames: event.target.checked }));
   $('maxMinus').addEventListener('click', () => changeMax(-1));
   $('maxPlus').addEventListener('click', () => changeMax(1));
+  $('maxLimitToggle').addEventListener('change', event => toggleMaxLimit(event.target.checked));
   $('editLayoutButton').addEventListener('click', beginEdit);
   $('nextSessionButton').addEventListener('click', nextSession);
   $('inviteCopyButton').addEventListener('click', copyInvite);

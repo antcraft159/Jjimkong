@@ -15,10 +15,10 @@
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="찜콩 · 좌석 찜하기">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="icon" href="icon.svg?v=20261128f" type="image/svg+xml">
+<link rel="icon" href="icon.svg?v=20261128g" type="image/svg+xml">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" media="print" onload="this.media='all'">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flag-icons@7.2.3/css/flag-icons.min.css" media="print" onload="this.media='all'">
-<link rel="stylesheet" href="css/style.css?v=20261128f">
+<link rel="stylesheet" href="css/style.css?v=20261128g">
 <script>
   (function () {
     var codes = ['ko', 'en', 'es', 'ru', 'mn', 'fr', 'de', 'ja', 'zh-CN', 'zh-TW', 'tl', 'ceb', 'it', 'th', 'ne', 'id', 'pt', 'ky', 'km', 'vi'];
@@ -44,7 +44,7 @@
     window.JJIM_LANG = lang;
     document.documentElement.lang = lang;
     document.documentElement.setAttribute('data-theme', theme);
-    if (lang !== 'ko') document.write('<script src="js/lang/' + lang + '.js?v=20261128f"><\/script>');
+    if (lang !== 'ko') document.write('<script src="js/lang/' + lang + '.js?v=20261128g"><\/script>');
   })();
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -76,7 +76,7 @@
     <div class="splash-seats">
       <i></i><i></i><i class="target"></i><i></i><i></i>
     </div>
-    <img class="splash-bean" src="icon.svg?v=20261128f" alt="" width="72" height="72">
+    <img class="splash-bean" src="icon.svg?v=20261128g" alt="" width="72" height="72">
     <div class="splash-pop">찜!</div>
   </div>
   <div class="splash-name" data-i18n-skip>찜콩</div>
@@ -94,7 +94,7 @@
 <header class="topbar">
   <div class="topbar-inner">
     <a class="brand-link" href="./" aria-label="찜콩 처음으로">
-      <img src="icon.svg?v=20261128f" alt="" width="28" height="28">
+      <img src="icon.svg?v=20261128g" alt="" width="28" height="28">
       <span class="brand-name" data-i18n-skip>찜콩</span>
     </a>
     <span class="topbar-sep" id="topbarSep" hidden></span>
@@ -304,7 +304,8 @@
           <div class="admin-block" id="adminControls">
             <label class="switch"><span>공개</span><input type="checkbox" id="publishedToggle"><span class="track"></span></label>
             <label class="switch"><span>이름 보이기</span><input type="checkbox" id="showNamesToggle"><span class="track"></span></label>
-            <div class="stepper">
+            <label class="switch"><span>1인 최대 정하기</span><input type="checkbox" id="maxLimitToggle" checked><span class="track"></span></label>
+            <div class="stepper" id="maxStepper">
               <span>1인 최대</span>
               <span class="stepper-ctl">
                 <button class="btn small" id="maxMinus" type="button" aria-label="1인 최대 줄이기">−</button>
@@ -460,12 +461,12 @@
 <footer class="foot">찜콩</footer>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" async></script>
-<script src="js/i18n.js?v=20261128f" defer></script>
-<script src="js/geometry.js?v=20261128f" defer></script>
-<script src="js/links.js?v=20261128f" defer></script>
-<script src="js/demo.js?v=20261128f" defer></script>
-<script src="js/api.js?v=20261128f" defer></script>
-<script src="js/stats.js?v=20261128f" defer></script>
-<script src="js/app.js?v=20261128f" defer></script>
+<script src="js/i18n.js?v=20261128g" defer></script>
+<script src="js/geometry.js?v=20261128g" defer></script>
+<script src="js/links.js?v=20261128g" defer></script>
+<script src="js/demo.js?v=20261128g" defer></script>
+<script src="js/api.js?v=20261128g" defer></script>
+<script src="js/stats.js?v=20261128g" defer></script>
+<script src="js/app.js?v=20261128g" defer></script>
 </body>
 </html>
